@@ -82,11 +82,21 @@ async function sync() {
     if (!slug) { console.log(`SKIP ${title}: no slug`); continue; }
 
     console.log(`  ${slug}...`);
-    const blocks = await getBlocks(page.id);
-    const content = blocksToMarkdown(blocks.results);
+    // Content from page blocks + Content property fallback
+    let content = "";
+    try {
+      const blocks = await getBlocks(page.id);
+      content = blocksToMarkdown(blocks.results);
+    } catch (e) {
+      console.log(`  blocks error: ${e.message}`);
+    }
+    if (!content.trim()) {
+      const contentProp = props.Content?.rich_text?.[0]?.plain_text || "";
+      content = contentProp;
+    }
 
-    const imgPath = heroImg ? `/assets/blog/${slug}.jpg` : "";
-    if (heroImg) {
+    const imgPath = (heroImg && heroImg.startsWith("http")) ? `/assets/blog/${slug}.jpg` : heroImg;
+    if (heroImg && heroImg.startsWith("http")) {
       try {
         const imgData = await fetch(heroImg);
         if (imgData.ok) {

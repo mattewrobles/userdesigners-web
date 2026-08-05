@@ -5,6 +5,9 @@ on:
   schedule:
     - cron: "0 8 * * *"
 
+permissions:
+  contents: write
+
 jobs:
   sync:
     runs-on: ubuntu-latest
@@ -18,10 +21,22 @@ jobs:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_DB_ID: ${{ secrets.NOTION_DB_ID }}
         run: node scripts/sync-notion-to-blog.js
-      - name: Commit changes
+      - name: Commit and push
         run: |
           git config user.name "blog-bot"
           git config user.email "bot@userdesigners.com"
           git add src/content/blog/ public/assets/blog/
-          git diff --staged --quiet || git commit -m "Sync blog from Notion [skip ci]"
-          git push
+          if git diff --staged --quiet; then
+            echo "No changes"
+          else
+            git commit -m "Sync blog from Notion"
+            git push
+            echo "HAS_CHANGES=true" >> $GITHUB_ENV
+          fi
+      - name: Notify Slack
+        if: env.HAS_CHANGES == 'true'
+        run: |
+          curl -s -X POST https://slack.com/api/chat.postMessage \
+            -H "Authorization: Bearer ${{ secrets.SLACK_BOT_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{"channel":"C061GH9ST8N","text":"📝 Blog UserDesigners: nuevos posts sincronizados desde Notion → https://www.userdesigners.com/blog"}'
