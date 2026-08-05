@@ -1,0 +1,10 @@
+/contacto/blog /blog 301
+/contacto/blog/* /blog/:splat 301
+/nosotros/blog /blog 301
+/nosotros/blog/* /blog/:splat 301
+/servicios/blog /blog 301
+/servicios/blog/* /blog/:splat 301
+/seo-doctores/blog /blog 301
+/seo-doctores/blog/* /blog/:splat 301
+/proyectos/blog /blog 301
+/proyectos/blog/* /blog/:splat 301
