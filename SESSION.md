@@ -42,3 +42,17 @@
 - Mixpanel ya inyectado
 - Geo/AEO tags por página
 - Comprimir assets
+## Ago 4 — Deploy a producción
+
+**GitHub:** https://github.com/mattewrobles/userdesigners-web
+**Cloudflare Pages:** conectado, auto-deploy en cada push a main
+- Build command: `npm run build`
+- Output directory: `dist`
+- Framework: Astro (auto-detectado)
+- Deps limpias: solo astro, @astrojs/sitemap, mixpanel-browser
+- 17 páginas, build ~5s
+
+**Dominio:** Si quieres conectar userdesigners.com a Cloudflare Pages:
+1. Cloudflare Dashboard → Workers & Pages → tu proyecto → Custom domains
+2. Agregar `userdesigners.com` (y `www.userdesigners.com`)
+3. Cloudflare maneja el DNS y SSL automáticamente
