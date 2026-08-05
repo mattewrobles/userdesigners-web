@@ -22,7 +22,12 @@ const framerCSS = fs.readFileSync("src/styles/framer-global.css", "utf-8");
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Blog | UserDesigners" />
   <meta property="og:description" content="Artículos sobre UX Design, investigación, design systems y producto digital." />
+  <meta property="og:image" content={new URL("/assets/local/bUYh6jy5kjctf6KEV3vRnONhegI.png", Astro.site).href} />
   <meta property="og:url" content={new URL("/blog", Astro.site).href} />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Blog | UserDesigners" />
+  <meta name="twitter:description" content="Artículos sobre UX Design, investigación, design systems y producto digital." />
+  <meta name="twitter:image" content={new URL("/assets/local/bUYh6jy5kjctf6KEV3vRnONhegI.png", Astro.site).href} />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
