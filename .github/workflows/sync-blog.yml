@@ -1,0 +1,27 @@
+name: Sync Blog from Notion
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 8 * * *"
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Sync blog posts
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DB_ID: ${{ secrets.NOTION_DB_ID }}
+        run: node scripts/sync-notion-to-blog.js
+      - name: Commit changes
+        run: |
+          git config user.name "blog-bot"
+          git config user.email "bot@userdesigners.com"
+          git add src/content/blog/ public/assets/blog/
+          git diff --staged --quiet || git commit -m "Sync blog from Notion [skip ci]"
+          git push
