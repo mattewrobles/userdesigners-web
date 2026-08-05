@@ -143,8 +143,26 @@ ${content}
   }
 
   console.log(`Synced ${count} posts`);
-  if (count > 0) {
-    fs.writeFileSync("sync-result.txt", count.toString());
+
+  // Delete archived posts
+  const archived = await notion(`/v1/databases/${DB_ID}/query`, "POST", {
+    filter: { property: "Status", select: { equals: "Archived" } },
+  });
+
+  let deleted = 0;
+  for (const page of archived.results || []) {
+    const slug = page.properties.Slug?.rich_text?.[0]?.plain_text || "";
+    if (!slug) continue;
+    const mdPath = `src/content/blog/${slug}.md`;
+    const imgPath = `public/assets/blog/${slug}.jpg`;
+    if (fs.existsSync(mdPath)) { fs.unlinkSync(mdPath); console.log(`  Deleted: ${slug}`); }
+    if (fs.existsSync(imgPath)) { fs.unlinkSync(imgPath); }
+    deleted++;
+  }
+  console.log(`Deleted ${deleted} posts, synced ${count}`);
+
+  if (count + deleted > 0) {
+    fs.writeFileSync("sync-result.txt", (count + deleted).toString());
   }
 }
 
