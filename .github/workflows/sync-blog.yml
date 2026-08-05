@@ -27,8 +27,8 @@ jobs:
         run: |
           git config user.name "blog-bot"
           git config user.email "bot@userdesigners.com"
-          git add src/content/blog/ public/assets/blog/
-          if git diff --staged --quiet; then
+          git add -A src/content/blog/ public/assets/blog/
+          if git diff --staged --quiet && git diff --quiet; then
             echo "No changes"
           else
             git commit -m "Sync blog from Notion"

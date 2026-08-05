@@ -159,11 +159,7 @@ ${content}
     if (fs.existsSync(imgPath)) { fs.unlinkSync(imgPath); }
     deleted++;
   }
-  console.log(`Deleted ${deleted} posts, synced ${count}`);
-
-  if (count + deleted > 0) {
-    fs.writeFileSync("sync-result.txt", (count + deleted).toString());
-  }
+  console.log(`Synced ${count} posts, deleted ${deleted}`);
 }
 
 sync().catch((e) => { console.error(e); process.exit(1); });
