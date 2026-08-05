@@ -3,7 +3,7 @@ name: Sync Blog from Notion
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 8 * * *"
+    - cron: "30 14 * * 1"
 
 permissions:
   contents: write

@@ -56,3 +56,19 @@
 1. Cloudflare Dashboard → Workers & Pages → tu proyecto → Custom domains
 2. Agregar `userdesigners.com` (y `www.userdesigners.com`)
 3. Cloudflare maneja el DNS y SSL automáticamente
+
+## Ago 5 — Automatización de blogs + deploy
+
+**Pipeline completo:**
+- Notion DB → GitHub Action (diario 8am + manual) → Cloudflare Pages → Slack (#users-seo)
+- Status flow: Draft → Ready → Published → Archived (delete)
+- Slack bot: @users_bot en #users-seo
+- GitHub: https://github.com/mattewrobles/userdesigners-web
+- Cloudflare DNS: apex + www → userdesigners-web.pages.dev
+- 17 páginas, build 3s
+
+**Reglas para crear posts en Notion:**
+- Hero Image: URL completa (http:// o https://)
+- Contenido: en el body de la página (headings, bullets, quotes, párrafos)
+- Status = Ready para publicar, Archived para borrar
+- Propiedad "Content" es solo respaldo, ignorarla
