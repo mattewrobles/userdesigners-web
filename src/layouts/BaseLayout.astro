@@ -1,0 +1,50 @@
+---
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+import fs from "fs";
+
+const framerCSS = fs.readFileSync("src/styles/framer.css", "utf-8")
+  .replace(/<\/?style[^>]*>/g, "");
+
+const { 
+  title = "UserDesigners / Agencia de UX UI", 
+  description = "Agencia de Experiencia de Usuario y diseño de Interfaz UX UI especializada en Bancos y Fintechs. 12 años de experiencia",
+  ogImage = "/assets/local/bUYh6jy5kjctf6KEV3vRnONhegI.png",
+  schemaOrg = ""
+} = Astro.props;
+---
+<!doctype html>
+<html lang="es-EC">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="generator" content="Astro + Framer">
+  <title>{title}</title>
+  <meta name="description" content={description}>
+  <meta name="framer-search-index" content="/assets/local/searchIndex-LqXxUI8iFOYO.json">
+  <meta name="framer-search-index-fallback" content="/assets/local/searchIndex-arPwJvNVXdwl.json">
+  <link rel="icon" type="image/png" href="/assets/local/o5LtTMyVT0hoY6m1F1q3smw3kq4.png">
+  <link rel="canonical" href={Astro.url.href}>
+  <meta property="og:type" content="website">
+  <meta property="og:title" content={title}>
+  <meta property="og:description" content={description}>
+  <meta property="og:image" content={ogImage}>
+  <meta property="og:url" content={Astro.url.href}>
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content={title}>
+  <meta name="twitter:description" content={description}>
+  <meta name="twitter:image" content={ogImage}>
+  <link rel="alternate" type="application/rss+xml" title="UserDesigners Blog" href="/rss.xml">
+  <Fragment set:html={`<style>${framerCSS}</style>`} />
+  <style is:global>
+    .framer-bjhdpb { align-items: flex-start !important; }
+    .framer-WOlJs.framer-v-1lvxs1p .framer-84xib0 { height: auto !important; }
+  </style>
+  {schemaOrg && <Fragment set:html={schemaOrg} />}
+</head>
+<body style="margin:0">
+  <Navbar />
+  <slot />
+  <Footer />
+</body>
+</html>

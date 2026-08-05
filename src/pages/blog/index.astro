@@ -1,0 +1,109 @@
+---
+import { getCollection } from "astro:content";
+import Navbar from "../../components/Navbar.astro";
+import Footer from "../../components/Footer.astro";
+import fs from "fs";
+
+const posts = (await getCollection("blog"))
+  .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+
+const framerCSS = fs.readFileSync("src/styles/framer-global.css", "utf-8");
+---
+
+<!doctype html>
+<html lang="es-EC">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog | UserDesigners</title>
+  <meta name="description" content="Artículos sobre UX Design, investigación, design systems y producto digital por el equipo de UserDesigners." />
+  <link rel="icon" href="/assets/local/o5LtTMyVT0hoY6m1F1q3smw3kq4.png" />
+  <link rel="canonical" href={new URL("/blog", Astro.site).href} />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Blog | UserDesigners" />
+  <meta property="og:description" content="Artículos sobre UX Design, investigación, design systems y producto digital." />
+  <meta property="og:url" content={new URL("/blog", Astro.site).href} />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style is:global set:html={framerCSS}></style>
+</head>
+<body style="margin:0;background-color:#030303;color:#fff;font-family:Inter,sans-serif">
+  <div class="bg-blob"></div>
+  <Navbar />
+
+  <main style="max-width:1100px;margin:0 auto;padding:80px 24px 120px;position:relative;z-index:1">
+    <header style="margin-bottom:64px">
+      <h1 style="font-family:'Familjen Grotesk',sans-serif;font-size:clamp(36px,6vw,64px);font-weight:500;line-height:1.1;letter-spacing:-0.03em;margin:0 0 16px;color:#fff">
+        Blog
+      </h1>
+      <p style="color:rgba(255,255,255,0.5);font-size:18px;max-width:560px;line-height:1.6;margin:0">
+        Ideas sobre diseño, investigación y producto digital. Escrito por el equipo de UserDesigners.
+      </p>
+    </header>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:32px">
+      {posts.map(post => (
+        <a href={`/blog/${post.id}`} style="text-decoration:none;border-radius:16px;overflow:hidden;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);transition:border-color 0.2s,background 0.2s">
+          {post.data.heroImage && (
+            <div style="height:200px;overflow:hidden">
+              <img src={post.data.heroImage} alt={post.data.title} style="width:100%;height:100%;object-fit:cover" loading="lazy" />
+            </div>
+          )}
+          <div style="padding:24px">
+            {post.data.category && (
+              <span style="display:inline-block;padding:3px 10px;background:rgba(255,255,255,0.05);border-radius:12px;font-size:12px;font-weight:500;color:rgba(255,255,255,0.45);margin-bottom:12px">
+                {post.data.category}
+              </span>
+            )}
+            <h2 style="font-family:'Familjen Grotesk',sans-serif;font-size:20px;font-weight:500;line-height:1.35;letter-spacing:-0.01em;color:#fff;margin:0 0 12px">
+              {post.data.title}
+            </h2>
+            {post.data.description && (
+              <p style="color:rgba(255,255,255,0.45);font-size:14px;line-height:1.6;margin:0 0 16px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">
+                {post.data.description}
+              </p>
+            )}
+            <div style="display:flex;gap:16px;color:rgba(255,255,255,0.3);font-size:13px">
+              <time datetime={post.data.date}>{new Date(post.data.date).toLocaleDateString("es-EC", { year: "numeric", month: "short", day: "numeric" })}</time>
+              {post.data.readTime && <span>{post.data.readTime}</span>}
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+  </main>
+
+  <Footer />
+</body>
+</html>
+
+<style is:global>
+  .framer-bjhdpb { align-items: flex-start !important; }
+  .framer-WOlJs .framer-bjhdpb { overflow: visible !important; }
+  .framer-WOlJs.framer-v-1lvxs1p .framer-84xib0 { height: auto !important; }
+  .framer-WOlJs.framer-v-1lvxs1p .framer-1m25ze8-container { width: auto !important; }
+  .framer-WOlJs .framer-1d3wp7v { width: auto !important; }
+  #navbar [data-framer-appear-id] { opacity: 1 !important; transform: none !important; }
+  .framer-wse24v { margin-left: auto !important; margin-right: auto !important; }
+  .framer-WOlJs { background-color: #030303 !important; padding-top: 0 !important; }
+  .bg-blob {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 800px;
+    height: 800px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, #d045ff, #998dd0, #0044ff, #ffbf00, #d045ff);
+    filter: blur(140px);
+    opacity: 0.12;
+    pointer-events: none;
+    z-index: 0;
+    animation: blob-spin 25s linear infinite;
+  }
+  @keyframes blob-spin {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+  }
+</style>

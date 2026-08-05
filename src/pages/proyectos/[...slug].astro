@@ -1,0 +1,16 @@
+---
+import fs from "fs";
+
+export function getStaticPaths() {
+  const files = fs.readdirSync("public/proyectos");
+  return files
+    .filter(f => f.endsWith(".html") && f !== "index.html")
+    .map(f => ({
+      params: { slug: f.replace(".html", "") },
+    }));
+}
+
+const { slug } = Astro.params;
+const html = fs.readFileSync(`public/proyectos/${slug}.html`, "utf-8");
+return new Response(html, { headers: { "content-type": "text/html; charset=utf-8" } });
+---
