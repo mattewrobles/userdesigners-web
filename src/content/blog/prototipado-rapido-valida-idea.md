@@ -2,7 +2,7 @@
 title: "Prototipado rápido: valida tu idea antes de gastar en desarrollo"
 description: "Una simulación interactiva de tu producto que puedes probar con usuarios reales en días, no en meses."
 category: "Product Design"
-heroImage: "https://framerusercontent.com/images/szk4SIgWp3isUqLfGUN6Mua8Wao.jpg?width=1046&height=630"
+heroImage: "/assets/blog/prototipado-rapido-valida-idea.jpg"
 date: "2026-07-22"
 readTime: "3 min"
 ---

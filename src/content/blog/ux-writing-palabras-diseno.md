@@ -2,7 +2,7 @@
 title: "UX Writing: las palabras también son diseño"
 description: "Cada palabra en un producto digital define la experiencia. Un buen UX Writing convierte más que un buen diseño visual."
 category: "UX Writing"
-heroImage: "https://framerusercontent.com/images/ay4pWbDMFW8RBOfzpSVbuGpmXs.jpg?width=1046&height=630"
+heroImage: "/assets/blog/ux-writing-palabras-diseno.jpg"
 date: "2026-07-22"
 readTime: "3 min"
 ---

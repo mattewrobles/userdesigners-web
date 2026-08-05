@@ -2,7 +2,7 @@
 title: "¿Qué es el UX Design y por qué tu negocio lo necesita?"
 description: "Descubre qué es el UX Design, cómo funciona el proceso y por qué cada negocio digital necesita invertir en experiencia de usuario para crecer."
 category: "UX Design"
-heroImage: "https://framerusercontent.com/images/nKc8sDhPDNOhQulylROyU3UX7h8.jpg?width=1046&height=630"
+heroImage: "/assets/blog/que-es-ux-design.jpg"
 date: "2026-07-22"
 readTime: "3 min"
 ---

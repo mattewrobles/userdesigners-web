@@ -2,7 +2,7 @@
 title: "Cómo una auditoría UX puede salvar tu producto digital"
 description: "Un análisis sistemático de tu producto para identificar problemas de usabilidad y fricción antes de que afecten tu conversión."
 category: "UX Research"
-heroImage: "https://framerusercontent.com/images/tHPsf3EHYnvnRzXhmYUOxtJP9Ow.jpg?width=1046&height=630"
+heroImage: "/assets/blog/auditoria-ux-producto-digital.jpg"
 date: "2026-07-22"
 readTime: "3 min"
 ---
