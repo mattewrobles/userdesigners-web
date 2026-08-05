@@ -71,12 +71,7 @@ function blocksToMarkdown(blocks) {
 async function sync() {
   console.log("Fetching posts from Notion...");
 
-  const filter = {
-    and: [
-      { property: "Status", select: { equals: "Published" } },
-      { property: "Ready to Post", checkbox: { equals: true } },
-    ],
-  };
+  const filter = { property: "Status", select: { equals: "Ready" } };
 
   const db = await notion(`/v1/databases/${DB_ID}/query`, "POST", {
     filter,
@@ -141,7 +136,7 @@ ${content}
     // Mark as synced
     await notion(`/v1/pages/${page.id}`, "PATCH", {
       properties: {
-        "Ready to Post": { checkbox: false },
+        Status: { select: { name: "Published" } },
         "Last Synced": { date: { start: today } },
       },
     });
