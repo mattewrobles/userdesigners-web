@@ -56,6 +56,12 @@ function blocksToMarkdown(blocks) {
       case "numbered_list_item": md += `1. ${text}\n`; break;
       case "paragraph": md += `${text}\n\n`; break;
       case "quote": md += `> ${text}\n\n`; break;
+      case "divider": md += `---\n\n`; break;
+      case "image": {
+        const url = b.image?.file?.url || b.image?.external?.url || "";
+        md += `![${b.image?.caption?.[0]?.plain_text || ""}](${url})\n\n`;
+        break;
+      }
       default: md += `${text}\n\n`;
     }
   }
@@ -64,12 +70,22 @@ function blocksToMarkdown(blocks) {
 
 async function sync() {
   console.log("Fetching posts from Notion...");
+
+  const filter = {
+    and: [
+      { property: "Status", select: { equals: "Published" } },
+      { property: "Ready to Post", checkbox: { equals: true } },
+    ],
+  };
+
   const db = await notion(`/v1/databases/${DB_ID}/query`, "POST", {
-    filter: { property: "Status", select: { equals: "Published" } },
+    filter,
     sorts: [{ property: "Title", direction: "ascending" }],
   });
 
+  const today = new Date().toISOString().slice(0, 10);
   let count = 0;
+
   for (const page of db.results) {
     const props = page.properties;
     const title = props.Title?.title?.[0]?.plain_text || "";
@@ -81,18 +97,17 @@ async function sync() {
 
     if (!slug) { console.log(`SKIP ${title}: no slug`); continue; }
 
-    console.log(`  ${slug}...`);
-    // Content from page blocks + Content property fallback
+    console.log(`  Syncing: ${slug}...`);
+
     let content = "";
     try {
       const blocks = await getBlocks(page.id);
       content = blocksToMarkdown(blocks.results);
     } catch (e) {
-      console.log(`  blocks error: ${e.message}`);
+      console.log(`  blocks error: ${e.message}, using Content property`);
     }
     if (!content.trim()) {
-      const contentProp = props.Content?.rich_text?.[0]?.plain_text || "";
-      content = contentProp;
+      content = props.Content?.rich_text?.[0]?.plain_text || "";
     }
 
     const imgPath = (heroImg && heroImg.startsWith("http")) ? `/assets/blog/${slug}.jpg` : heroImg;
@@ -102,6 +117,7 @@ async function sync() {
         if (imgData.ok) {
           const buf = Buffer.from(await imgData.arrayBuffer());
           fs.writeFileSync(`public/assets/blog/${slug}.jpg`, buf);
+          console.log(`  img downloaded`);
         }
       } catch (e) { console.log(`  img download failed: ${e.message}`); }
     }
@@ -110,17 +126,31 @@ async function sync() {
 title: "${title.replace(/"/g, '\\"')}"
 description: "${desc.replace(/"/g, '\\"')}"
 category: "${cat}"
-heroImage: "${imgPath}"
+heroImage: "${imgPath || ""}"
 date: "${date}"
 readTime: "3 min"
 ---
 
 ${content}
 `;
+    fs.mkdirSync("src/content/blog", { recursive: true });
+    fs.mkdirSync("public/assets/blog", { recursive: true });
     fs.writeFileSync(`src/content/blog/${slug}.md`, md);
     count++;
+
+    // Mark as synced
+    await notion(`/v1/pages/${page.id}`, "PATCH", {
+      properties: {
+        "Ready to Post": { checkbox: false },
+        "Last Synced": { date: { start: today } },
+      },
+    });
   }
+
   console.log(`Synced ${count} posts`);
+  if (count > 0) {
+    fs.writeFileSync("sync-result.txt", count.toString());
+  }
 }
 
 sync().catch((e) => { console.error(e); process.exit(1); });
