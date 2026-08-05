@@ -39,4 +39,4 @@ jobs:
           curl -s -X POST https://slack.com/api/chat.postMessage \
             -H "Authorization: Bearer ${{ secrets.SLACK_BOT_TOKEN }}" \
             -H "Content-Type: application/json" \
-            -d '{"channel":"C061GH9ST8N","text":"📝 Blog UserDesigners: nuevos posts sincronizados desde Notion → https://www.userdesigners.com/blog"}'
+            -d '{"channel":"C0BN01LMC3F","text":"📝 Blog UserDesigners: nuevos posts sincronizados desde Notion → https://www.userdesigners.com/blog"}'
