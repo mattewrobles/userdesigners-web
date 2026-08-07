@@ -15,8 +15,8 @@ const framerCSS = fs.readFileSync("src/styles/framer-global.css", "utf-8");
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Blog | UserDesigners</title>
-  <meta name="description" content="Artículos sobre UX Design, investigación, design systems y producto digital por el equipo de UserDesigners." />
+  <title>Blog UX Design | Artículos sobre Diseño Digital | UserDesigners</title>
+  <meta name="description" content="Artículos sobre UX Design, investigación de usuarios, design systems y producto digital para Fintechs y startups en Latinoamérica." />
   <link rel="icon" href="/assets/local/o5LtTMyVT0hoY6m1F1q3smw3kq4.png" />
   <link rel="canonical" href={new URL("/blog", Astro.site).href} />
   <meta property="og:type" content="website" />
@@ -28,6 +28,26 @@ const framerCSS = fs.readFileSync("src/styles/framer-global.css", "utf-8");
   <meta name="twitter:title" content="Blog | UserDesigners" />
   <meta name="twitter:description" content="Artículos sobre UX Design, investigación, design systems y producto digital." />
   <meta name="twitter:image" content={new URL("/assets/local/bUYh6jy5kjctf6KEV3vRnONhegI.png", Astro.site).href} />
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    "name": "Blog UX Design — UserDesigners",
+    "description": "Artículos sobre UX Design, investigación de usuarios, design systems y producto digital.",
+    "url": "https://www.userdesigners.com/blog",
+    "publisher": {
+      "@type": "Organization",
+      "name": "UserDesigners",
+      "url": "https://www.userdesigners.com"
+    },
+    "blogPost": posts.map(p => ({
+      "@type": "BlogPosting",
+      "headline": p.data.title,
+      "description": p.data.description || p.data.title,
+      "url": `https://www.userdesigners.com/blog/${p.id}`,
+      "datePublished": p.data.date,
+      "author": { "@type": "Organization", "name": "UserDesigners" }
+    }))
+  })} />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />

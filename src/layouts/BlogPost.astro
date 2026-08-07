@@ -39,10 +39,14 @@ const ogImgFinal = ogImage || heroImage;
     "@type": "BlogPosting",
     headline: title,
     description: post.data.description || title,
-    image: ogImage || heroImage,
+    image: ogImgFinal,
     datePublished: date,
-    author: { "@type": "Organization", name: "UserDesigners" },
-    publisher: { "@type": "Organization", name: "UserDesigners" }
+    url: new URL(Astro.url.pathname, Astro.site).href,
+    mainEntityOfPage: { "@type": "WebPage", "@id": new URL(Astro.url.pathname, Astro.site).href },
+    author: { "@type": "Organization", name: "UserDesigners", url: "https://www.userdesigners.com" },
+    publisher: { "@type": "Organization", name: "UserDesigners", url: "https://www.userdesigners.com",
+      logo: { "@type": "ImageObject", url: "https://www.userdesigners.com/assets/local/o5LtTMyVT0hoY6m1F1q3smw3kq4.png" }
+    }
   })} />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
