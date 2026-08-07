@@ -88,7 +88,7 @@ async function sync() {
     const desc = props.Description?.rich_text?.[0]?.plain_text || "";
     const cat = props.Category?.select?.name || "";
     const heroImg = props["Hero Image"]?.url || "";
-    const date = page.created_time.slice(0, 10);
+    const date = props.Date?.date?.start || page.created_time.slice(0, 10);
 
     if (!slug) { console.log(`SKIP ${title}: no slug`); continue; }
 
@@ -105,17 +105,25 @@ async function sync() {
       content = props.Content?.rich_text?.[0]?.plain_text || "";
     }
 
-    const imgPath = (heroImg && heroImg.startsWith("http")) ? `/assets/blog/${slug}.jpg` : heroImg;
+    let imgExt = "jpg";
+    let imgPath = heroImg && !heroImg.startsWith("http") ? heroImg : "";
     if (heroImg && heroImg.startsWith("http")) {
       try {
         const imgData = await fetch(heroImg);
         if (imgData.ok) {
+          const ct = imgData.headers.get("content-type") || "";
+          if (ct.includes("png")) imgExt = "png";
+          else if (ct.includes("webp")) imgExt = "webp";
           const buf = Buffer.from(await imgData.arrayBuffer());
-          fs.writeFileSync(`public/assets/blog/${slug}.jpg`, buf);
-          console.log(`  img downloaded`);
+          fs.writeFileSync(`public/assets/blog/${slug}.${imgExt}`, buf);
+          imgPath = `/assets/blog/${slug}.${imgExt}`;
+          console.log(`  img downloaded (${imgExt})`);
         }
       } catch (e) { console.log(`  img download failed: ${e.message}`); }
     }
+
+    const wordCount = content.split(/\s+/).filter(Boolean).length;
+    const readTime = `${Math.max(1, Math.ceil(wordCount / 200))} min`;
 
     const md = `---
 title: "${title.replace(/"/g, '\\"')}"
@@ -123,7 +131,7 @@ description: "${desc.replace(/"/g, '\\"')}"
 category: "${cat}"
 heroImage: "${imgPath || ""}"
 date: "${date}"
-readTime: "3 min"
+readTime: "${readTime}"
 ---
 
 ${content}

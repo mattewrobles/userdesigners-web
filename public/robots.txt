@@ -1,0 +1,20 @@
+User-agent: *
+Allow: /
+
+# AI crawlers — permitted for GEO/AEO visibility
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+Sitemap: https://www.userdesigners.com/sitemap-index.xml
