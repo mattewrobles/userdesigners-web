@@ -1,0 +1,104 @@
+{
+  "name": "UserDesigners — Blog desde Slack",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "blog-slack",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-slack",
+      "name": "Slack Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "blog-slack-trigger"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse Slack slash command payload\n// Slack sends: token=...&text=tema+del+blog&command=%2Fblog&...\nconst body = $input.first().json.body || $input.first().json;\n\n// Slash command sends form-encoded body\nconst text = body.text || '';\nconst userId = body.user_id || body.user_name || 'unknown';\nconst channelId = body.channel_id || 'C0BN01LMC3F';\nconst responseUrl = body.response_url || '';\n\n// Format: /blog tema del post | Categoria\n// Category is optional, separated by |\nconst parts = text.split('|').map(s => s.trim());\nconst topic = parts[0] || text;\nconst category = parts[1] || 'UX Design';\n\nif (!topic) {\n  return [{ json: { error: 'Falta el tema. Uso: /blog tema del post | Categoria' } }];\n}\n\nreturn [{ json: { topic, category, userId, channelId, responseUrl } }];"
+      },
+      "id": "parse-slack",
+      "name": "Parsear comando Slack",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "⏳ Generando borrador sobre *{{ $json.topic }}*... Te aviso en Notion cuando esté listo.",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              { "name": "Content-Type", "value": "application/json" }
+            ]
+          }
+        }
+      },
+      "id": "respond-slack-ack",
+      "name": "Responder a Slack (ACK)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [680, 180]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.github.com/repos/mattewrobles/userdesigners-web/actions/workflows/generate-blog.yml/dispatches",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Accept", "value": "application/vnd.github+json" },
+            { "name": "X-GitHub-Api-Version", "value": "2022-11-28" }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            { "name": "ref", "value": "main" },
+            { "name": "inputs", "value": "={{ JSON.stringify({ topic: $json.topic, category: $json.category, slack_channel: $json.channelId }) }}" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "github-dispatch",
+      "name": "Disparar GitHub Action",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [680, 420],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "github-pat-creds",
+          "name": "GitHub PAT — UserDesigners"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Slack Webhook": {
+      "main": [
+        [
+          { "node": "Parsear comando Slack", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Parsear comando Slack": {
+      "main": [
+        [
+          { "node": "Responder a Slack (ACK)", "type": "main", "index": 0 },
+          { "node": "Disparar GitHub Action", "type": "main", "index": 0 }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "instanceId": "userdesigners"
+  }
+}
