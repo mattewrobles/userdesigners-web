@@ -36,12 +36,27 @@
 - En build, `public/` HTMLs toman precedencia sobre `.astro` pages (comportamiento esperado)
 - Los directorios vacíos en `public/` no afectan el build
 
-## Pendientes (optimización)
-- Optimizar imágenes (WebP/AVIF, lazy loading, srcset)
-- Schema.org ya incluido en todos los HTMLs
-- Mixpanel ya inyectado
-- Geo/AEO tags por página
-- Comprimir assets
+## Ago 7 — SEO/GEO/AEO + n8n blog pipeline
+
+**SEO completado:**
+- Meta descriptions: todas 100–160c ✅
+- Titles: todas 30–60c ✅
+- Alt tags: todas las imágenes ✅
+- Schema JSON-LD (@graph): Organization + LocalBusiness + GeoCoordinates (home), FAQPage en nosotros/servicios/contacto/seo-doctores, CreativeWork en proyectos, Blog + BlogPosting en blog
+- robots.txt: AI crawlers permitidos (GPTBot, ClaudeBot, Google-Extended, PerplexityBot, Amazonbot) ✅
+- OG/Twitter tags: todas las páginas ✅
+- Canonical tags: todas ✅
+
+**n8n /blog pipeline (Slack → GitHub Actions → Notion):**
+- Workflow ID: s2eM6QlvIuQqNjN6 en n8n.srv923594.hstgr.cloud
+- Fix crítico: nodo "Disparar GitHub Action" necesitaba `specifyBody: "string"` + `JSON.stringify()` — sin eso el body llegaba como `{"":""}` y GitHub retornaba error
+- Pipeline probado: 3 runs exitosos en GitHub Actions (22:23, 22:04, 21:55 UTC)
+- Unsplash hero image: opcional vía UNSPLASH_ACCESS_KEY en GitHub Secrets
+- Notion DB: schema dinámico (detecta propiedades automáticamente)
+
+**Pendientes:**
+- Optimizar imágenes (WebP/AVIF, lazy loading) — Framer exports son 500KB+ HTML
+- Agregar más posts de blog (generación manual o /blog en Slack)
 ## Ago 4 — Deploy a producción
 
 **GitHub:** https://github.com/mattewrobles/userdesigners-web
