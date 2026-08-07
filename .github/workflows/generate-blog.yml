@@ -32,6 +32,7 @@ jobs:
           TOKENROUTER_API_KEY: ${{ secrets.TOKENROUTER_API_KEY }}
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_DB_ID: ${{ secrets.NOTION_DB_ID }}
+          UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
         run: |
           set +e
           node scripts/generate-blog-draft.js "${{ github.event.inputs.topic }}" "${{ github.event.inputs.category }}" > /tmp/script-out.txt 2>&1

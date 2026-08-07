@@ -14,6 +14,7 @@ import https from "https";
 const OPENAI_KEY = process.env.TOKENROUTER_API_KEY || process.env.OPENAI_API_KEY;
 const NOTION_TOKEN = process.env.NOTION_TOKEN;
 const DB_ID = process.env.NOTION_DB_ID;
+const UNSPLASH_KEY = process.env.UNSPLASH_ACCESS_KEY || null;
 
 if (!OPENAI_KEY || !NOTION_TOKEN || !DB_ID) {
   console.error("Missing env vars: OPENAI_API_KEY, NOTION_TOKEN, NOTION_DB_ID");
@@ -100,6 +101,30 @@ function openaiRequest(messages) {
   });
 }
 
+function unsplashFetch(query) {
+  if (!UNSPLASH_KEY) return Promise.resolve(null);
+  return new Promise((resolve) => {
+    const path = `/search/photos?query=${encodeURIComponent(query)}&per_page=1&orientation=landscape`;
+    const req = https.request({
+      hostname: "api.unsplash.com",
+      path,
+      method: "GET",
+      headers: { Authorization: `Client-ID ${UNSPLASH_KEY}` },
+    }, (res) => {
+      let d = "";
+      res.on("data", (c) => (d += c));
+      res.on("end", () => {
+        try {
+          const json = JSON.parse(d);
+          resolve(json.results?.[0]?.urls?.regular || null);
+        } catch { resolve(null); }
+      });
+    });
+    req.on("error", () => resolve(null));
+    req.end();
+  });
+}
+
 function notion(path, method = "GET", body = null) {
   return new Promise((resolve, reject) => {
     const data = body ? JSON.stringify(body) : null;
@@ -172,6 +197,10 @@ async function generate() {
   console.log(`  Title: ${draft.title}`);
   console.log(`  Slug: ${draft.slug}`);
 
+  // Fetch hero image from Unsplash (optional — skipped if no key)
+  const heroImage = await unsplashFetch(draft.title);
+  if (heroImage) console.log(`  Image: ${heroImage}`);
+
   const today = new Date().toISOString().slice(0, 10);
   const blocks = markdownToNotionBlocks(draft.content);
 
@@ -191,6 +220,7 @@ async function generate() {
   const catKey = findProp("Category", "Categoría", "category", "Tag");
   const statusKey = findProp("Status", "Estado", "status");
   const dateKey = findProp("Date", "Fecha", "Published", "date");
+  const imageKey = findProp("Image", "Hero Image", "Imagen", "Cover", "HeroImage", "heroImage");
 
   const properties = {};
   if (titleKey) properties[titleKey] = { title: [{ text: { content: draft.title } }] };
@@ -199,6 +229,7 @@ async function generate() {
   if (catKey) properties[catKey] = { select: { name: draft.category } };
   if (statusKey) properties[statusKey] = { select: { name: "Draft" } };
   if (dateKey) properties[dateKey] = { date: { start: today } };
+  if (imageKey && heroImage) properties[imageKey] = { url: heroImage };
 
   // Create page in Notion with Status=Draft
   const page = await notion(`/v1/pages`, "POST", {
@@ -221,6 +252,7 @@ async function generate() {
     slug: draft.slug,
     notion_url: page.url,
     notion_id: page.id,
+    hero_image: heroImage || null,
   }));
 }
 
