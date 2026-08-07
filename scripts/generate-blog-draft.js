@@ -70,10 +70,11 @@ OUTPUT FORMAT — devuelve SOLO JSON sin markdown, sin explicaciones:
 function openaiRequest(messages) {
   return new Promise((resolve, reject) => {
     const body = JSON.stringify({
-      model: "google/gemini-flash-1.5",
+      model: "google/gemini-3.5-flash-lite",
       messages,
       temperature: 0.7,
-      max_tokens: 1200,
+      max_tokens: 1500,
+      response_format: { type: "json_object" },
     });
     const opts = {
       hostname: "api.tokenrouter.com",
@@ -159,11 +160,12 @@ async function generate() {
 
   let draft;
   try {
-    // Strip markdown code fences if present
-    const clean = raw.replace(/^```json\n?/, "").replace(/\n?```$/, "").trim();
-    draft = JSON.parse(clean);
+    // Extract JSON object from response (handles reasoning text before/after)
+    const jsonMatch = raw.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error("No JSON found");
+    draft = JSON.parse(jsonMatch[0]);
   } catch {
-    console.error("OpenAI response not valid JSON:", raw.slice(0, 500));
+    console.error("Could not extract JSON from response:", raw.slice(0, 500));
     process.exit(1);
   }
 
