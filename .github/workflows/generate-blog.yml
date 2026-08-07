@@ -1,0 +1,49 @@
+name: Generate Blog Draft
+
+on:
+  workflow_dispatch:
+    inputs:
+      topic:
+        description: "Tema del blog (ej: 'por qué los diseñadores deben entender métricas')"
+        required: true
+      category:
+        description: "Categoría"
+        required: false
+        default: "UX Design"
+      slack_channel:
+        description: "Slack channel ID para notificar"
+        required: false
+        default: "C0BN01LMC3F"
+
+permissions:
+  contents: read
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Generate blog draft
+        id: generate
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DB_ID: ${{ secrets.NOTION_DB_ID }}
+        run: |
+          OUTPUT=$(node scripts/generate-blog-draft.js "${{ github.event.inputs.topic }}" "${{ github.event.inputs.category }}" 2>&1)
+          echo "$OUTPUT"
+          LAST_LINE=$(echo "$OUTPUT" | tail -1)
+          NOTION_URL=$(echo "$LAST_LINE" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('notion_url',''))" 2>/dev/null || echo "")
+          TITLE=$(echo "$LAST_LINE" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('title',''))" 2>/dev/null || echo "${{ github.event.inputs.topic }}")
+          echo "notion_url=$NOTION_URL" >> $GITHUB_OUTPUT
+          echo "title=$TITLE" >> $GITHUB_OUTPUT
+      - name: Notify Slack
+        run: |
+          MSG="✍️ *Nuevo borrador generado:* ${{ steps.generate.outputs.title }}\n→ Revisa en Notion: ${{ steps.generate.outputs.notion_url }}\nCambia Status a \`Ready\` cuando esté listo para publicar."
+          curl -s -X POST https://slack.com/api/chat.postMessage \
+            -H "Authorization: Bearer ${{ secrets.SLACK_BOT_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d "{\"channel\":\"${{ github.event.inputs.slack_channel }}\",\"text\":\"$MSG\"}"

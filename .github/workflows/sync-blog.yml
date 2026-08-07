@@ -2,6 +2,15 @@ name: Sync Blog from Notion
 
 on:
   workflow_dispatch:
+    inputs:
+      target_branch:
+        description: "Branch to push to (main = production, preview = staging)"
+        required: false
+        default: "main"
+      slack_channel:
+        description: "Slack channel ID to notify"
+        required: false
+        default: "C0BN01LMC3F"
   schedule:
     - cron: "30 14 * * 1"
 
@@ -11,8 +20,14 @@ permissions:
 jobs:
   sync:
     runs-on: ubuntu-latest
+    env:
+      TARGET_BRANCH: ${{ github.event.inputs.target_branch || 'main' }}
+      SLACK_CHANNEL: ${{ github.event.inputs.slack_channel || 'C0BN01LMC3F' }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.target_branch || 'main' }}
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -28,15 +43,25 @@ jobs:
           git add -A src/content/blog/ public/assets/blog/
           if git diff --staged --quiet && git diff --quiet; then
             echo "No changes"
+            echo "POST_COUNT=0" >> $GITHUB_ENV
           else
-            git commit -m "Sync blog from Notion"
-            git push
+            POST_COUNT=$(git diff --staged --name-only | grep "src/content/blog/" | wc -l | tr -d ' ')
+            git commit -m "Sync blog from Notion → $TARGET_BRANCH"
+            git push origin $TARGET_BRANCH
             echo "HAS_CHANGES=true" >> $GITHUB_ENV
+            echo "POST_COUNT=$POST_COUNT" >> $GITHUB_ENV
           fi
       - name: Notify Slack
         if: env.HAS_CHANGES == 'true'
         run: |
+          if [ "$TARGET_BRANCH" = "main" ]; then
+            URL="https://www.userdesigners.com/blog"
+            MSG="✅ *Blog UserDesigners:* ${{ env.POST_COUNT }} post(s) publicados en producción → $URL"
+          else
+            URL="https://preview.userdesigners-web.pages.dev/blog"
+            MSG="👀 *Blog Preview:* ${{ env.POST_COUNT }} post(s) en preview para revisión → $URL\nAproba con: merge \`preview\` → \`main\`"
+          fi
           curl -s -X POST https://slack.com/api/chat.postMessage \
             -H "Authorization: Bearer ${{ secrets.SLACK_BOT_TOKEN }}" \
             -H "Content-Type: application/json" \
-            -d '{"channel":"C0BN01LMC3F","text":"📝 Blog UserDesigners: nuevos posts sincronizados desde Notion → https://www.userdesigners.com/blog"}'
+            -d "{\"channel\":\"$SLACK_CHANNEL\",\"text\":\"$MSG\"}"
