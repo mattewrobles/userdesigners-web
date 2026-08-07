@@ -1,17 +1,17 @@
 /**
  * generate-blog-draft.js
- * Genera un borrador de blog en Notion usando GPT-4o-mini.
+ * Genera un borrador de blog en Notion usando Gemini Flash via TokenRouter.
  * Uso: node scripts/generate-blog-draft.js "tema del blog" [categoria]
  *
  * Env vars requeridas:
- *   OPENAI_API_KEY
+ *   TOKENROUTER_API_KEY  (o OPENAI_API_KEY como alias)
  *   NOTION_TOKEN
  *   NOTION_DB_ID
  */
 
 import https from "https";
 
-const OPENAI_KEY = process.env.OPENAI_API_KEY;
+const OPENAI_KEY = process.env.TOKENROUTER_API_KEY || process.env.OPENAI_API_KEY;
 const NOTION_TOKEN = process.env.NOTION_TOKEN;
 const DB_ID = process.env.NOTION_DB_ID;
 
@@ -70,13 +70,13 @@ OUTPUT FORMAT — devuelve SOLO JSON sin markdown, sin explicaciones:
 function openaiRequest(messages) {
   return new Promise((resolve, reject) => {
     const body = JSON.stringify({
-      model: "gpt-4o-mini",
+      model: "google/gemini-flash-1.5",
       messages,
       temperature: 0.7,
       max_tokens: 1200,
     });
     const opts = {
-      hostname: "api.openai.com",
+      hostname: "api.tokenrouter.com",
       path: "/v1/chat/completions",
       method: "POST",
       headers: {
