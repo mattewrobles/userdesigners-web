@@ -48,9 +48,18 @@ jobs:
           TITLE=$(echo "$LAST_LINE" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('title',''))" 2>/dev/null || echo "${{ github.event.inputs.topic }}")
           echo "notion_url=$NOTION_URL" >> $GITHUB_OUTPUT
           echo "title=$TITLE" >> $GITHUB_OUTPUT
-      - name: Notify Slack
+      - name: Notify Slack (success)
+        if: success()
         run: |
           MSG="✍️ *Nuevo borrador generado:* ${{ steps.generate.outputs.title }}\n→ Revisa en Notion: ${{ steps.generate.outputs.notion_url }}\nCambia Status a \`Ready\` cuando esté listo para publicar."
+          curl -s -X POST https://slack.com/api/chat.postMessage \
+            -H "Authorization: Bearer ${{ secrets.SLACK_BOT_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d "{\"channel\":\"${{ github.event.inputs.slack_channel }}\",\"text\":\"$MSG\"}"
+      - name: Notify Slack (failure)
+        if: failure()
+        run: |
+          MSG="❌ *Error generando borrador* sobre \"${{ github.event.inputs.topic }}\"\nRevisa los logs: https://github.com/mattewrobles/userdesigners-web/actions/workflows/generate-blog.yml"
           curl -s -X POST https://slack.com/api/chat.postMessage \
             -H "Authorization: Bearer ${{ secrets.SLACK_BOT_TOKEN }}" \
             -H "Content-Type: application/json" \
