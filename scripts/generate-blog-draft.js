@@ -175,17 +175,35 @@ async function generate() {
   const today = new Date().toISOString().slice(0, 10);
   const blocks = markdownToNotionBlocks(draft.content);
 
+  // Fetch DB schema to only send properties that exist
+  const db = await notion(`/v1/databases/${DB_ID}`);
+  if (db.object === "error") {
+    console.error("Notion DB fetch error:", db.message);
+    process.exit(1);
+  }
+  const dbProps = db.properties || {};
+
+  const findProp = (...names) => names.find(n => dbProps[n]);
+
+  const titleKey = findProp("Title", "Name", "title");
+  const slugKey = findProp("Slug", "slug", "URL", "url");
+  const descKey = findProp("Description", "Descripción", "description", "Excerpt");
+  const catKey = findProp("Category", "Categoría", "category", "Tag");
+  const statusKey = findProp("Status", "Estado", "status");
+  const dateKey = findProp("Date", "Fecha", "Published", "date");
+
+  const properties = {};
+  if (titleKey) properties[titleKey] = { title: [{ text: { content: draft.title } }] };
+  if (slugKey) properties[slugKey] = { rich_text: [{ text: { content: draft.slug } }] };
+  if (descKey) properties[descKey] = { rich_text: [{ text: { content: draft.description } }] };
+  if (catKey) properties[catKey] = { select: { name: draft.category } };
+  if (statusKey) properties[statusKey] = { select: { name: "Draft" } };
+  if (dateKey) properties[dateKey] = { date: { start: today } };
+
   // Create page in Notion with Status=Draft
   const page = await notion(`/v1/pages`, "POST", {
     parent: { database_id: DB_ID },
-    properties: {
-      Title: { title: [{ text: { content: draft.title } }] },
-      Slug: { rich_text: [{ text: { content: draft.slug } }] },
-      Description: { rich_text: [{ text: { content: draft.description } }] },
-      Category: { select: { name: draft.category } },
-      Status: { select: { name: "Draft" } },
-      Date: { date: { start: today } },
-    },
+    properties,
     children: blocks.slice(0, 100), // Notion max 100 blocks per request
   });
 
