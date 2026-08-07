@@ -10,7 +10,7 @@ interface Props {
 }
 
 const { post } = Astro.props;
-const { title, category, date, readTime, heroImage, ogImage } = post.data;
+const { title, category, date, updatedDate, readTime, heroImage, ogImage } = post.data;
 const { Content } = await render(post);
 const framerCSS = fs.readFileSync("src/styles/framer-global.css", "utf-8");
 const ogImgFinal = ogImage || heroImage;
@@ -41,6 +41,7 @@ const ogImgFinal = ogImage || heroImage;
     description: post.data.description || title,
     image: ogImgFinal,
     datePublished: date,
+    dateModified: updatedDate || date,
     url: new URL(Astro.url.pathname, Astro.site).href,
     mainEntityOfPage: { "@type": "WebPage", "@id": new URL(Astro.url.pathname, Astro.site).href },
     author: { "@type": "Organization", name: "UserDesigners", url: "https://www.userdesigners.com" },
@@ -92,6 +93,7 @@ const ogImgFinal = ogImage || heroImage;
         </h1>
         <div style="display:flex;gap:20px;align-items:center;color:rgba(255,255,255,0.4);font-size:14px;font-family:Inter,sans-serif">
           <time datetime={date}>{new Date(date).toLocaleDateString("es-EC", { year: "numeric", month: "long", day: "numeric" })}</time>
+          {updatedDate && <span style="font-style:italic">· Actualizado {new Date(updatedDate).toLocaleDateString("es-EC", { year: "numeric", month: "long", day: "numeric" })}</span>}
           {readTime && <span>{readTime} de lectura</span>}
         </div>
       </header>
