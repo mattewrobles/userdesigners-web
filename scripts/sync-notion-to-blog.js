@@ -68,20 +68,30 @@ function blocksToMarkdown(blocks) {
   return md.trim();
 }
 
+async function queryAll(filter, sorts) {
+  const results = [];
+  let cursor = undefined;
+  do {
+    const body = { filter, sorts };
+    if (cursor) body.start_cursor = cursor;
+    const res = await notion(`/v1/databases/${DB_ID}/query`, "POST", body);
+    results.push(...(res.results || []));
+    cursor = res.has_more ? res.next_cursor : undefined;
+  } while (cursor);
+  return results;
+}
+
 async function sync() {
   console.log("Fetching posts from Notion...");
 
   const filter = { property: "Status", select: { equals: "Ready" } };
 
-  const db = await notion(`/v1/databases/${DB_ID}/query`, "POST", {
-    filter,
-    sorts: [{ property: "Title", direction: "ascending" }],
-  });
+  const pages = await queryAll(filter, [{ property: "Title", direction: "ascending" }]);
 
   const today = new Date().toISOString().slice(0, 10);
   let count = 0;
 
-  for (const page of db.results) {
+  for (const page of pages) {
     const props = page.properties;
     const title = props.Title?.title?.[0]?.plain_text || "";
     const slug = props.Slug?.rich_text?.[0]?.plain_text || "";
@@ -153,12 +163,13 @@ ${content}
   console.log(`Synced ${count} posts`);
 
   // Delete archived posts
-  const archived = await notion(`/v1/databases/${DB_ID}/query`, "POST", {
-    filter: { property: "Status", select: { equals: "Archived" } },
-  });
+  const archivedPages = await queryAll(
+    { property: "Status", select: { equals: "Archived" } },
+    []
+  );
 
   let deleted = 0;
-  for (const page of archived.results || []) {
+  for (const page of archivedPages) {
     const slug = page.properties.Slug?.rich_text?.[0]?.plain_text || "";
     if (!slug) continue;
     const mdPath = `src/content/blog/${slug}.md`;
