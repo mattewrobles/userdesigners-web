@@ -1,10 +1,11 @@
 ---
 interface Props {
   variant?: "1" | "2" | "3" | "hero";
-  size?: number;      // ancho en px del óvalo
-  blur?: number;      // blur en px (el home usa 48)
-  opacity?: number;   // el home usa 0.38
+  size?: number;
+  blur?: number;
+  opacity?: number;
   rotate?: boolean;
+  float?: boolean;
   speed?: number;
   top?: string;
   right?: string;
@@ -17,18 +18,19 @@ const {
   variant = "3",
   size = 470,
   blur = 48,
-  opacity = 0.38,
+  opacity = 0.45,
   rotate = true,
+  float = true,
   speed = 30,
   top, right, bottom, left,
   style: extraStyle,
 } = Astro.props;
-// gradientes del home real (framer-vcgj52 Glow): linear vertical
+// gradientes con contraste (el home real usa #f6c65f → #998dd0, vibrantes)
 const gradients = {
-  "1": "linear-gradient(#f6c65f 0%, #e367548c 48.1%, #998dd0 100%)",
-  "2": "linear-gradient(140deg, rgb(246,198,95) 0%, rgb(227,103,83) 30%, rgb(153,141,208) 79%, rgb(132,217,250) 100%)",
-  "3": "linear-gradient(140deg, rgb(132,217,250) 0%, rgb(18,61,255) 45%, rgb(74,222,255) 100%)",
-  "hero": "linear-gradient(#f6c65f 0%, #e367548c 48.1%, #998dd0 100%)",
+  "1": "linear-gradient(#f6c65f 0%, #e36754 40%, #998dd0 75%, #84d9fa 100%)",
+  "2": "linear-gradient(140deg, rgb(246,198,95) 0%, rgb(227,103,83) 35%, rgb(153,141,208) 75%, rgb(132,217,250) 100%)",
+  "3": "linear-gradient(140deg, rgb(74,222,255) 0%, rgb(18,61,255) 50%, rgb(132,217,250) 100%)",
+  "hero": "linear-gradient(#f6c65f 0%, #e36754 40%, #998dd0 100%)",
 };
 const bg = gradients[variant] || gradients["3"];
 const position = [top && `top:${top}`, right && `right:${right}`, bottom && `bottom:${bottom}`, left && `left:${left}`].filter(Boolean).join(";");
@@ -37,40 +39,62 @@ const position = [top && `top:${top}`, right && `right:${right}`, bottom && `bot
 <div
   class="blob"
   data-rotate={rotate}
+  data-float={float}
   data-speed={speed}
   style={`--blob-size:${size}px;--blob-blur:${blur}px;--blob-opacity:${opacity};--blob-bg:${bg};${position}${extraStyle ? ";" + extraStyle : ""}`}
   aria-hidden="true"
-></div>
+>
+  <span class="blob-shape"></span>
+</div>
 
 <script>
   import { animate } from "motion";
 
-  // rota el óvalo suavemente como el Glow del home (el canvas lo anima en runtime)
   document.querySelectorAll(".blob").forEach((el, i) => {
-    const rotate = el.dataset.rotate === "true";
-    if (!rotate) return;
     const speed = Number(el.dataset.speed || 30);
     const reverse = i % 2 === 1;
-    animate(
-      el,
-      { transform: ["rotate(0deg)", `rotate(${reverse ? -360 : 360}deg)`] },
-      { duration: speed, repeat: Infinity, ease: "linear" }
-    );
+    const shape = el.querySelector(".blob-shape");
+
+    // flotación suave del contenedor (sube/baja + leve desplazamiento)
+    if (el.dataset.float === "true") {
+      animate(
+        el,
+        {
+          y: [0, -26, 0, 20, 0],
+          x: [0, 16, 0, -14, 0],
+        },
+        { duration: speed * 1.8, repeat: Infinity, ease: "easeInOut" }
+      );
+    }
+    // rotación del óvalo (el gradiente gira → el color se mueve, como el canvas del home)
+    if (el.dataset.rotate === "true" && shape) {
+      animate(
+        shape,
+        { transform: ["rotate(0deg)", `rotate(${reverse ? -360 : 360}deg)`] },
+        { duration: speed, repeat: Infinity, ease: "linear" }
+      );
+    }
   });
 </script>
 
 <style>
   .blob {
     position: absolute;
-    border-radius: 888px; /* forma de óvalo del Glow del home */
+    pointer-events: none;
+    z-index: 0;
+    will-change: transform;
+    width: var(--blob-size);
+    height: calc(var(--blob-size) * 1.27);
+  }
+  /* el óvalo con gradiente: rota para que el color se mueva */
+  .blob-shape {
+    position: absolute;
+    inset: 0;
+    border-radius: 888px;
     background: var(--blob-bg);
     filter: blur(var(--blob-blur));
     -webkit-filter: blur(var(--blob-blur));
     opacity: var(--blob-opacity);
-    width: var(--blob-size);
-    height: calc(var(--blob-size) * 1.27); /* 470x597 como el home */
-    pointer-events: none;
-    z-index: 0;
     will-change: transform;
   }
 </style>
