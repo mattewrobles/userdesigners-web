@@ -235,8 +235,42 @@
   --opacity-disabled: 0.4;
 }
 
-@media (max-width: 810px) {
+/* ============================================================
+   RESPONSIVE — breakpoints reales de Framer
+   ============================================================
+   La web usa 3 breakpoints exactos (verificado en src/html/):
+
+   · Desktop  : >= 1440px        (media min-width: 1440px)
+   · Tablet   : 810px – 1439px   (media min-width:810px) and (max-width:1439.98px)
+   · Mobile   : <= 809px         (media max-width: 809.98px)
+   · Compact  : <= 480px         (uso interno para ajustes finos)
+
+   REGLA DE ORO: mobile-first no aplica acá. Framer usa desktop-first:
+   los estilos base son para desktop y se sobreescriben hacia abajo.
+   Mantener el mismo patrón en componentes nuevos:
+     @media (max-width: 809.98px) { ... ajustes mobile ... }
+     @media (min-width: 810px) and (max-width: 1439.98px) { ... tablet ... }
+
+   Tipografía: la escala usa clamp() con vw — es FLUIDA (no salta por breakpoint),
+   solo se sobreescribe el --space-section en mobile.
+
+   Padding lateral: --space-pad: clamp(20px, 5vw, 80px) — fluido.
+*/
+
+/* Mobile: menos espacio de sección */
+@media (max-width: 809.98px) {
   :root {
     --space-section: 80px;
+  }
+}
+
+/* Compact: tipografía un poco menor */
+@media (max-width: 479.98px) {
+  :root {
+    --display-1: clamp(34px, 9vw, 48px);
+    --display-2: clamp(30px, 8vw, 40px);
+    --heading-1: clamp(26px, 7vw, 34px);
+    --heading-2: clamp(24px, 6vw, 32px);
+    --heading-3: clamp(20px, 5.5vw, 28px);
   }
 }

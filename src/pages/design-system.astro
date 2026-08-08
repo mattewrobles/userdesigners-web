@@ -237,6 +237,18 @@ import Blob from "../components/ui/Blob.astro";
     <div class="token">Duración<br /><code>0.1 / 0.2 / 0.3 / 0.5 / 0.7s</code></div>
   </div>
 
+  <h2>Responsive</h2>
+  <p class="sub" style="margin-bottom:16px">Breakpoints exactos de Framer (verificados en los HTMLs migrados). La web es <strong>desktop-first</strong>: estilos base para desktop, se sobreescriben hacia abajo. Tipografía y padding son fluidos (clamp + vw), no saltan por breakpoint.</p>
+  <div class="tokens-grid">
+    <div class="token">Desktop<br /><code>min-width: 1440px</code></div>
+    <div class="token">Tablet<br /><code>810px — 1439px</code></div>
+    <div class="token">Mobile<br /><code>max-width: 809.98px</code></div>
+    <div class="token">Compact<br /><code>max-width: 479.98px</code></div>
+    <div class="token">Tipografía<br /><code>clamp() + vw — fluida</code></div>
+    <div class="token">Padding sección<br /><code>--space-pad: clamp(20px,5vw,80px)</code></div>
+  </div>
+  <p class="sub" style="margin-top:16px">Convención para componentes nuevos: <code>@media (max-width: 809.98px)</code> para mobile, <code>@media (min-width: 810px) and (max-width: 1439.98px)</code> para tablet. Ejemplo: <code>--space-section</code> baja de 110px → 80px en mobile, y la escala tipográfica se ajusta en compact (&lt;480px).</p>
+
   <h2>Demo — todo junto</h2>
   <p class="sub" style="margin-bottom:20px">Hero de muestra con todos los componentes combinados: LetterReveal, botones, badges, cards, glow y marquee.</p>
   <div style="position:relative;border:1px solid var(--border-subtle);border-radius:24px;overflow:hidden;padding:64px 48px">
