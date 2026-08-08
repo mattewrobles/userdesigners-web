@@ -108,7 +108,7 @@ const framerCSS = fs.readFileSync("src/styles/framer.css", "utf-8")
           </div>
           <div class="hero-stat-divider"></div>
           <div class="hero-stat">
-            <span class="hero-stat-num">{Math.ceil(allPosts.reduce((acc, p) => acc + parseInt(p.data.readTime || "3"), 0) / allPosts.length)}</span>
+            <span class="hero-stat-num">{allPosts.length > 0 ? Math.ceil(allPosts.reduce((acc, p) => acc + parseInt(p.data.readTime || "3"), 0) / allPosts.length) : 0}</span>
             <span class="hero-stat-label">min lectura promedio</span>
           </div>
         </div>
@@ -263,6 +263,51 @@ const framerCSS = fs.readFileSync("src/styles/framer.css", "utf-8")
         el.classList.add("animate-in");
         el.style.setProperty("--delay", `${0.2 + i * 0.05}s`);
       });
+    }
+
+    const filterContainer = document.getElementById("blog-filters");
+    const filterSelect = document.querySelector("#blog-filters select");
+    const allCards = document.querySelectorAll(".blog-card, .featured-entrance");
+
+    function applyFilter(value) {
+      const active = value === "all" ? "" : value;
+      allCards.forEach(card => {
+        const cat = (card.dataset.category || "").toLowerCase();
+        const shouldShow = !active || cat === active.toLowerCase();
+        card.style.display = shouldShow ? "" : "none";
+      });
+    }
+
+    if (filterContainer) {
+      filterContainer.querySelectorAll(".blog-filter").forEach(btn => {
+        btn.setAttribute("role", "button");
+        btn.setAttribute("aria-pressed", "false");
+        btn.style.cursor = "pointer";
+        btn.style.transition = "all 0.2s ease";
+        btn.addEventListener("click", () => {
+          const value = btn.dataset.filter || "all";
+          filterContainer.querySelectorAll(".blog-filter").forEach(b => {
+            const isActive = b === btn;
+            b.setAttribute("aria-pressed", String(isActive));
+            b.style.color = isActive ? "#030303" : "rgba(255,255,255,0.5)";
+            b.style.background = isActive ? "#fff" : "rgba(255,255,255,0.03)";
+            b.style.borderColor = isActive ? "#fff" : "rgba(255,255,255,0.06)";
+          });
+          applyFilter(value);
+        });
+      });
+      const firstBtn = filterContainer.querySelector(".blog-filter");
+      if (firstBtn) {
+        firstBtn.setAttribute("aria-pressed", "true");
+        firstBtn.style.color = "#030303";
+        firstBtn.style.background = "#fff";
+        firstBtn.style.borderColor = "#fff";
+      }
+    }
+
+    if (filterSelect) {
+      filterSelect.style.cursor = "pointer";
+      filterSelect.addEventListener("change", () => applyFilter(filterSelect.value));
     }
   });
 </script>
@@ -434,6 +479,11 @@ const framerCSS = fs.readFileSync("src/styles/framer.css", "utf-8")
     opacity: 0;
     filter: blur(10px);
     transform: translateY(30px);
+  }
+  .blog-filter:focus-visible,
+  #blog-filters select:focus-visible {
+    outline: 2px solid #0099ff;
+    outline-offset: 2px;
   }
   .blog-card {
     opacity: 0;

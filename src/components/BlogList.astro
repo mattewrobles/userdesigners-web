@@ -23,7 +23,7 @@ const projects = [
 
 {
   posts.length > 0 && currentPage === 1 && (
-    <a href={`/blog/${featured.id}`} class="featured-entrance" style="text-decoration:none;display:block;margin-bottom:64px;border-radius:20px;overflow:hidden;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);transition:border-color 0.3s,background 0.3s;position:relative">
+    <a href={`/blog/${featured.id}`} class="featured-entrance" data-category={featured.data.category || "Destacado"} style="text-decoration:none;display:block;margin-bottom:64px;border-radius:20px;overflow:hidden;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);transition:border-color 0.3s,background 0.3s;position:relative">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:0">
         {featured.data.heroImage && (
           <div style="height:100%;min-height:320px;overflow:hidden">
@@ -55,7 +55,7 @@ const projects = [
     {posts.length > 0 && currentPage === 1 && (
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:24px">
         {posts.slice(1).map(post => (
-          <a href={`/blog/${post.id}`} class="blog-card" style="text-decoration:none;border-radius:16px;overflow:hidden;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);transition:all 0.3s ease">
+          <a href={`/blog/${post.id}`} class="blog-card" data-category={post.data.category || ""} style="text-decoration:none;border-radius:16px;overflow:hidden;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);transition:all 0.3s ease">
             {post.data.heroImage && (
               <div style="height:200px;overflow:hidden">
                 <img src={post.data.heroImage} alt={post.data.title} style="width:100%;height:100%;object-fit:cover;transition:transform 0.6s ease" loading="lazy" />
@@ -88,7 +88,7 @@ const projects = [
     {posts.length > 0 && currentPage !== 1 && (
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:24px">
         {posts.map(post => (
-          <a href={`/blog/${post.id}`} class="blog-card" style="text-decoration:none;border-radius:16px;overflow:hidden;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);transition:all 0.3s ease">
+          <a href={`/blog/${post.id}`} class="blog-card" data-category={post.data.category || ""} style="text-decoration:none;border-radius:16px;overflow:hidden;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);transition:all 0.3s ease">
             {post.data.heroImage && (
               <div style="height:200px;overflow:hidden">
                 <img src={post.data.heroImage} alt={post.data.title} style="width:100%;height:100%;object-fit:cover;transition:transform 0.6s ease" loading="lazy" />

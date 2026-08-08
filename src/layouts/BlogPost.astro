@@ -21,7 +21,9 @@ const relatedPosts = allPosts
   .slice(0, 2);
 const framerCSS = fs.readFileSync("src/styles/framer.css", "utf-8")
   .replace(/<\/?style[^>]*>/g, "");
-const ogImgFinal = ogImage || heroImage;
+const ogImgFinal = (ogImage || heroImage)
+  ? new URL(ogImage || heroImage, Astro.site).href
+  : "";
 const hasToc = headings && headings.length > 0;
 ---
 
@@ -98,7 +100,7 @@ const hasToc = headings && headings.length > 0;
             <span class="post-category">{category}</span>
           )}
           <h1 class="post-title">{title}</h1>
-          <p class="post-description">{post.data.description}</p>
+          {post.data.description && <p class="post-description">{post.data.description}</p>}
           <div class="post-meta">
             <time datetime={date}>{new Date(date).toLocaleDateString("es-EC", { year: "numeric", month: "long", day: "numeric" })}</time>
             {updatedDate && <span style="font-style:italic">· Actualizado {new Date(updatedDate).toLocaleDateString("es-EC", { year: "numeric", month: "long", day: "numeric" })}</span>}
