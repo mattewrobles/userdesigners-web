@@ -107,6 +107,9 @@ const position = [top && `top:${top}`, right && `right:${right}`, bottom && `bot
     pointer-events: none;
     z-index: 0;
     opacity: 0; /* aparece cuando el JS genera el SVG */
+    filter: blur(var(--blob-blur));
+    -webkit-filter: blur(var(--blob-blur));
+    mix-blend-mode: var(--blob-blend);
   }
   .blob svg {
     width: var(--blob-size);

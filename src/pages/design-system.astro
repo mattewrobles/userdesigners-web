@@ -78,9 +78,9 @@ import Blob from "../components/ui/Blob.astro";
   <h2>Glows ambientales (blobs)</h2>
   <p class="sub" style="margin-bottom:16px">Patrón real del home: el blob va en una esquina (no cubre todo), es una figura orgánica SVG (elipses rotadas + gradientes fade) con <code>blur 60px</code> + <code>mix-blend-mode: hard-light</code>. El color cambia en cada carga, como el canvas del home.</p>
   <div style="position:relative;border:1px solid var(--border-subtle);border-radius:20px;overflow:hidden;height:300px;background:var(--surface-1)">
-    <Blob variant="1" size={320} top="12%" left="50%" speed={25} />
+    <Blob variant="1" size={420} blur={45} opacity={0.6} top="15%" left="45%" speed={25} />
     <div style="position:relative;z-index:1;padding:24px;color:var(--text-secondary);font-size:14px">
-      Un blob en el hero — figura orgánica, blur 60px, hard-light. Refresca para ver el color cambiar.
+      Un blob en el hero — figura orgánica, blur moderado, hard-light. Refresca para ver el color cambiar.
     </div>
   </div>
 
@@ -249,7 +249,7 @@ import Blob from "../components/ui/Blob.astro";
   <h2>Demo — todo junto</h2>
   <p class="sub" style="margin-bottom:20px">Hero de muestra con todos los componentes combinados: LetterReveal, botones, badges, un solo blob en la esquina (como el home) y marquee.</p>
   <div style="position:relative;border:1px solid var(--border-subtle);border-radius:24px;overflow:hidden;padding:64px 48px">
-    <Blob variant="3" size={340} blur={60} opacity={0.4} top="8%" right="-60px" speed={30} />
+    <Blob variant="3" size={380} blur={45} opacity={0.6} top="5%" right="5%" speed={30} />
     <div style="position:relative;z-index:1">
       <Badge variant="outline">UX · UI · Producto</Badge>
       <div style="height:20px"></div>
