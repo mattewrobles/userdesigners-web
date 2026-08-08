@@ -1,0 +1,37 @@
+---
+interface Props {
+  variant?: "text" | "card" | "circle";
+  width?: string;
+  height?: string;
+}
+
+const { variant = "text", width = "100%", height } = Astro.props;
+const style = `width:${width};${height ? `height:${height};` : ""}`;
+---
+
+<div class={`skeleton skeleton--${variant}`} style={style} aria-hidden="true"></div>
+
+<style>
+  .skeleton {
+    display: block;
+    background: var(--surface-2);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    position: relative;
+  }
+  .skeleton::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+    animation: shimmer 1.5s infinite;
+  }
+  .skeleton--text { height: 14px; }
+  .skeleton--card { height: 120px; border-radius: var(--radius-lg); }
+  .skeleton--circle { border-radius: 50%; aspect-ratio: 1; width: var(--space-9) !important; }
+
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+</style>

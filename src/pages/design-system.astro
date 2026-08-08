@@ -1,0 +1,168 @@
+---
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+import Button from "../components/ui/Button.astro";
+import Card from "../components/ui/Card.astro";
+import Badge from "../components/ui/Badge.astro";
+import Text from "../components/ui/Text.astro";
+import Icon from "../components/ui/Icon.astro";
+import Divider from "../components/ui/Divider.astro";
+import Input from "../components/ui/Input.astro";
+import SectionLabel from "../components/ui/SectionLabel.astro";
+---
+
+<!doctype html>
+<html lang="es-EC">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Design System | UserDesigners</title>
+  <meta name="description" content="Design system de UserDesigners: tokens, componentes y guías." />
+  <meta name="robots" content="noindex" />
+  <link rel="icon" href="/assets/local/o5LtTMyVT0hoY6m1F1q3smw3kq4.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Familjen+Grotesk:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles/tokens.css" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { background: var(--surface-1); color: var(--text-primary); font-family: var(--font-body); }
+    body { min-height: 100vh; }
+    main { max-width: var(--container-max); margin: 0 auto; padding: 80px var(--space-pad) 120px; }
+    h1, h2, h3 { font-family: var(--font-display); font-weight: 500; letter-spacing: -0.02em; }
+    h1 { font-size: 42px; margin-bottom: 8px; }
+    h2 { font-size: 24px; margin: 64px 0 20px; }
+    h3 { font-size: 18px; margin: 32px 0 12px; }
+    .sub { color: var(--text-secondary); margin-bottom: 24px; }
+    .grid { display: flex; gap: 16px; flex-wrap: wrap; }
+    .grid > * { flex: 0 0 auto; }
+    .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+    .swatch { border: 1px solid var(--border-subtle); border-radius: var(--radius-md); overflow: hidden; }
+    .swatch-color { height: 64px; }
+    .swatch-name { padding: 10px 12px; font-size: 13px; color: var(--text-secondary); }
+    .swatch-name code { display: block; color: var(--text-primary); margin-top: 4px; font-family: var(--font-mono); font-size: 11px; }
+    .row { display: flex; gap: 24px; flex-wrap: wrap; align-items: center; }
+    .spaces { display: flex; align-items: flex-end; gap: 4px; flex-wrap: wrap; }
+    .space { background: var(--ud-blue); opacity: 0.6; }
+    .tokens-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+    .token { border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 12px 14px; font-size: 13px; }
+    .token code { color: var(--accent-default); font-family: var(--font-mono); font-size: 11px; }
+  </style>
+</head>
+<body>
+
+<Navbar />
+
+<main>
+  <h1>Design System</h1>
+  <p class="sub">UserDesigners — tokens y componentes nativos. Extraído del diseño Framer original.</p>
+
+  <Divider />
+
+  <h2>Color</h2>
+  <div class="swatches">
+    <div class="swatch"><div class="swatch-color" style="background:#030303;border-bottom:1px solid #333"></div><div class="swatch-name">--ud-black<code>#030303</code></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#ffffff"></div><div class="swatch-name">--ud-white<code>#ffffff</code></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:rgb(161,161,168)"></div><div class="swatch-name">--ud-gray-400<code>rgb(161,161,168)</code></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:rgb(206,206,206)"></div><div class="swatch-name">--ud-gray-300<code>rgb(206,206,206)</code></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#0099ff"></div><div class="swatch-name">--ud-blue<code>#0099ff</code></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:rgb(10,10,10);border-bottom:1px solid #333"></div><div class="swatch-name">--ud-card<code>rgb(10,10,10)</code></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:rgb(62,62,65)"></div><div class="swatch-name">--ud-border-card<code>rgb(62,62,65)</code></div></div>
+  </div>
+
+  <h2>Tipografía</h2>
+  <div style="display:grid;gap:16px">
+    <Text as="h1" size="display">Display</Text>
+    <Text as="h2" size="title">Title</Text>
+    <Text as="h2" size="3xl">Heading 3xl — 24px</Text>
+    <Text as="h3" size="xl">Heading xl — 19px</Text>
+    <Text size="base">Body base — 16px, DM Sans. El texto normal de la web.</Text>
+    <Text size="sm" color="secondary">Body small — 14px, secundario</Text>
+    <Text size="xs" color="tertiary" tracking="label">Label uppercase — 11px</Text>
+  </div>
+
+  <h2>Botones</h2>
+  <div class="row">
+    <Button variant="primary">Primary (glass)</Button>
+    <Button variant="ghost">Ghost</Button>
+    <Button variant="stroke">Stroke (hero)</Button>
+    <Button variant="link">Link</Button>
+    <Button variant="danger">Danger</Button>
+  </div>
+  <div class="row" style="margin-top:12px">
+    <Button variant="primary" size="sm">Small</Button>
+    <Button variant="primary" size="md">Medium</Button>
+    <Button variant="primary" size="lg">Large</Button>
+  </div>
+
+  <h2>Cards</h2>
+  <div class="grid" style="max-width:680px">
+    <Card style="width:320px">
+      <h3 style="font-size:16px;margin-bottom:8px">Card</h3>
+      <p style="color:var(--text-secondary);font-size:14px;line-height:1.6">Superficie rgb(10,10,10) con borde rgb(62,62,65), radius 16px, hover lift.</p>
+    </Card>
+    <Card hover={false} style="width:320px">
+      <h3 style="font-size:16px;margin-bottom:8px">Card sin hover</h3>
+      <p style="color:var(--text-secondary);font-size:14px;line-height:1.6">Misma superficie, sin elevación al pasar el mouse.</p>
+    </Card>
+  </div>
+
+  <h2>Badges</h2>
+  <div class="row">
+    <Badge>Default</Badge>
+    <Badge variant="outline">Outline</Badge>
+    <Badge variant="accent">Accent</Badge>
+  </div>
+
+  <h2>Iconos</h2>
+  <div class="row">
+    <Icon name="arrowRight" size="lg" />
+    <Icon name="check" size="lg" />
+    <Icon name="menu" size="lg" />
+    <Icon name="close" size="lg" />
+    <Icon name="mail" size="lg" />
+    <Icon name="phone" size="lg" />
+    <Icon name="mapPin" size="lg" />
+    <Icon name="external" size="lg" />
+    <Icon name="linkedin" size="lg" />
+    <Icon name="instagram" size="lg" />
+    <Icon name="xTwitter" size="lg" />
+    <Icon name="quote" size="lg" />
+    <Icon name="sparkle" size="lg" />
+  </div>
+
+  <h2>Inputs</h2>
+  <div style="max-width:360px;display:grid;gap:16px">
+    <Input label="Nombre" placeholder="Tu nombre" />
+    <Input label="Email" type="email" placeholder="tucorreo@email.com" />
+  </div>
+
+  <h2>Spacing (4px grid)</h2>
+  <div class="spaces">
+    <div class="space" style="width:4px;height:40px"></div>
+    <div class="space" style="width:8px;height:40px"></div>
+    <div class="space" style="width:12px;height:40px"></div>
+    <div class="space" style="width:16px;height:40px"></div>
+    <div class="space" style="width:24px;height:40px"></div>
+    <div class="space" style="width:32px;height:40px"></div>
+    <div class="space" style="width:48px;height:40px"></div>
+    <div class="space" style="width:64px;height:40px"></div>
+    <div class="space" style="width:96px;height:40px"></div>
+    <div class="space" style="width:120px;height:40px"></div>
+  </div>
+
+  <h2>Tokens</h2>
+  <div class="tokens-grid">
+    <div class="token">Radius sm/md/lg/pill<br /><code>8 / 14 / 16 / 999px</code></div>
+    <div class="token">Blur sm→4xl<br /><code>10 / 18 / 24 / 32 / 48 / 70 / 80px</code></div>
+    <div class="token">Z-index<br /><code>1 content · 1000 nav · 1100 menu · 1200 modal</code></div>
+    <div class="token">Breakpoints<br /><code>1440 / 810 / 480px</code></div>
+    <div class="token">Motion easing<br /><code>ease-out cubic-bezier(0.22,1,0.36,1)</code></div>
+    <div class="token">Duración<br /><code>0.1 / 0.2 / 0.3 / 0.5 / 0.7s</code></div>
+  </div>
+</main>
+
+<Footer />
+
+</body>
+</html>

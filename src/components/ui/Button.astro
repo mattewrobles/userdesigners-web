@@ -1,23 +1,45 @@
 ---
 interface Props {
   href?: string;
-  variant?: "primary" | "ghost" | "link";
-  size?: "md" | "lg";
+  variant?: "primary" | "ghost" | "link" | "stroke" | "danger";
+  size?: "sm" | "md" | "lg";
   target?: "_blank" | "_self";
   rel?: string;
+  strokeFill?: boolean;
 }
 
-const { href = "#", variant = "primary", size = "md", target = "_self", rel } = Astro.props;
+const {
+  href = "#",
+  variant = "primary",
+  size = "md",
+  target = "_self",
+  rel,
+  strokeFill = true,
+} = Astro.props;
 const classes = `btn btn--${variant} btn--${size}`;
 ---
 
 {
   href ? (
     <a href={href} class={classes} target={target} rel={rel || (target === "_blank" ? "noopener" : undefined)}>
-      <slot />
+      {variant === "stroke" && (
+        <>
+          <span class="btn-stroke" aria-hidden="true"></span>
+          <span class="btn-fill" aria-hidden="true"></span>
+        </>
+      )}
+      <span class="btn-label"><slot /></span>
     </a>
   ) : (
-    <button class={classes}><slot /></button>
+    <button class={classes}>
+      {variant === "stroke" && (
+        <>
+          <span class="btn-stroke" aria-hidden="true"></span>
+          <span class="btn-fill" aria-hidden="true"></span>
+        </>
+      )}
+      <span class="btn-label"><slot /></span>
+    </button>
   )
 }
 
@@ -29,42 +51,81 @@ const classes = `btn btn--${variant} btn--${size}`;
     text-decoration: none;
     font-family: var(--font-body);
     font-weight: 500;
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-btn);
     cursor: pointer;
+    position: relative;
     transition: background var(--duration-fast) ease, border-color var(--duration-fast) ease, color var(--duration-fast) ease, opacity var(--duration-fast) ease;
     border: 2px solid transparent;
     box-sizing: border-box;
+    white-space: nowrap;
   }
 
+  .btn--sm { padding: 10px 18px; font-size: 14px; }
   .btn--md { padding: 12px 28px; font-size: 15px; }
   .btn--lg { padding: 16px 32px; font-size: 16px; }
 
+  /* Glass — botón "Filled" del navbar (rgba 255 0.08 + borde 2px) */
   .btn--primary {
     background: var(--surface-glass);
-    border-color: var(--color-border-strong);
-    color: var(--color-text);
+    border-color: var(--border-strong);
+    color: var(--text-primary);
   }
-  .btn--primary:hover { background: rgba(255, 255, 255, 0.13); }
+  .btn--primary:hover { background: var(--surface-glass-hover); }
 
+  /* Ghost — transparente con borde tenue */
   .btn--ghost {
     background: transparent;
-    border-color: var(--color-border);
-    color: var(--color-muted);
+    border-color: var(--border-subtle);
+    color: var(--text-secondary);
   }
-  .btn--ghost:hover { color: var(--color-text); border-color: var(--color-border-strong); }
+  .btn--ghost:hover { color: var(--text-primary); border-color: var(--border-strong); }
 
+  /* Link — azul con underline (único uso del accent en botones) */
   .btn--link {
     background: transparent;
     border: none;
-    color: var(--color-accent);
+    color: var(--accent-default);
     padding: 0;
     text-decoration: underline;
     text-underline-offset: 4px;
   }
   .btn--link:hover { opacity: 0.85; }
 
+  /* Stroke — botón del hero (radial gradient inferior + fill inset 2px) */
+  .btn--stroke {
+    background: rgba(255, 255, 255, 0.05);
+    border: none;
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    overflow: visible;
+    padding: 12px 20px;
+  }
+  .btn-stroke {
+    position: absolute;
+    inset: 0;
+    background: var(--stroke-glow);
+    border-radius: var(--radius-sm);
+    pointer-events: none;
+  }
+  .btn-fill {
+    position: absolute;
+    inset: 2px;
+    background: var(--stroke-fill);
+    border-radius: calc(var(--radius-sm) - 2px);
+    pointer-events: none;
+  }
+  .btn-label { position: relative; z-index: 1; }
+
+  /* Danger — para acciones destructivas */
+  .btn--danger {
+    background: transparent;
+    border-color: rgba(227, 103, 83, 0.5);
+    color: rgb(227, 103, 83);
+  }
+  .btn--danger:hover { background: rgba(227, 103, 83, 0.1); }
+
   .btn:focus-visible {
-    outline: 2px solid var(--color-accent);
+    outline: 2px solid var(--accent-default);
     outline-offset: 2px;
   }
 </style>
