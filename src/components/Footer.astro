@@ -1,8 +1,26 @@
 ---
 
 <footer class="site-footer">
-  <div class="footer-bg">
-    <div class="footer-bg-blur"></div>
+  <div class="footer-effects">
+    <div class="footer-grid">
+      <div class="footer-grid-line"></div>
+      <div class="footer-grid-line"></div>
+      <div class="footer-grid-line"></div>
+      <div class="footer-grid-line"></div>
+    </div>
+    <div class="footer-blur"></div>
+    <div class="footer-flare">
+      <svg viewBox="0 0 1156 614" style="width:100%;height:100%">
+        <path d="M0 0H1156V614H0V0Z" fill="url(#g1)" opacity="0.15"/>
+        <defs>
+          <linearGradient id="g1" x1="578" y1="0" x2="578" y2="614" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#84d9fa" offset="0"/>
+            <stop stop-color="#123dff" offset="0.5"/>
+            <stop stop-color="#4adeff" offset="1"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
   </div>
 
   <div class="footer-inner">
@@ -48,7 +66,7 @@
     </div>
 
     <div class="footer-bottom">
-      <p>© 2025 Userdesigners. All rights reserved.</p>
+      <p>&copy; 2025 Userdesigners. All rights reserved.</p>
       <a href="/">Privacy policy</a>
     </div>
   </div>
@@ -63,23 +81,47 @@
     font-family: "Manrope", sans-serif;
   }
 
-  .footer-bg {
+  .footer-effects {
     position: absolute;
     inset: 0;
     pointer-events: none;
+    z-index: 0;
   }
 
-  .footer-bg-blur {
+  .footer-grid {
     position: absolute;
-    top: 0;
+    inset: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    opacity: 0.15;
+  }
+
+  .footer-grid-line {
+    border-left: 1px solid rgba(101, 103, 113, 0.5);
+    border-right: 1px solid rgba(101, 103, 113, 0.5);
+  }
+
+  .footer-blur {
+    position: absolute;
+    top: -100px;
     left: 50%;
-    width: 800px;
-    height: 400px;
-    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 300px;
+    transform: translateX(-50%);
     background: conic-gradient(from 0deg, rgb(208, 69, 255), rgb(153, 141, 208), rgb(0, 68, 255), rgb(255, 191, 0), rgb(208, 69, 255));
     border-radius: 50%;
     filter: blur(70px);
-    opacity: 0.1;
+    opacity: 0.08;
+  }
+
+  .footer-flare {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    filter: blur(30px);
+    opacity: 0.7;
   }
 
   .footer-inner {
@@ -112,23 +154,24 @@
     color: #fff;
     font-size: 14px;
     line-height: 1.7;
-    margin: 0 0 20px;
+    margin: 0 0 24px;
     max-width: 280px;
   }
 
   .footer-contact {
     display: block;
     color: #fff;
-    font-size: 16px;
+    font-size: 17px;
+    font-weight: 500;
     line-height: 1.4;
     text-decoration: none;
-    margin-bottom: 8px;
-    transition: opacity 0.15s;
+    margin-bottom: 10px;
+    transition: opacity 0.2s;
   }
-  .footer-contact:hover { opacity: 0.7; }
+  .footer-contact:hover { opacity: 0.6; }
 
   .footer-col h5 {
-    font-family: "Clash Grotesk", sans-serif;
+    font-family: "Clash Grotesk", "Clash Grotesk Placeholder", sans-serif;
     font-size: 18px;
     font-weight: 500;
     color: #fff;
@@ -152,7 +195,8 @@
   .footer-col a {
     color: rgb(206, 206, 206);
     text-decoration: none;
-    transition: color 0.15s;
+    transition: color 0.2s;
+    font-size: 14px;
   }
   .footer-col a:hover { color: #fff; }
 
@@ -185,5 +229,6 @@
     }
     .footer-brand { grid-column: 1 / -1; }
     .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+    .footer-grid { grid-template-columns: repeat(2, 1fr); }
   }
 </style>
