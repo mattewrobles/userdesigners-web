@@ -33,6 +33,7 @@ const position = [top && `top:${top}`, right && `right:${right}`, bottom && `bot
   data-rotate={rotate}
   data-speed={speed}
   data-variant={variant}
+  data-blend={blend}
   style={`--blob-size:${size}px;--blob-blur:${blur}px;--blob-opacity:${opacity};--blob-blend:${blend};${position}${extraStyle ? ";" + extraStyle : ""}`}
   aria-hidden="true"
 ></div>
@@ -51,7 +52,7 @@ const position = [top && `top:${top}`, right && `right:${right}`, bottom && `bot
   function randomLightness() { return 50 + Math.floor(Math.random() * 20); }
   function randomAngle() { return Math.floor(Math.random() * 360); }
 
-  function generateBlobSVG(index) {
+  function generateBlobSVG(index, blend) {
     const hue = randomHue();
     const sat = randomSaturation();
     const light = randomLightness();
@@ -77,11 +78,12 @@ const position = [top && `top:${top}`, right && `right:${right}`, bottom && `bot
       ellipses.push(`<ellipse cx="${rx}" cy="${ry}" fill="url(#${gradId})" rx="${rx}" ry="${ry}" transform="${t}"></ellipse>`);
       grads.push(`<linearGradient gradientUnits="userSpaceOnUse" id="${gradId}" x1="${rx}" x2="${rx}" y1="0" y2="${ry * 2}"><stop stop-color="${color}"></stop><stop offset="1" stop-opacity="0"></stop></linearGradient>`);
     }
-    return `<svg viewBox="0 0 600 600" fill="none" xmlns="http://www.w3.org/2000/svg"><g opacity="0.4" style="mix-blend-mode:hard-light">${ellipses.join("")}</g><defs>${grads.join("")}</defs></svg>`;
+    return `<svg viewBox="0 0 600 600" fill="none" xmlns="http://www.w3.org/2000/svg"><g opacity="0.85" style="mix-blend-mode:${blend}">${ellipses.join("")}</g><defs>${grads.join("")}</defs></svg>`;
   }
 
   document.querySelectorAll(".blob").forEach((el, index) => {
-    el.innerHTML = generateBlobSVG(index);
+    const blend = el.dataset.blend || "normal";
+    el.innerHTML = generateBlobSVG(index, blend);
     el.style.opacity = "1";
 
     const svg = el.querySelector("svg");
@@ -109,7 +111,6 @@ const position = [top && `top:${top}`, right && `right:${right}`, bottom && `bot
     opacity: 0; /* aparece cuando el JS genera el SVG */
     filter: blur(var(--blob-blur));
     -webkit-filter: blur(var(--blob-blur));
-    mix-blend-mode: var(--blob-blend);
   }
   .blob svg {
     width: var(--blob-size);

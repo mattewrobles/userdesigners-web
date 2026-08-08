@@ -106,6 +106,7 @@ const classes = `btn btn--${variant} btn--${size}`;
     border-radius: calc(var(--radius-btn) + 2px);
     overflow: hidden;
     pointer-events: none;
+    transition: background 0.3s ease;
   }
   /* contenedor de órbita: más ancho que alto → la rotación genera elipse fluida */
   .btn-orbit {
@@ -113,9 +114,23 @@ const classes = `btn btn--${variant} btn--${size}`;
     inset: -20px -60px;
     animation: btn-orbit-spin 4s linear infinite;
     will-change: transform;
+    transition: opacity 0.3s ease;
   }
   .btn--stroke:hover .btn-orbit {
-    animation-duration: 1.8s; /* acelerar en hover */
+    animation-duration: 2.4s; /* apenas acelera en hover */
+  }
+  /* Hover sutil: el spot se funde y el borde se aclara gradualmente, sin saltar */
+  .btn--stroke:hover .btn-orbit {
+    opacity: 0.25;
+  }
+  .btn--stroke:hover .btn-stroke {
+    background: rgba(255, 255, 255, 0.35);
+  }
+  .btn--stroke:hover {
+    background: rgba(255, 255, 255, 0.09);
+  }
+  .btn--stroke:hover .btn-fill {
+    opacity: 0.92;
   }
   /* el spot en el borde superior del contenedor rotante */
   .btn-orbit::before {
@@ -136,6 +151,7 @@ const classes = `btn btn--${variant} btn--${size}`;
     background: var(--stroke-fill);
     border-radius: calc(var(--radius-btn) - 2px);
     pointer-events: none;
+    transition: opacity 0.3s ease;
   }
   .btn-label { position: relative; z-index: 1; }
 
