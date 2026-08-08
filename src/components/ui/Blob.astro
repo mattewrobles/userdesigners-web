@@ -25,14 +25,7 @@ const {
   top, right, bottom, left,
   style: extraStyle,
 } = Astro.props;
-// gradientes con contraste (el home real usa #f6c65f → #998dd0, vibrantes)
-const gradients = {
-  "1": "linear-gradient(#f6c65f 0%, #e36754 40%, #998dd0 75%, #84d9fa 100%)",
-  "2": "linear-gradient(140deg, rgb(246,198,95) 0%, rgb(227,103,83) 35%, rgb(153,141,208) 75%, rgb(132,217,250) 100%)",
-  "3": "linear-gradient(140deg, rgb(74,222,255) 0%, rgb(18,61,255) 50%, rgb(132,217,250) 100%)",
-  "hero": "linear-gradient(#f6c65f 0%, #e36754 40%, #998dd0 100%)",
-};
-const bg = gradients[variant] || gradients["3"];
+// el gradiente lo genera el JS con colores aleatorios (patrón del blog)
 const position = [top && `top:${top}`, right && `right:${right}`, bottom && `bottom:${bottom}`, left && `left:${left}`].filter(Boolean).join(";");
 ---
 
@@ -41,7 +34,7 @@ const position = [top && `top:${top}`, right && `right:${right}`, bottom && `bot
   data-rotate={rotate}
   data-float={float}
   data-speed={speed}
-  style={`--blob-size:${size}px;--blob-blur:${blur}px;--blob-opacity:${opacity};--blob-bg:${bg};${position}${extraStyle ? ";" + extraStyle : ""}`}
+  style={`--blob-size:${size}px;--blob-blur:${blur}px;--blob-opacity:${opacity};${position}${extraStyle ? ";" + extraStyle : ""}`}
   aria-hidden="true"
 >
   <span class="blob-shape"></span>
@@ -50,12 +43,31 @@ const position = [top && `top:${top}`, right && `right:${right}`, bottom && `bot
 <script>
   import { animate } from "motion";
 
+  // colores dinámicos por carga (patrón del blog): al refrescar cambia el color
+  function randomHue() {
+    const ranges = [[0, 100], [170, 360]];
+    const r = ranges[Math.floor(Math.random() * ranges.length)];
+    return r[0] + Math.floor(Math.random() * (r[1] - r[0]));
+  }
+  function randomBetween(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+
   document.querySelectorAll(".blob").forEach((el, i) => {
     const speed = Number(el.dataset.speed || 30);
     const reverse = i % 2 === 1;
     const shape = el.querySelector(".blob-shape");
 
-    // flotación suave del contenedor (sube/baja + leve desplazamiento)
+    // gradiente aleatorio por carga: base + alt (misma técnica que el blog)
+    const hue = randomHue();
+    const sat = 80 + Math.floor(Math.random() * 20);
+    const light = 50 + Math.floor(Math.random() * 20);
+    const base = `hsl(${hue}, ${sat}%, ${light}%)`;
+    const alt = `hsl(${(hue + randomBetween(30, 120)) % 360}, ${sat}%, ${light}%)`;
+    const c3 = `hsl(${(hue + randomBetween(140, 200)) % 360}, ${sat}%, ${Math.min(70, light + 10)}%)`;
+    if (shape) {
+      shape.style.background = `linear-gradient(140deg, ${base} 0%, ${alt} 45%, ${c3} 75%, ${base} 100%)`;
+    }
+
+    // flotación suave del contenedor
     if (el.dataset.float === "true") {
       animate(
         el,
@@ -66,7 +78,7 @@ const position = [top && `top:${top}`, right && `right:${right}`, bottom && `bot
         { duration: speed * 1.8, repeat: Infinity, ease: "easeInOut" }
       );
     }
-    // rotación del óvalo (el gradiente gira → el color se mueve, como el canvas del home)
+    // rotación del óvalo (el gradiente gira → el color se mueve)
     if (el.dataset.rotate === "true" && shape) {
       animate(
         shape,
@@ -91,10 +103,9 @@ const position = [top && `top:${top}`, right && `right:${right}`, bottom && `bot
     position: absolute;
     inset: 0;
     border-radius: 888px;
-    background: var(--blob-bg);
     filter: blur(var(--blob-blur));
     -webkit-filter: blur(var(--blob-blur));
     opacity: var(--blob-opacity);
-    will-change: transform;
+    will-change: transform, background;
   }
 </style>
