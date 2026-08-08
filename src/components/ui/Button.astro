@@ -24,7 +24,7 @@ const classes = `btn btn--${variant} btn--${size}`;
     <a href={href} class={classes} target={target} rel={rel || (target === "_blank" ? "noopener" : undefined)}>
       {variant === "stroke" && (
         <>
-          <span class="btn-stroke" aria-hidden="true"><span class="btn-orbit"></span></span>
+          <span class="btn-stroke" aria-hidden="true"></span>
           <span class="btn-fill" aria-hidden="true"></span>
         </>
       )}
@@ -34,7 +34,7 @@ const classes = `btn btn--${variant} btn--${size}`;
     <button class={classes}>
       {variant === "stroke" && (
         <>
-          <span class="btn-stroke" aria-hidden="true"><span class="btn-orbit"></span></span>
+          <span class="btn-stroke" aria-hidden="true"></span>
           <span class="btn-fill" aria-hidden="true"></span>
         </>
       )}
@@ -99,51 +99,37 @@ const classes = `btn btn--${variant} btn--${size}`;
     overflow: visible;
     padding: 12px 20px;
   }
-  /* Halo exterior: spot de luz que orbita el borde por fuera (fluido, como Framer Motion) */
+  /* Halo: barrido de luz que cruza el borde inferior (shine sweep, como Framer) */
   .btn-stroke {
     position: absolute;
-    inset: -2px; /* se proyecta por fuera del botón */
-    border-radius: calc(var(--radius-btn) + 2px);
+    inset: 0;
+    border-radius: var(--radius-btn);
     overflow: hidden;
     pointer-events: none;
-    transition: background 0.3s ease;
   }
-  /* contenedor de órbita: más ancho que alto → la rotación genera elipse fluida */
-  .btn-orbit {
+  /* la onda de luz: gradiente radial anclado que barre de izquierda a derecha */
+  .btn-stroke::before {
+    content: "";
     position: absolute;
-    inset: -20px -60px;
-    animation: btn-orbit-spin 4s linear infinite;
+    top: -20%;
+    bottom: -20%;
+    width: 36%;
+    left: -40%;
+    background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.25) 45%, rgba(255, 255, 255, 0) 75%);
+    filter: blur(3px);
+    -webkit-filter: blur(3px);
+    animation: btn-stroke-sweep 3.5s ease-in-out infinite;
     will-change: transform;
-    transition: opacity 0.3s ease;
   }
-  .btn--stroke:hover .btn-orbit {
-    animation-duration: 2.4s; /* apenas acelera en hover */
+  .btn--stroke:hover .btn-stroke::before {
+    animation-duration: 2s; /* barre más rápido en hover */
   }
-  /* Hover sutil: el spot se funde y el borde se aclara gradualmente, sin saltar */
-  .btn--stroke:hover .btn-orbit {
-    opacity: 0.25;
-  }
-  .btn--stroke:hover .btn-stroke {
-    background: rgba(255, 255, 255, 0.35);
-  }
+  /* Hover sutil: el borde completo se aclara gradualmente */
   .btn--stroke:hover {
     background: rgba(255, 255, 255, 0.09);
   }
   .btn--stroke:hover .btn-fill {
-    opacity: 0.92;
-  }
-  /* el spot en el borde superior del contenedor rotante */
-  .btn-orbit::before {
-    content: "";
-    position: absolute;
-    left: 50%;
-    top: 0;
-    width: 44px;
-    height: 44px;
-    transform: translate(-50%, -50%);
-    background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.35) 45%, rgba(255, 255, 255, 0) 75%);
-    filter: blur(2px);
-    -webkit-filter: blur(2px);
+    opacity: 0.9;
   }
   .btn-fill {
     position: absolute;
@@ -155,10 +141,13 @@ const classes = `btn btn--${variant} btn--${size}`;
   }
   .btn-label { position: relative; z-index: 1; }
 
-  /* rotación lineal continua = órbita fluida, sin saltos */
-  @keyframes btn-orbit-spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+  /* la onda entra por la izquierda, cruza y sale, con pausa elegante */
+  @keyframes btn-stroke-sweep {
+    0%   { transform: translateX(0) scaleX(0.6); opacity: 0; }
+    8%   { opacity: 0.9; }
+    45%  { transform: translateX(330%) scaleX(1); opacity: 0.9; }
+    60%  { transform: translateX(420%) scaleX(1.1); opacity: 0; }
+    100% { transform: translateX(420%) scaleX(1.1); opacity: 0; }
   }
 
   /* Danger — para acciones destructivas */
