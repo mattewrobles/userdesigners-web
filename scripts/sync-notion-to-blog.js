@@ -84,6 +84,7 @@ async function queryAll(filter, sorts) {
 async function sync() {
   console.log("Fetching posts from Notion...");
 
+  const MAX_POSTS = 2;
   const filter = { property: "Status", select: { equals: "Ready" } };
 
   const pages = await queryAll(filter, [{ property: "Title", direction: "ascending" }]);
@@ -92,6 +93,10 @@ async function sync() {
   let count = 0;
 
   for (const page of pages) {
+    if (count >= MAX_POSTS) {
+      console.log(`  Limit ${MAX_POSTS} reached, process remaining in next run`);
+      break;
+    }
     const props = page.properties;
     const title = props.Title?.title?.[0]?.plain_text || "";
     const slug = props.Slug?.rich_text?.[0]?.plain_text || "";
