@@ -1,8 +1,10 @@
 ---
 import { render } from "astro:content";
+import { getCollection } from "astro:content";
 import type { CollectionEntry } from "astro:content";
 import Navbar from "../components/Navbar.astro";
 import Footer from "../components/Footer.astro";
+import Giscus from "../components/Giscus.astro";
 import fs from "fs";
 
 interface Props {
@@ -11,9 +13,16 @@ interface Props {
 
 const { post } = Astro.props;
 const { title, category, date, updatedDate, readTime, heroImage, ogImage } = post.data;
-const { Content } = await render(post);
-const framerCSS = fs.readFileSync("src/styles/framer-global.css", "utf-8");
+const { Content, headings } = await render(post);
+const allPosts = (await getCollection("blog"))
+  .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+const relatedPosts = allPosts
+  .filter(p => p.id !== post.id && p.data.category === post.data.category)
+  .slice(0, 2);
+const framerCSS = fs.readFileSync("src/styles/framer.css", "utf-8")
+  .replace(/<\/?style[^>]*>/g, "");
 const ogImgFinal = ogImage || heroImage;
+const hasToc = headings && headings.length > 0;
 ---
 
 <!doctype html>
@@ -72,41 +81,82 @@ const ogImgFinal = ogImage || heroImage;
 </head>
 <body style="margin:0;background-color:#030303;color:#fff;font-family:Inter,sans-serif">
   <div class="bg-blob"></div>
+  <div id="reading-progress"></div>
   <Navbar />
-  
-  <article style="position:relative;z-index:1">
+
+  <article style="position:relative;z-index:1;padding-top:80px">
     {heroImage && (
-      <div style="width:100%;max-height:420px;overflow:hidden;margin-bottom:48px;border-radius:0">
-        <img src={heroImage} alt={title} style="width:100%;height:auto;max-height:420px;object-fit:cover;display:block" />
+      <div class="post-hero-img">
+        <img src={heroImage} alt={title} />
       </div>
     )}
 
-    <div style="max-width:720px;margin:0 auto;padding:0 24px">
-      <header style="margin-bottom:48px">
-        {category && (
-          <span style="display:inline-block;padding:4px 12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:20px;font-size:13px;font-weight:500;color:rgba(255,255,255,0.6);margin-bottom:20px;font-family:Inter,sans-serif">
-            {category}
-          </span>
-        )}
-        <h1 style="font-family:'Familjen Grotesk',sans-serif;font-size:clamp(32px,5vw,52px);font-weight:500;line-height:1.15;letter-spacing:-0.03em;margin:0 0 20px;color:#fff">
-          {title}
-        </h1>
-        <div style="display:flex;gap:20px;align-items:center;color:rgba(255,255,255,0.4);font-size:14px;font-family:Inter,sans-serif">
-          <time datetime={date}>{new Date(date).toLocaleDateString("es-EC", { year: "numeric", month: "long", day: "numeric" })}</time>
-          {updatedDate && <span style="font-style:italic">· Actualizado {new Date(updatedDate).toLocaleDateString("es-EC", { year: "numeric", month: "long", day: "numeric" })}</span>}
-          {readTime && <span>{readTime} de lectura</span>}
-        </div>
-      </header>
+    <div class="post-layout">
+      <div class="post-content">
+        <header class="post-header">
+          {category && (
+            <span class="post-category">{category}</span>
+          )}
+          <h1 class="post-title">{title}</h1>
+          <p class="post-description">{post.data.description}</p>
+          <div class="post-meta">
+            <time datetime={date}>{new Date(date).toLocaleDateString("es-EC", { year: "numeric", month: "long", day: "numeric" })}</time>
+            {updatedDate && <span style="font-style:italic">· Actualizado {new Date(updatedDate).toLocaleDateString("es-EC", { year: "numeric", month: "long", day: "numeric" })}</span>}
+            {readTime && <span>{readTime} de lectura</span>}
+          </div>
+        </header>
 
-      <div class="prose" style="font-size:17px;line-height:1.8;color:rgba(255,255,255,0.85)">
-        <Content />
+        <div class="prose">
+          <Content />
+        </div>
+
+        <Giscus />
+
+        {relatedPosts.length > 0 && (
+          <div class="related-posts">
+            <h2 class="related-title">Artículos relacionados</h2>
+            <div class="related-grid">
+              {relatedPosts.map(p => (
+                <a href={`/blog/${p.id}`} class="related-card">
+                  {p.data.heroImage && (
+                    <div class="related-card-img">
+                      <img src={p.data.heroImage} alt={p.data.title} loading="lazy" />
+                    </div>
+                  )}
+                  <div class="related-card-body">
+                    <span class="related-card-cat">{p.data.category}</span>
+                    <h3 class="related-card-title">{p.data.title}</h3>
+                    <span class="related-card-meta">{p.data.readTime || "4 min"} de lectura</span>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <footer class="post-footer">
+          <a href="/blog" class="back-link">← Volver al blog</a>
+        </footer>
       </div>
 
-      <footer style="margin-top:80px;padding:40px 0;border-top:1px solid rgba(255,255,255,0.06)">
-        <a href="/blog" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:14px;font-family:Inter,sans-serif">
-          ← Volver al blog
-        </a>
-      </footer>
+      {hasToc && (
+        <aside class="post-sidebar">
+          <nav class="toc">
+            <h3 class="toc-title">En este artículo</h3>
+            <ul class="toc-list">
+              {headings.filter(h => h.depth <= 3).map(h => (
+                <li class="toc-item" style={{ marginLeft: `${(h.depth - 2) * 12}px` }}>
+                  <a href={`#${h.slug}`} class="toc-link">{h.text}</a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+          <div class="toc-cta">
+            <p>¿Tienes un proyecto similar?</p>
+            <a href="https://wa.me/593961026799?text=Hola%20UserDesigners%2C%20quiero%20agendar%20una%20sesi%C3%B3n" target="_blank" rel="noopener">Charlemos</a>
+          </div>
+        </aside>
+      )}
     </div>
   </article>
 
@@ -114,7 +164,149 @@ const ogImgFinal = ogImage || heroImage;
 </body>
 </html>
 
+<script>
+  import { animate, scroll, inView } from "motion";
+
+  const progress = document.getElementById("reading-progress");
+  if (progress) {
+    scroll(
+      (p) => {
+        progress.style.transform = `scaleX(${p})`;
+      },
+      { target: document.body }
+    );
+  }
+
+  const headers = document.querySelectorAll(".prose h2, .prose h3");
+  headers.forEach((h) => {
+    inView(h, () => {
+      animate(h, { opacity: [0, 1], y: [20, 0] }, { duration: 0.5, easing: "ease-out" });
+    }, { margin: "-80px" });
+  });
+
+  const images = document.querySelectorAll(".prose img");
+  images.forEach((img) => {
+    inView(img, () => {
+      animate(img, { opacity: [0, 1], transform: ["translateY(20px)", "translateY(0)"] }, { duration: 0.6, easing: "ease-out" });
+    }, { margin: "-60px" });
+  });
+
+  const relatedCards = document.querySelectorAll(".related-card");
+  relatedCards.forEach((card, i) => {
+    inView(card, () => {
+      animate(card, { opacity: [0, 1], y: [20, 0] }, { duration: 0.4, easing: "ease-out", delay: i * 0.1 });
+    }, { margin: "-40px" });
+  });
+
+  const tocLinks = document.querySelectorAll(".toc-link");
+  tocLinks.forEach((link) => {
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+      const id = link.getAttribute("href")?.slice(1);
+      if (id) {
+        const target = document.getElementById(id);
+        if (target) {
+          target.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }
+    });
+  });
+</script>
+
 <style is:global>
+  #reading-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, #00f0ff, #998dd0);
+    transform-origin: 0 50%;
+    transform: scaleX(0);
+    z-index: 1000;
+    pointer-events: none;
+  }
+
+  .post-hero-img {
+    width: 100%;
+    max-width: 1100px;
+    max-height: 420px;
+    overflow: hidden;
+    margin: 0 auto 48px;
+    padding: 0 24px;
+  }
+  .post-hero-img img {
+    width: 100%;
+    height: auto;
+    max-height: 420px;
+    object-fit: cover;
+    display: block;
+    border-radius: 24px;
+  }
+
+  .post-layout {
+    display: grid;
+    grid-template-columns: 1fr 220px;
+    gap: 48px;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+    align-items: start;
+  }
+  .post-content {
+    max-width: 720px;
+    min-width: 0;
+  }
+  .post-sidebar {
+    position: sticky;
+    top: 100px;
+  }
+  .post-header {
+    margin-bottom: 48px;
+  }
+  .post-category {
+    display: inline-block;
+    padding: 4px 14px;
+    background: rgba(0,240,255,0.08);
+    border: 1px solid rgba(0,240,255,0.15);
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #00f0ff;
+    margin-bottom: 20px;
+    font-family: Inter, sans-serif;
+  }
+  .post-title {
+    font-family: 'Familjen Grotesk', sans-serif;
+    font-size: clamp(32px, 5vw, 52px);
+    font-weight: 500;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    margin: 0 0 16px;
+    color: #fff;
+  }
+  .post-description {
+    font-size: 18px;
+    line-height: 1.6;
+    color: rgba(255,255,255,0.5);
+    margin: 0 0 24px;
+    font-family: Inter, sans-serif;
+  }
+  .post-meta {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    color: rgba(255,255,255,0.35);
+    font-size: 14px;
+    font-family: Inter, sans-serif;
+    flex-wrap: wrap;
+  }
+
+  .prose {
+    font-size: 17px;
+    line-height: 1.8;
+    color: rgba(255,255,255,0.85);
+  }
   .prose h2 {
     font-family: 'Familjen Grotesk', sans-serif;
     font-size: 28px;
@@ -123,6 +315,7 @@ const ogImgFinal = ogImage || heroImage;
     letter-spacing: -0.02em;
     color: #fff;
     margin: 56px 0 20px;
+    scroll-margin-top: 80px;
   }
   .prose h3 {
     font-family: 'Familjen Grotesk', sans-serif;
@@ -131,6 +324,7 @@ const ogImgFinal = ogImage || heroImage;
     line-height: 1.4;
     color: rgba(255,255,255,0.9);
     margin: 40px 0 16px;
+    scroll-margin-top: 80px;
   }
   .prose p {
     margin: 0 0 20px;
@@ -172,15 +366,174 @@ const ogImgFinal = ogImage || heroImage;
     border-top: 1px solid rgba(255,255,255,0.06);
     margin: 48px 0;
   }
-  .framer-bjhdpb { align-items: flex-start !important; }
-  .framer-WOlJs .framer-bjhdpb { overflow: visible !important; }
-  .framer-WOlJs.framer-v-1lvxs1p .framer-84xib0 { height: auto !important; }
-  .framer-WOlJs.framer-v-1lvxs1p .framer-1m25ze8-container { width: auto !important; }
-  .framer-WOlJs .framer-1d3wp7v { width: auto !important; }
-  #navbar [data-framer-appear-id] { opacity: 1 !important; transform: none !important; }
-  .framer-wse24v { margin-left: auto !important; margin-right: auto !important; }
-  .framer-WOlJs { background-color: #030303 !important; padding-top: 0 !important; margin-left: auto !important; margin-right: auto !important; }
-  .framer-WOlJs.framer-v-ib24dp { padding-top: 0 !important; }
+
+  .toc {
+    padding: 24px;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.06);
+    margin-bottom: 24px;
+  }
+  .toc-title {
+    font-family: 'Familjen Grotesk', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: rgba(255,255,255,0.7);
+    margin: 0 0 16px;
+  }
+  .toc-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .toc-item {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .toc-link {
+    font-size: 13px;
+    color: rgba(255,255,255,0.4);
+    text-decoration: none;
+    line-height: 1.4;
+    font-family: Inter, sans-serif;
+    transition: color 0.2s;
+    display: block;
+  }
+  .toc-link:hover {
+    color: rgba(255,255,255,0.7);
+  }
+  .toc-cta {
+    padding: 20px 24px;
+    border-radius: 16px;
+    background: rgba(0,240,255,0.03);
+    border: 1px solid rgba(0,240,255,0.08);
+  }
+  .toc-cta p {
+    font-family: 'Familjen Grotesk', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: #fff;
+    margin: 0 0 12px;
+    line-height: 1.4;
+  }
+  .toc-cta a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 42px;
+    padding: 0 22px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.25s ease;
+  }
+  .toc-cta a:hover {
+    background: rgba(255,255,255,0.12);
+    border-color: rgba(255,255,255,0.25);
+    transform: translateY(-1px);
+  }
+
+  .related-posts {
+    margin-top: 64px;
+    padding-top: 48px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .related-title {
+    font-family: 'Familjen Grotesk', sans-serif;
+    font-size: 22px;
+    font-weight: 500;
+    color: #fff;
+    margin: 0 0 24px;
+    letter-spacing: -0.02em;
+  }
+  .related-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .related-card {
+    display: flex;
+    flex-direction: column;
+    border-radius: 14px;
+    overflow: hidden;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.06);
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+  .related-card:hover {
+    border-color: rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.04);
+  }
+  .related-card-img {
+    height: 140px;
+    overflow: hidden;
+  }
+  .related-card-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+  }
+  .related-card:hover .related-card-img img {
+    transform: scale(1.05);
+  }
+  .related-card-body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .related-card-cat {
+    font-size: 11px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.35);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    font-family: Inter, sans-serif;
+  }
+  .related-card-title {
+    font-family: 'Familjen Grotesk', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.3;
+    color: #fff;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .related-card-meta {
+    font-size: 12px;
+    color: rgba(255,255,255,0.25);
+    font-family: Inter, sans-serif;
+  }
+
+  .post-footer {
+    margin-top: 48px;
+    padding: 32px 0;
+  }
+  .back-link {
+    color: rgba(255,255,255,0.4);
+    text-decoration: none;
+    font-size: 14px;
+    font-family: Inter, sans-serif;
+    transition: color 0.2s;
+  }
+  .back-link:hover {
+    color: rgba(255,255,255,0.7);
+  }
+
   .bg-blob {
     position: fixed;
     top: 50%;
@@ -199,5 +552,67 @@ const ogImgFinal = ogImage || heroImage;
   @keyframes blob-spin {
     from { transform: translate(-50%, -50%) rotate(0deg); }
     to { transform: translate(-50%, -50%) rotate(360deg); }
+  }
+
+  @media (max-width: 900px) {
+    .post-layout {
+      grid-template-columns: 1fr;
+    }
+    .post-sidebar {
+      display: none;
+    }
+    .related-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 768px) {
+    .post-layout {
+      padding: 0 16px;
+    }
+    .post-content {
+      max-width: 100%;
+    }
+    .post-hero-img {
+      max-width: 100%;
+      border-radius: 16px;
+      max-height: 240px;
+      margin-bottom: 32px;
+    }
+    .post-hero-img img {
+      max-height: 240px;
+    }
+    .post-header {
+      margin-bottom: 32px;
+    }
+    .post-title {
+      font-size: clamp(26px, 8vw, 32px);
+    }
+    .post-description {
+      font-size: 16px;
+    }
+    .prose {
+      font-size: 16px;
+    }
+    .prose h2 {
+      font-size: 24px;
+    }
+    .prose h3 {
+      font-size: 19px;
+    }
+  }
+  @media (max-width: 480px) {
+    .post-layout {
+      padding: 0 12px;
+    }
+    .post-hero-img {
+      max-width: 100%;
+    }
+    .post-meta {
+      font-size: 12px;
+      gap: 12px;
+    }
+    .related-grid {
+      gap: 12px;
+    }
   }
 </style>

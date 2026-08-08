@@ -1,0 +1,78 @@
+---
+export interface Props {
+  repo: string;
+  repoId: string;
+  category: string;
+  categoryId: string;
+  mapping?: "pathname" | "title" | "og:title" | "specific" | "number" | "url";
+  term?: string;
+  lang?: string;
+  theme?: string;
+}
+
+const {
+  repo = "mattewrobles/userdesigners-web",
+  repoId = "R_kgDOTuM7Xw",
+  category = "General",
+  categoryId = "DIC_kwDOTuM7X84DC60N",
+  mapping = "pathname",
+  term,
+  lang = "es",
+  theme = "dark",
+} = Astro.props;
+---
+
+<section class="giscus-wrapper">
+  <h2 style="font-family:'Familjen Grotesk',sans-serif;font-size:22px;font-weight:500;color:#fff;margin:0 0 24px;letter-spacing:-0.02em">
+    Comentarios
+  </h2>
+  <div
+    class="giscus"
+    data-repo={repo}
+    data-repo-id={repoId}
+    data-category={category}
+    data-category-id={categoryId}
+    data-mapping={mapping}
+    data-strict="0"
+    data-reactions-enabled="1"
+    data-emit-metadata="0"
+    data-input-position="bottom"
+    data-theme={theme}
+    data-lang={lang}
+  ></div>
+</section>
+
+<script>
+  const giscusDiv = document.querySelector(".giscus-wrapper .giscus");
+  if (giscusDiv && !giscusDiv.querySelector("iframe")) {
+    const script = document.createElement("script");
+    script.src = "https://giscus.app/client.js";
+    for (const attr of giscusDiv.attributes) {
+      if (attr.name.startsWith("data-")) {
+        script.setAttribute(attr.name, attr.value);
+      }
+    }
+    script.setAttribute("crossorigin", "anonymous");
+    script.async = true;
+    giscusDiv.appendChild(script);
+  }
+</script>
+
+<style is:global>
+  .giscus-wrapper {
+    margin-top: 64px;
+    padding-top: 48px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .giscus-wrapper .giscus {
+    width: 100%;
+  }
+  .giscus-frame {
+    width: 100%;
+    border: none;
+  }
+  .giscus-frame-wrapper {
+    border-radius: 12px;
+    overflow: hidden;
+  }
+</style>

@@ -221,12 +221,16 @@ async function generate() {
   const statusKey = findProp("Status", "Estado", "status");
   const dateKey = findProp("Date", "Fecha", "Published", "date");
   const imageKey = findProp("Image", "Hero Image", "Imagen", "Cover", "HeroImage", "heroImage");
+  const authorKey = findProp("Author", "author");
+  const tagsKey = findProp("Tags", "tags");
 
   const properties = {};
   if (titleKey) properties[titleKey] = { title: [{ text: { content: draft.title } }] };
   if (slugKey) properties[slugKey] = { rich_text: [{ text: { content: draft.slug } }] };
   if (descKey) properties[descKey] = { rich_text: [{ text: { content: draft.description } }] };
   if (catKey) properties[catKey] = { select: { name: draft.category } };
+  if (authorKey) properties[authorKey] = { select: { name: "UserDesigners" } };
+  if (tagsKey) properties[tagsKey] = { multi_select: [] };
   if (statusKey) properties[statusKey] = { select: { name: "Draft" } };
   if (dateKey) properties[dateKey] = { date: { start: today } };
   if (imageKey && heroImage) properties[imageKey] = { url: heroImage };

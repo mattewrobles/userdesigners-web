@@ -2,7 +2,9 @@
 title: "Diseño mobile-first: no es una tendencia, es una necesidad"
 description: "Más del 60% del tráfico web viene de dispositivos móviles. Diseñar pensando en móvil primero no es opcional."
 category: "Product Design"
-heroImage: "/assets/blog/dise-o-mobile-first.jpg"
+author: "UserDesigners"
+tags: ["UX Design", "Metodología"]
+heroImage: "/assets/blog/diseno-mobile-first.jpg"
 date: "2026-08-05"
 readTime: "4 min"
 ---

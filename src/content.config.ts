@@ -7,6 +7,8 @@ const blog = defineCollection({
     title: z.string(),
     description: z.string().optional(),
     category: z.string().optional(),
+    author: z.string().optional().default("UserDesigners"),
+    tags: z.array(z.string()).optional().default([]),
     heroImage: z.string().optional(),
     ogImage: z.string().optional(),
     date: z.string(),

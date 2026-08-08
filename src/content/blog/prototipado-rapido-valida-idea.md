@@ -2,6 +2,8 @@
 title: "Prototipado rápido: valida tu idea antes de gastar en desarrollo"
 description: "Una simulación interactiva de tu producto que puedes probar con usuarios reales en días, no en meses."
 category: "Product Design"
+author: "UserDesigners"
+tags: ["UX Research", "Metodología"]
 heroImage: "/assets/blog/prototipado-rapido-valida-idea.jpg"
 date: "2026-08-05"
 readTime: "4 min"
