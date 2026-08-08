@@ -77,12 +77,12 @@ import Blob from "../components/ui/Blob.astro";
 
   <h2>Glows ambientales (blobs)</h2>
   <p class="sub" style="margin-bottom:16px">Patrón real del home: el blob va en una esquina (no cubre todo), es una figura orgánica SVG (elipses rotadas + gradientes fade) con <code>blur 60px</code> + <code>mix-blend-mode: hard-light</code>. El color cambia en cada carga, como el canvas del home.</p>
-  <div style="position:relative;border:1px solid var(--border-subtle);border-radius:20px;overflow:hidden;height:380px;background:var(--surface-1)">
-    <Blob variant="1" size={300} blur={30} opacity={0.7} blend="normal" top="8%" left="42%" speed={25} />
-    <Blob variant="2" size={260} blur={30} opacity={0.7} blend="normal" top="13%" left="38%" speed={30} />
-    <Blob variant="3" size={320} blur={30} opacity={0.7} blend="normal" top="3%" left="50%" speed={35} />
+  <div style="position:relative;border:1px solid var(--border-subtle);border-radius:20px;overflow:hidden;height:420px;background:var(--surface-1)">
+    <Blob variant="3" size={380} blur={48} opacity={0.38} top="5%" left="35%" speed={30} />
+    <Blob variant="1" size={320} blur={48} opacity={0.3} top="12%" left="30%" speed={40} />
+    <Blob variant="2" size={300} blur={48} opacity={0.28} top="3%" left="50%" speed={50} />
     <div style="position:relative;z-index:1;padding:24px;color:var(--text-secondary);font-size:14px">
-      Blobs del hero — 3 figuras orgánicas superpuestas (patrón del blog). Refresca para ver el color cambiar.
+      Glow del home — óvalos con gradiente linear + blur 48 + opacity 0.38 (el patrón real del hero).
     </div>
   </div>
 
@@ -251,7 +251,7 @@ import Blob from "../components/ui/Blob.astro";
   <h2>Demo — todo junto</h2>
   <p class="sub" style="margin-bottom:20px">Hero de muestra con todos los componentes combinados: LetterReveal, botones, badges, un solo blob en la esquina (como el home) y marquee.</p>
   <div style="position:relative;border:1px solid var(--border-subtle);border-radius:24px;overflow:hidden;padding:64px 48px">
-    <Blob variant="3" size={380} blur={30} opacity={0.65} blend="normal" top="5%" right="5%" speed={30} />
+    <Blob variant="3" size={340} blur={48} opacity={0.3} top="0" right="0" speed={35} />
     <div style="position:relative;z-index:1">
       <Badge variant="outline">UX · UI · Producto</Badge>
       <div style="height:20px"></div>

@@ -1,10 +1,9 @@
 ---
 interface Props {
   variant?: "1" | "2" | "3" | "hero";
-  size?: number;      // tamaño del blob en px
-  blur?: number;      // blur en px
-  opacity?: number;
-  blend?: "hard-light" | "overlay" | "normal";
+  size?: number;      // ancho en px del óvalo
+  blur?: number;      // blur en px (el home usa 48)
+  opacity?: number;   // el home usa 0.38
   rotate?: boolean;
   speed?: number;
   top?: string;
@@ -16,15 +15,22 @@ interface Props {
 
 const {
   variant = "3",
-  size = 320,
-  blur = 60,
-  opacity = 0.4,
-  blend = "hard-light",
+  size = 470,
+  blur = 48,
+  opacity = 0.38,
   rotate = true,
   speed = 30,
   top, right, bottom, left,
   style: extraStyle,
 } = Astro.props;
+// gradientes del home real (framer-vcgj52 Glow): linear vertical
+const gradients = {
+  "1": "linear-gradient(#f6c65f 0%, #e367548c 48.1%, #998dd0 100%)",
+  "2": "linear-gradient(140deg, rgb(246,198,95) 0%, rgb(227,103,83) 30%, rgb(153,141,208) 79%, rgb(132,217,250) 100%)",
+  "3": "linear-gradient(140deg, rgb(132,217,250) 0%, rgb(18,61,255) 45%, rgb(74,222,255) 100%)",
+  "hero": "linear-gradient(#f6c65f 0%, #e367548c 48.1%, #998dd0 100%)",
+};
+const bg = gradients[variant] || gradients["3"];
 const position = [top && `top:${top}`, right && `right:${right}`, bottom && `bottom:${bottom}`, left && `left:${left}`].filter(Boolean).join(";");
 ---
 
@@ -32,90 +38,39 @@ const position = [top && `top:${top}`, right && `right:${right}`, bottom && `bot
   class="blob"
   data-rotate={rotate}
   data-speed={speed}
-  data-variant={variant}
-  data-blend={blend}
-  style={`--blob-size:${size}px;--blob-blur:${blur}px;--blob-opacity:${opacity};--blob-blend:${blend};${position}${extraStyle ? ";" + extraStyle : ""}`}
+  style={`--blob-size:${size}px;--blob-blur:${blur}px;--blob-opacity:${opacity};--blob-bg:${bg};${position}${extraStyle ? ";" + extraStyle : ""}`}
   aria-hidden="true"
 ></div>
 
 <script>
-  // Patrón del blog (generateBlobSVG): elipses orgánicas + gradientes fade + hard-light.
-  // Los colores son dinámicos por variante, como el canvas del home que cambia por página.
-  function rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
-  function randomBetween(min, max) { return rand(min, max); }
-  function randomHue() {
-    const ranges = [[0, 100], [170, 360]];
-    const r = ranges[Math.floor(Math.random() * ranges.length)];
-    return r[0] + Math.floor(Math.random() * (r[1] - r[0]));
-  }
-  function randomSaturation() { return 80 + Math.floor(Math.random() * 20); }
-  function randomLightness() { return 50 + Math.floor(Math.random() * 20); }
-  function randomAngle() { return Math.floor(Math.random() * 360); }
+  import { animate } from "motion";
 
-  function generateBlobSVG(index, blend) {
-    const hue = randomHue();
-    const sat = randomSaturation();
-    const light = randomLightness();
-    const baseColor = `hsl(${hue}, ${sat}%, ${light}%)`;
-    const altHue = (hue + randomBetween(30, 120)) % 360;
-    const altColor = `hsl(${altHue}, ${sat}%, ${light}%)`;
-    const cx = 300, cy = 300;
-    const ellipses = [];
-    const grads = [];
-    const letters = ["a", "b", "c", "d"];
-    const rx1 = randomBetween(80, 160);
-    const ry1 = randomBetween(200, 350);
-    const rot1 = randomAngle();
-    const t1 = `matrix(${Math.cos(rot1 * Math.PI / 180)}, ${Math.sin(rot1 * Math.PI / 180)}, ${-Math.sin(rot1 * Math.PI / 180)}, ${Math.cos(rot1 * Math.PI / 180)}, ${cx}, ${cy})`;
-    ellipses.push(`<ellipse cx="${rx1}" cy="${ry1}" fill="${baseColor}" rx="${rx1}" ry="${ry1}" transform="${t1}"></ellipse>`);
-    for (let i = 0; i < 4; i++) {
-      const rx = randomBetween(60, 150);
-      const ry = randomBetween(180, 350);
-      const rot = randomAngle();
-      const gradId = `blob-${index}-${letters[i]}`;
-      const color = i % 2 === 0 ? baseColor : altColor;
-      const t = `matrix(${Math.cos(rot * Math.PI / 180)}, ${Math.sin(rot * Math.PI / 180)}, ${-Math.sin(rot * Math.PI / 180)}, ${Math.cos(rot * Math.PI / 180)}, ${cx + randomBetween(-40, 40)}, ${cy + randomBetween(-40, 40)})`;
-      ellipses.push(`<ellipse cx="${rx}" cy="${ry}" fill="url(#${gradId})" rx="${rx}" ry="${ry}" transform="${t}"></ellipse>`);
-      grads.push(`<linearGradient gradientUnits="userSpaceOnUse" id="${gradId}" x1="${rx}" x2="${rx}" y1="0" y2="${ry * 2}"><stop stop-color="${color}"></stop><stop offset="1" stop-opacity="0"></stop></linearGradient>`);
-    }
-    return `<svg viewBox="0 0 600 600" fill="none" xmlns="http://www.w3.org/2000/svg"><g opacity="0.85" style="mix-blend-mode:${blend}">${ellipses.join("")}</g><defs>${grads.join("")}</defs></svg>`;
-  }
-
-  document.querySelectorAll(".blob").forEach((el, index) => {
-    const blend = el.dataset.blend || "normal";
-    el.innerHTML = generateBlobSVG(index, blend);
-    el.style.opacity = "1";
-
-    const svg = el.querySelector("svg");
-    if (svg && el.dataset.rotate === "true") {
-      const speed = Number(el.dataset.speed || 30);
-      const reverse = index % 2 === 1;
-      import("motion").then(({ animate }) => {
-        animate(
-          svg,
-          { transform: ["rotate(0deg)", `rotate(${reverse ? -360 : 360}deg)`] },
-          { duration: speed, repeat: Infinity, ease: "linear" }
-        );
-      });
-    }
+  // rota el óvalo suavemente como el Glow del home (el canvas lo anima en runtime)
+  document.querySelectorAll(".blob").forEach((el, i) => {
+    const rotate = el.dataset.rotate === "true";
+    if (!rotate) return;
+    const speed = Number(el.dataset.speed || 30);
+    const reverse = i % 2 === 1;
+    animate(
+      el,
+      { transform: ["rotate(0deg)", `rotate(${reverse ? -360 : 360}deg)`] },
+      { duration: speed, repeat: Infinity, ease: "linear" }
+    );
   });
 </script>
 
 <style>
   .blob {
     position: absolute;
-    border-radius: 0;
-    will-change: transform, opacity;
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0; /* aparece cuando el JS genera el SVG */
+    border-radius: 888px; /* forma de óvalo del Glow del home */
+    background: var(--blob-bg);
     filter: blur(var(--blob-blur));
     -webkit-filter: blur(var(--blob-blur));
-  }
-  .blob svg {
+    opacity: var(--blob-opacity);
     width: var(--blob-size);
-    height: var(--blob-size);
-    display: block;
+    height: calc(var(--blob-size) * 1.27); /* 470x597 como el home */
+    pointer-events: none;
+    z-index: 0;
     will-change: transform;
   }
 </style>

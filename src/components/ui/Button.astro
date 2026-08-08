@@ -108,8 +108,8 @@ const classes = `btn btn--${variant} btn--${size}`;
   /* Borde animado suave: dos glows con blur que giran alrededor (motion.dev) */
   .btn-stroke {
     position: absolute;
-    inset: -3px; /* halo por fuera del botón */
-    border-radius: calc(var(--radius-btn) + 3px);
+    inset: -1px; /* halo fino por fuera del botón */
+    border-radius: calc(var(--radius-btn) + 1px);
     overflow: hidden;
     pointer-events: none;
   }
@@ -121,13 +121,13 @@ const classes = `btn btn--${variant} btn--${size}`;
       from 0deg,
       transparent 0deg,
       rgba(255, 255, 255, 0) 40deg,
-      rgba(255, 255, 255, 0.35) 90deg,
+      rgba(255, 255, 255, 0.25) 90deg,
       rgba(255, 255, 255, 0) 140deg
     );
-    filter: blur(14px);
-    -webkit-filter: blur(14px);
+    filter: blur(8px);
+    -webkit-filter: blur(8px);
     will-change: transform;
-    opacity: 0.8;
+    opacity: 0.6;
   }
   .btn-stroke-glow--2 {
     inset: -30%;
@@ -135,22 +135,22 @@ const classes = `btn btn--${variant} btn--${size}`;
       from 180deg,
       transparent 0deg,
       rgba(255, 255, 255, 0) 40deg,
-      rgba(255, 255, 255, 0.2) 100deg,
+      rgba(255, 255, 255, 0.15) 100deg,
       rgba(255, 255, 255, 0) 150deg
     );
-    filter: blur(20px);
-    -webkit-filter: blur(20px);
-    opacity: 0.5;
+    filter: blur(12px);
+    -webkit-filter: blur(12px);
+    opacity: 0.4;
   }
-  /* Hover: el borde se llena de blanco suave */
+  /* Hover: brillo fino en el borde, no blanco sólido */
   .btn--stroke:hover .btn-stroke {
-    background: rgba(255, 255, 255, 0.55);
+    background: rgba(255, 255, 255, 0.28);
   }
   .btn--stroke:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.08);
   }
   .btn--stroke:hover .btn-fill {
-    opacity: 0.85;
+    opacity: 0.92;
   }
   .btn-fill {
     position: absolute;
