@@ -78,11 +78,11 @@ import Blob from "../components/ui/Blob.astro";
   <h2>Glows ambientales (blobs)</h2>
   <p class="sub" style="margin-bottom:16px">Patrón real del home: el blob va en una esquina (no cubre todo), es una figura orgánica SVG (elipses rotadas + gradientes fade) con <code>blur 60px</code> + <code>mix-blend-mode: hard-light</code>. El color cambia en cada carga, como el canvas del home.</p>
   <div style="position:relative;border:1px solid var(--border-subtle);border-radius:20px;overflow:hidden;height:420px;background:var(--surface-1)">
-    <Blob variant="3" size={380} blur={48} opacity={0.38} top="5%" left="35%" speed={30} />
-    <Blob variant="1" size={320} blur={48} opacity={0.3} top="12%" left="30%" speed={40} />
-    <Blob variant="2" size={300} blur={48} opacity={0.28} top="3%" left="50%" speed={50} />
+    <Blob variant="3" placement="top-center" size={300} blur={48} opacity={0.38} speed={30} />
+    <Blob variant="1" placement="bottom-left" size={280} blur={48} opacity={0.32} speed={40} />
+    <Blob variant="2" placement="top-right" size={260} blur={48} opacity={0.3} speed={50} />
     <div style="position:relative;z-index:1;padding:24px;color:var(--text-secondary);font-size:14px">
-      Glow del home — óvalos con gradiente linear + blur 48 + opacity 0.38 (el patrón real del hero).
+      Blob componente: instancias con <code>placement</code> (esquinas) — misma lógica, formas y colores distintos por carga.
     </div>
   </div>
 

@@ -1,6 +1,10 @@
 ---
 interface Props {
   variant?: "1" | "2" | "3" | "hero";
+  // preset = geometría real de cada página (del audit Framer)
+  preset?: "home" | "contacto" | "servicios" | "proyectos" | "none";
+  // placement = esquina donde va el blob (porcentajes del contenedor)
+  placement?: "top-left" | "top-right" | "top-center" | "bottom-left" | "bottom-right" | "center" | "none";
   size?: number;
   blur?: number;
   opacity?: number;
@@ -16,6 +20,8 @@ interface Props {
 
 const {
   variant = "3",
+  preset = "none",
+  placement = "none",
   size = 470,
   blur = 48,
   opacity = 0.45,
@@ -25,8 +31,31 @@ const {
   top, right, bottom, left,
   style: extraStyle,
 } = Astro.props;
-// el gradiente lo genera el JS con colores aleatorios (patrón del blog)
-const position = [top && `top:${top}`, right && `right:${right}`, bottom && `bottom:${bottom}`, left && `left:${left}`].filter(Boolean).join(";");
+
+// geometrías reales de Framer por página (width%, height%, top, left)
+const presets: Record<string, string> = {
+  home: "width:59%;height:60%;top:20%;left:0%",
+  contacto: "width:108%;height:47%;top:34%;left:0%",
+  servicios: "width:52%;height:31%;top:36%;left:5%",
+  proyectos: "width:56%;height:10%;top:29%;left:0%",
+};
+const placements: Record<string, string> = {
+  "top-left": "top:8%;left:4%",
+  "top-right": "top:8%;right:4%",
+  "top-center": "top:6%;left:50%;transform:translateX(-50%)",
+  "bottom-left": "bottom:8%;left:4%",
+  "bottom-right": "bottom:8%;right:4%",
+  center: "top:50%;left:50%;transform:translate(-50%,-50%)",
+};
+
+const position = [
+  preset !== "none" ? presets[preset] : "",
+  placement !== "none" ? placements[placement] : "",
+  top && `top:${top}`,
+  right && `right:${right}`,
+  bottom && `bottom:${bottom}`,
+  left && `left:${left}`,
+].filter(Boolean).join(";");
 ---
 
 <div
@@ -126,9 +155,12 @@ const position = [top && `top:${top}`, right && `right:${right}`, bottom && `bot
     pointer-events: none;
     z-index: 0;
     will-change: transform;
+    /* si no hay preset/placement, usa el tamaño por defecto */
     width: var(--blob-size);
     height: calc(var(--blob-size) * 1.27);
   }
+  .blob[style*="width:"] { width: auto; height: auto; }
+  .blob[style*="height:"] { height: auto; }
   /* el blob orgánico: border-radius aleatorio (lo genera el JS por carga) */
   .blob-shape {
     position: absolute;
