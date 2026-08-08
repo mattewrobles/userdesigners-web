@@ -54,7 +54,13 @@
 - Unsplash hero image: opcional vía UNSPLASH_ACCESS_KEY en GitHub Secrets
 - Notion DB: schema dinámico (detecta propiedades automáticamente)
 
+**Fixes adicionales Ago 7 (loop 2):**
+- seo-doctores routeId collision → removido `data-framer-hydrate-v2` (commit 8a60318) ✅
+- Canonicals proyecto pages: trailing slash + verificaci-n-biom-trica decoded (commit fde1198) ✅
+- Audit routeId: colisiones en Framer pages son esperadas (mismo SPA bundle) — no bug ✅
+
 **Pendientes:**
+- Mau: configurar `/publish` en Slack → api.slack.com/apps → Slash Commands → URL: `https://n8n.srv923594.hstgr.cloud/webhook/slack-publish`
 - Optimizar imágenes (WebP/AVIF, lazy loading) — Framer exports son 500KB+ HTML
 - Agregar más posts de blog (generación manual o /blog en Slack)
 ## Ago 4 — Deploy a producción
