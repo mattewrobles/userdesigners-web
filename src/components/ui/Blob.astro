@@ -86,30 +86,30 @@ const position = [top && `top:${top}`, right && `right:${right}`, bottom && `bot
       shape.style.borderRadius = randomBlobRadius();
     }
 
-    // deformación continua: el border-radius morphea entre formas orgánicas
+    // deformación elástica: el border-radius morphea con rebote (overshoot)
     if (el.dataset.float === "true" && shape) {
       animate(
         shape,
         {
           borderRadius: [randomBlobRadius(), randomBlobRadius(), randomBlobRadius(), randomBlobRadius(), randomBlobRadius()],
-          scale: [1, 1.12, 0.94, 1.08, 1],
+          scale: [1, 1.12, 0.95, 1.07, 1],
         },
-        { duration: speed * 2.4, repeat: Infinity, ease: "easeInOut" }
+        { duration: speed * 2.2, repeat: Infinity, ease: [0.34, 1.56, 0.64, 1] }
       );
     }
 
-    // flotación suave del contenedor
+    // flotación elástica: sube y baja con rebote suave (como el canvas del home)
     if (el.dataset.float === "true") {
       animate(
         el,
         {
-          y: [0, -26, 0, 20, 0],
-          x: [0, 16, 0, -14, 0],
+          y: [0, -24, 0, 18, 0],
+          x: [0, 14, 0, -12, 0],
         },
-        { duration: speed * 1.8, repeat: Infinity, ease: "easeInOut" }
+        { duration: speed * 1.5, repeat: Infinity, ease: [0.34, 1.56, 0.64, 1] }
       );
     }
-    // rotación del óvalo
+    // rotación del óvalo (continua, linear)
     if (el.dataset.rotate === "true" && shape) {
       animate(
         shape,
