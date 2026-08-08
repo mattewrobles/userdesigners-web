@@ -105,46 +105,50 @@ const classes = `btn btn--${variant} btn--${size}`;
     overflow: visible;
     padding: 12px 20px;
   }
-  /* Borde animado suave: dos glows con blur que giran alrededor (motion.dev) */
+  /* Borde animado: el brillo rota DENTRO del botón (inset 0), el fill tapa el centro
+     y deja un anillo de 2px donde se ve el brillo recorriendo el borde (como Framer) */
   .btn-stroke {
     position: absolute;
-    inset: -1px; /* halo fino por fuera del botón */
-    border-radius: calc(var(--radius-btn) + 1px);
+    inset: 0;
+    border-radius: var(--radius-btn);
     overflow: hidden;
     pointer-events: none;
   }
-  /* glow que rota alrededor del contorno */
+  /* glow que rota: el brillo viaja por el borde */
   .btn-stroke-glow {
     position: absolute;
-    inset: -40%;
+    inset: -45%;
     background: conic-gradient(
       from 0deg,
       transparent 0deg,
-      rgba(255, 255, 255, 0) 40deg,
-      rgba(255, 255, 255, 0.25) 90deg,
-      rgba(255, 255, 255, 0) 140deg
+      rgba(255, 255, 255, 0) 50deg,
+      rgba(255, 255, 255, 0.5) 100deg,
+      rgba(255, 255, 255, 0) 160deg
     );
-    filter: blur(8px);
-    -webkit-filter: blur(8px);
+    filter: blur(6px);
+    -webkit-filter: blur(6px);
     will-change: transform;
-    opacity: 0.6;
+    opacity: 0.7;
   }
   .btn-stroke-glow--2 {
     inset: -30%;
     background: conic-gradient(
       from 180deg,
       transparent 0deg,
-      rgba(255, 255, 255, 0) 40deg,
-      rgba(255, 255, 255, 0.15) 100deg,
-      rgba(255, 255, 255, 0) 150deg
+      rgba(255, 255, 255, 0) 50deg,
+      rgba(255, 255, 255, 0.25) 100deg,
+      rgba(255, 255, 255, 0) 160deg
     );
-    filter: blur(12px);
-    -webkit-filter: blur(12px);
-    opacity: 0.4;
+    filter: blur(10px);
+    -webkit-filter: blur(10px);
+    opacity: 0.45;
   }
-  /* Hover: brillo fino en el borde, no blanco sólido */
-  .btn--stroke:hover .btn-stroke {
-    background: rgba(255, 255, 255, 0.28);
+  /* Hover: el anillo se ilumina un poco más (brillo fino) */
+  .btn--stroke:hover .btn-stroke-glow {
+    opacity: 0.9;
+  }
+  .btn--stroke:hover .btn-stroke-glow--2 {
+    opacity: 0.6;
   }
   .btn--stroke:hover {
     background: rgba(255, 255, 255, 0.08);
@@ -152,6 +156,7 @@ const classes = `btn btn--${variant} btn--${size}`;
   .btn--stroke:hover .btn-fill {
     opacity: 0.92;
   }
+  /* el fill tapa el centro → deja visible el anillo de 2px con el brillo */
   .btn-fill {
     position: absolute;
     inset: 2px;
