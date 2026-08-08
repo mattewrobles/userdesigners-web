@@ -2,12 +2,20 @@
 import { getCollection } from "astro:content";
 import Navbar from "../../components/Navbar.astro";
 import Footer from "../../components/Footer.astro";
+import BlogList from "../../components/BlogList.astro";
 import fs from "fs";
 
-const posts = (await getCollection("blog"))
+const allPosts = (await getCollection("blog"))
   .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
 
-const framerCSS = fs.readFileSync("src/styles/framer.css", "utf-8");
+const perPage = 10;
+const currentPage = 1;
+const totalPages = Math.ceil(allPosts.length / perPage);
+const posts = allPosts.slice(0, perPage);
+const categories = [...new Set(allPosts.map(p => p.data.category).filter(Boolean))];
+
+const framerCSS = fs.readFileSync("src/styles/framer.css", "utf-8")
+  .replace(/<\/?style[^>]*>/g, "");
 ---
 
 <!doctype html>
@@ -39,7 +47,7 @@ const framerCSS = fs.readFileSync("src/styles/framer.css", "utf-8");
       "name": "UserDesigners",
       "url": "https://www.userdesigners.com"
     },
-    "blogPost": posts.map(p => ({
+    "blogPost": allPosts.map(p => ({
       "@type": "BlogPosting",
       "headline": p.data.title,
       "description": p.data.description || p.data.title,
@@ -69,55 +77,195 @@ const framerCSS = fs.readFileSync("src/styles/framer.css", "utf-8");
     })(window, document, "clarity", "script", "xytbbmamwh");
   </script>
 </head>
-<body style="margin:0;background-color:#030303;color:#fff;font-family:Inter,sans-serif">
-  <div class="bg-blob"></div>
+<body style="margin:0;background-color:#030303;color:#fff;font-family:Inter,sans-serif;overflow-x:hidden">
   <Navbar />
 
-  <main style="max-width:1100px;margin:0 auto;padding:80px 24px 120px;position:relative;z-index:1">
-    <header style="margin-bottom:64px">
-      <h1 style="font-family:'Familjen Grotesk',sans-serif;font-size:clamp(36px,6vw,64px);font-weight:500;line-height:1.1;letter-spacing:-0.03em;margin:0 0 16px;color:#fff">
-        Blog
-      </h1>
-      <p style="color:rgba(255,255,255,0.5);font-size:18px;max-width:560px;line-height:1.6;margin:0">
-        Ideas sobre diseño, investigación y producto digital. Escrito por el equipo de UserDesigners.
-      </p>
-    </header>
-
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:32px">
-      {posts.map(post => (
-        <a href={`/blog/${post.id}`} style="text-decoration:none;border-radius:16px;overflow:hidden;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);transition:border-color 0.2s,background 0.2s">
-          {post.data.heroImage && (
-            <div style="height:200px;overflow:hidden">
-              <img src={post.data.heroImage} alt={post.data.title} style="width:100%;height:100%;object-fit:cover" loading="lazy" />
-            </div>
-          )}
-          <div style="padding:24px">
-            {post.data.category && (
-              <span style="display:inline-block;padding:3px 10px;background:rgba(255,255,255,0.05);border-radius:12px;font-size:12px;font-weight:500;color:rgba(255,255,255,0.45);margin-bottom:12px">
-                {post.data.category}
-              </span>
-            )}
-            <h2 style="font-family:'Familjen Grotesk',sans-serif;font-size:20px;font-weight:500;line-height:1.35;letter-spacing:-0.01em;color:#fff;margin:0 0 12px">
-              {post.data.title}
-            </h2>
-            {post.data.description && (
-              <p style="color:rgba(255,255,255,0.45);font-size:14px;line-height:1.6;margin:0 0 16px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">
-                {post.data.description}
-              </p>
-            )}
-            <div style="display:flex;gap:16px;color:rgba(255,255,255,0.3);font-size:13px">
-              <time datetime={post.data.date}>{new Date(post.data.date).toLocaleDateString("es-EC", { year: "numeric", month: "short", day: "numeric" })}</time>
-              {post.data.readTime && <span>{post.data.readTime}</span>}
-            </div>
+  <main style="position:relative;z-index:1;padding:0">
+    <section class="blog-hero" id="blogHero">
+      <div class="hero-blobs" id="heroBlobs">
+        <div class="hero-blob hero-blob-3" id="blob3"></div>
+        <div class="hero-blob hero-blob-2" id="blob2"></div>
+        <div class="hero-blob hero-blob-1" id="blob1"></div>
+      </div>
+      <div class="hero-content">
+        <div class="hero-badge">Blog</div>
+        <h1 class="hero-title" id="heroTitle">
+          Ideas sobre diseño<br />
+          que transforman productos
+        </h1>
+        <p class="hero-sub" id="heroSub">
+          Investigación, producto digital, design systems y todo lo que rodea al diseño centrado en el usuario.
+        </p>
+        <div class="hero-stats" id="heroStats">
+          <div class="hero-stat">
+            <span class="hero-stat-num">{allPosts.length}</span>
+            <span class="hero-stat-label">artículos</span>
           </div>
-        </a>
-      ))}
-    </div>
+          <div class="hero-stat-divider"></div>
+          <div class="hero-stat">
+            <span class="hero-stat-num">{categories.length}</span>
+            <span class="hero-stat-label">categorías</span>
+          </div>
+          <div class="hero-stat-divider"></div>
+          <div class="hero-stat">
+            <span class="hero-stat-num">{Math.ceil(allPosts.reduce((acc, p) => acc + parseInt(p.data.readTime || "3"), 0) / allPosts.length)}</span>
+            <span class="hero-stat-label">min lectura promedio</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section style="max-width:1100px;margin:0 auto;padding:0 24px 120px">
+      {categories.length > 0 && (
+        <div style="margin-bottom:48px;display:flex;justify-content:flex-end">
+          {categories.length <= 6 ? (
+            <div style="display:flex;gap:8px;flex-wrap:wrap" id="blog-filters">
+              {categories.map(cat => (
+                <button class="blog-filter" data-filter={cat} style="all:unset;cursor:pointer;padding:6px 16px;border-radius:40px;font-size:14px;font-family:Inter,sans-serif;color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);transition:all 0.2s">{cat}</button>
+              ))}
+            </div>
+          ) : (
+            <select id="blog-filters" style="padding:8px 16px;border-radius:12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.7);font-size:14px;font-family:Inter,sans-serif;outline:none;cursor:pointer">
+              <option value="all" style="background:#030303">Todas las categorías</option>
+              {categories.map(cat => (
+                <option value={cat} style="background:#030303">{cat}</option>
+              ))}
+            </select>
+          )}
+        </div>
+      )}
+
+      <BlogList
+        posts={posts}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        baseUrl="/blog"
+        categories={categories}
+        totalPosts={allPosts.length}
+      />
+    </section>
   </main>
 
   <Footer />
 </body>
 </html>
+
+<script is:inline>
+  document.addEventListener("DOMContentLoaded", () => {
+    const hero = document.getElementById("blogHero");
+    const cards = document.querySelectorAll(".blog-card");
+    const featured = document.querySelector("main section:nth-child(2) > a");
+
+    function randomHue() {
+      const ranges = [[0, 100], [170, 360]];
+      const r = ranges[Math.floor(Math.random() * ranges.length)];
+      return r[0] + Math.floor(Math.random() * (r[1] - r[0]));
+    }
+    function randomSaturation() { return 80 + Math.floor(Math.random() * 20); }
+    function randomLightness() { return 50 + Math.floor(Math.random() * 20); }
+    function randomAngle() { return Math.floor(Math.random() * 360); }
+    function randomBetween(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+    function generateBlobSVG(index) {
+      const hue = randomHue();
+      const sat = randomSaturation();
+      const light = randomLightness();
+      const baseColor = `hsl(${hue}, ${sat}%, ${light}%)`;
+      const altHue = (hue + randomBetween(30, 120)) % 360;
+      const altColor = `hsl(${altHue}, ${sat}%, ${light}%)`;
+      const cx = 300, cy = 300;
+      const ellipses = [];
+      const grads = [];
+      const letters = ['a', 'b', 'c', 'd'];
+      const rx1 = randomBetween(80, 160);
+      const ry1 = randomBetween(200, 350);
+      const rot1 = randomAngle();
+      const t1 = `matrix(${Math.cos(rot1 * Math.PI / 180)}, ${Math.sin(rot1 * Math.PI / 180)}, ${-Math.sin(rot1 * Math.PI / 180)}, ${Math.cos(rot1 * Math.PI / 180)}, ${cx}, ${cy})`;
+      ellipses.push(`<ellipse cx="${rx1}" cy="${ry1}" fill="${baseColor}" rx="${rx1}" ry="${ry1}" transform="${t1}"></ellipse>`);
+      for (let i = 0; i < 4; i++) {
+        const rx = randomBetween(60, 150);
+        const ry = randomBetween(180, 350);
+        const rot = randomAngle();
+        const gradId = `blob-${index}-${letters[i]}`;
+        const color = i % 2 === 0 ? baseColor : altColor;
+        const t = `matrix(${Math.cos(rot * Math.PI / 180)}, ${Math.sin(rot * Math.PI / 180)}, ${-Math.sin(rot * Math.PI / 180)}, ${Math.cos(rot * Math.PI / 180)}, ${cx + randomBetween(-40, 40)}, ${cy + randomBetween(-40, 40)})`;
+        ellipses.push(`<ellipse cx="${rx}" cy="${ry}" fill="url(#${gradId})" rx="${rx}" ry="${ry}" transform="${t}"></ellipse>`);
+        grads.push(`<linearGradient gradientUnits="userSpaceOnUse" id="${gradId}" x1="${rx}" x2="${rx}" y1="0" y2="${ry * 2}"><stop stop-color="${color}"></stop><stop offset="1" stop-opacity="0"></stop></linearGradient>`);
+      }
+      return `<svg viewBox="0 0 600 600" fill="none" xmlns="http://www.w3.org/2000/svg"><g opacity="0.4" style="mix-blend-mode:hard-light">${ellipses.join('')}</g><defs>${grads.join('')}</defs></svg>`;
+    }
+
+    if (hero) {
+      [document.getElementById("blob1"), document.getElementById("blob2"), document.getElementById("blob3")].forEach((blob, i) => {
+        if (blob) {
+          blob.innerHTML = generateBlobSVG(i);
+          blob.style.opacity = "1";
+        }
+      });
+
+      const badge = hero.querySelector(".hero-badge");
+      if (badge) {
+        badge.classList.add("animate-in");
+        badge.style.setProperty("--delay", "0.02s");
+      }
+
+      const titleEl = document.getElementById("heroTitle");
+      if (titleEl) {
+        const text = titleEl.innerHTML;
+        const parts = text.split(/(<br\s*\/?>)/);
+        let html = "";
+        parts.forEach(part => {
+          if (part.match(/<br\s*\/?>/)) {
+            html += part;
+          } else {
+            const words = part.split(/(\s+)/);
+            words.forEach(word => {
+              if (word.trim() === "") {
+                html += word;
+              } else {
+                html += '<span class="hero-word">';
+                for (const char of word) {
+                  html += `<span class="hero-letter">${char}</span>`;
+                }
+                html += '</span>';
+              }
+            });
+          }
+        });
+        titleEl.innerHTML = html;
+        const letters = titleEl.querySelectorAll(".hero-letter");
+        letters.forEach((el, i) => {
+          el.style.setProperty("--i", i);
+          el.classList.add("animate-letter");
+        });
+      }
+
+      const subEl = document.getElementById("heroSub");
+      if (subEl) {
+        subEl.classList.add("animate-in");
+        subEl.style.setProperty("--delay", "0.15s");
+      }
+
+      const statsEl = document.getElementById("heroStats");
+      if (statsEl) {
+        statsEl.classList.add("animate-in");
+        statsEl.style.setProperty("--delay", "0.25s");
+      }
+    }
+
+    if (featured) {
+      featured.classList.add("animate-in");
+      featured.style.setProperty("--delay", "0.15s");
+    }
+
+    if (cards.length) {
+      cards.forEach((el, i) => {
+        el.classList.add("animate-in");
+        el.style.setProperty("--delay", `${0.2 + i * 0.05}s`);
+      });
+    }
+  });
+</script>
 
 <style is:global>
   .framer-bjhdpb { align-items: flex-start !important; }
@@ -129,23 +277,191 @@ const framerCSS = fs.readFileSync("src/styles/framer.css", "utf-8");
   .framer-wse24v { margin-left: auto !important; margin-right: auto !important; }
   .framer-WOlJs { background-color: #030303 !important; padding-top: 0 !important; margin-left: auto !important; margin-right: auto !important; }
   .framer-WOlJs.framer-v-ib24dp { padding-top: 0 !important; }
-  .bg-blob {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    width: 800px;
-    height: 800px;
-    transform: translate(-50%, -50%);
-    border-radius: 50%;
-    background: conic-gradient(from 0deg, #d045ff, #998dd0, #0044ff, #ffbf00, #d045ff);
-    filter: blur(140px);
-    opacity: 0.12;
-    pointer-events: none;
-    z-index: 0;
-    animation: blob-spin 25s linear infinite;
+  .blog-card:hover { border-color: rgba(255,255,255,0.15) !important; background: rgba(255,255,255,0.04) !important; }
+  .blog-card:hover img { transform: scale(1.05); }
+  main section:nth-child(2) > a:hover { border-color: rgba(255,255,255,0.15) !important; }
+
+  .blog-hero {
+    position: relative;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 160px 24px 80px;
+    text-align: center;
+    overflow: visible;
   }
+  .hero-blobs {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .hero-blob {
+    position: absolute;
+    border-radius: 0;
+    will-change: transform, opacity;
+    overflow: visible;
+  }
+  .hero-blob svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    animation: blob-spin linear infinite;
+  }
+  .hero-blob-1 svg { animation-duration: 25s; }
+  .hero-blob-2 svg { animation-duration: 30s; animation-direction: reverse; }
+  .hero-blob-3 svg { animation-duration: 35s; }
   @keyframes blob-spin {
-    from { transform: translate(-50%, -50%) rotate(0deg); }
-    to { transform: translate(-50%, -50%) rotate(360deg); }
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  .hero-blob-1 {
+    width: 300px;
+    height: 300px;
+    top: 15%;
+    left: 50%;
+    filter: blur(60px);
+    mix-blend-mode: hard-light;
+  }
+  .hero-blob-2 {
+    width: 260px;
+    height: 260px;
+    top: 20%;
+    left: 45%;
+    filter: blur(60px);
+    mix-blend-mode: hard-light;
+  }
+  .hero-blob-3 {
+    width: 320px;
+    height: 320px;
+    top: 10%;
+    left: 55%;
+    filter: blur(60px);
+    mix-blend-mode: hard-light;
+  }
+  .hero-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+  .hero-badge {
+    display: inline-flex;
+    padding: 6px 20px;
+    border-radius: 40px;
+    font-family: "Familjen Grotesk", sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+    margin-bottom: 24px;
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateY(20px);
+  }
+  .hero-title {
+    font-family: "Familjen Grotesk", sans-serif;
+    font-size: clamp(40px, 7vw, 80px);
+    font-weight: 500;
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+    color: #fff;
+    margin: 0 0 24px;
+    text-wrap: balance;
+  }
+  .hero-letter {
+    display: inline-block;
+    opacity: 0.001;
+    filter: blur(10px);
+    transform: translateY(10px);
+  }
+  .hero-word {
+    display: inline;
+    white-space: nowrap;
+  }
+  .hero-sub {
+    color: rgba(255,255,255,0.4);
+    font-size: 18px;
+    max-width: 520px;
+    line-height: 1.7;
+    margin: 0 0 48px;
+    font-family: "Inter", sans-serif;
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateY(25px);
+  }
+  .hero-stats {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateY(20px);
+  }
+  .hero-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 0 40px;
+  }
+  .hero-stat-num {
+    font-family: "Familjen Grotesk", sans-serif;
+    font-size: 32px;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  .hero-stat-label {
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+    color: rgba(255,255,255,0.35);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+  .hero-stat-divider {
+    width: 1px;
+    height: 40px;
+    background: rgba(255,255,255,0.08);
+  }
+  .featured-entrance {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateY(30px);
+  }
+  .blog-card {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateY(30px);
+  }
+  @media (max-width: 640px) {
+    .blog-hero { padding: 140px 20px 60px; }
+    .hero-title { font-size: clamp(32px, 10vw, 48px); }
+    .hero-sub { font-size: 16px; max-width: 100%; margin-bottom: 36px; }
+    .hero-stat { padding: 0 20px; }
+    .hero-stat-num { font-size: 24px; }
+    .hero-stats { flex-wrap: wrap; justify-content: center; gap: 0; }
+    .hero-stat-divider:nth-child(4) { display: none; }
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; filter: blur(10px); transform: translateY(30px); }
+    to { opacity: 1; filter: blur(0px); transform: translateY(0); }
+  }
+  @keyframes letterIn {
+    from { opacity: 0.001; filter: blur(10px); transform: translateY(10px); }
+    to { opacity: 1; filter: blur(0px); transform: translateY(0); }
+  }
+  .animate-in {
+    animation: fadeInUp 0.6s ease-out var(--delay, 0s) both;
+  }
+  .hero-letter {
+    animation: letterIn 0.4s ease-out calc(var(--i, 0) * 0.02s) both;
   }
 </style>

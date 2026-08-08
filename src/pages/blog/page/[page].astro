@@ -1,0 +1,120 @@
+---
+import { getCollection, getEntry } from "astro:content";
+import { getStaticPaths as getPaginatedPaths } from "astro:content";
+import Navbar from "../../../components/Navbar.astro";
+import Footer from "../../../components/Footer.astro";
+import BlogList from "../../../components/BlogList.astro";
+import fs from "fs";
+
+export async function getStaticPaths() {
+  const allPosts = (await getCollection("blog"))
+    .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+
+  const perPage = 10;
+  const totalPages = Math.ceil(allPosts.length / perPage);
+
+  return Array.from({ length: totalPages - 1 }, (_, i) => {
+    const page = i + 2;
+    const start = (page - 1) * perPage;
+    const end = start + perPage;
+    return {
+      params: { page: String(page) },
+      props: {
+        posts: allPosts.slice(start, end),
+        currentPage: page,
+        totalPages,
+        totalPosts: allPosts.length,
+        categories: [...new Set(allPosts.map(p => p.data.category).filter(Boolean))],
+      },
+    };
+  });
+}
+
+const { posts, currentPage, totalPages, totalPosts, categories } = Astro.props;
+
+const framerCSS = fs.readFileSync("src/styles/framer.css", "utf-8")
+  .replace(/<\/?style[^>]*>/g, "");
+---
+
+<!doctype html>
+<html lang="es-EC">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog UX Design — Página {currentPage} | UserDesigners</title>
+  <meta name="description" content="Artículos sobre UX Design — página {currentPage} de {totalPages}." />
+  <link rel="icon" href="/assets/local/o5LtTMyVT0hoY6m1F1q3smw3kq4.png" />
+  <link rel="canonical" href={new URL(`/blog/page/${currentPage}`, Astro.site).href} />
+  {currentPage > 1 && <link rel="prev" href={currentPage === 2 ? "/blog" : `/blog/page/${currentPage - 1}`} />}
+  {currentPage < totalPages && <link rel="next" href={`/blog/page/${currentPage + 1}`} />}
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Blog | UserDesigners — Página {currentPage}" />
+  <meta property="og:description" content="Artículos sobre UX Design, investigación, design systems y producto digital." />
+  <meta property="og:image" content={new URL("/assets/local/bUYh6jy5kjctf6KEV3vRnONhegI.png", Astro.site).href} />
+  <meta property="og:url" content={new URL(`/blog/page/${currentPage}`, Astro.site).href} />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Blog | UserDesigners — Página {currentPage}" />
+  <meta name="twitter:description" content="Artículos sobre UX Design, investigación, design systems y producto digital." />
+  <meta name="twitter:image" content={new URL("/assets/local/bUYh6jy5kjctf6KEV3vRnONhegI.png", Astro.site).href} />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style is:global set:html={framerCSS}></style>
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PDZVJDG9Y5"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){window.dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-PDZVJDG9Y5');
+  </script>
+  <!-- Microsoft Clarity -->
+  <script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "xytbbmamwh");
+  </script>
+</head>
+<body style="margin:0;background-color:#030303;color:#fff;font-family:Inter,sans-serif">
+  <Navbar />
+
+  <main style="position:relative;z-index:1;padding:0">
+    <section style="max-width:1100px;margin:0 auto;padding:120px 24px 120px">
+      <div style="margin-bottom:48px">
+        <a href="/blog" style="display:inline-flex;align-items:center;gap:6px;color:rgba(255,255,255,0.4);text-decoration:none;font-size:14px;font-family:Inter,sans-serif;margin-bottom:24px;transition:color 0.2s">
+          ← Volver al blog
+        </a>
+        <h1 style="font-family:'Familjen Grotesk',sans-serif;font-size:clamp(28px,4vw,40px);font-weight:500;letter-spacing:-0.03em;margin:0;color:#fff">
+          Blog — Página {currentPage}
+        </h1>
+      </div>
+
+      <BlogList
+        posts={posts}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        baseUrl="/blog"
+        categories={categories}
+        totalPosts={totalPosts}
+      />
+    </section>
+  </main>
+
+  <Footer />
+</body>
+</html>
+
+<style is:global>
+  .blog-card {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateY(30px);
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; filter: blur(10px); transform: translateY(30px); }
+    to { opacity: 1; filter: blur(0px); transform: translateY(0); }
+  }
+</style>

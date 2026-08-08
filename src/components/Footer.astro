@@ -1,234 +1,377 @@
----
-
-<footer class="site-footer">
-  <div class="footer-effects">
-    <div class="footer-grid">
-      <div class="footer-grid-line"></div>
-      <div class="footer-grid-line"></div>
-      <div class="footer-grid-line"></div>
-      <div class="footer-grid-line"></div>
-    </div>
-    <div class="footer-blur"></div>
-    <div class="footer-flare">
-      <svg viewBox="0 0 1156 614" style="width:100%;height:100%">
-        <path d="M0 0H1156V614H0V0Z" fill="url(#g1)" opacity="0.15"/>
-        <defs>
-          <linearGradient id="g1" x1="578" y1="0" x2="578" y2="614" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#84d9fa" offset="0"/>
-            <stop stop-color="#123dff" offset="0.5"/>
-            <stop stop-color="#4adeff" offset="1"/>
-          </linearGradient>
-        </defs>
-      </svg>
+<footer class="f-footer" id="footer">
+  <div class="f-effects">
+    <div class="f-blur-wrap">
+      <div class="f-blur-container">
+        <div class="f-blur-1">
+          <div class="f-blur-1-inner"></div>
+        </div>
+        <div class="f-blur-2">
+          <div class="f-blur-2-inner"></div>
+        </div>
+        <div class="f-blur-3">
+          <div class="f-blur-3-inner"></div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div class="footer-inner">
-    <div class="footer-content">
-      <div class="footer-brand">
-        <a href="/" class="footer-logo">
-          <img src="/assets/local/THPlYhmIylZZQK7C2oB2vUpYec.png" alt="UserDesigners" width="140" height="24" />
-        </a>
-        <p class="footer-tagline">Agencia de diseñadores UX/UI.</p>
-        <a href="mailto:latam@userdesigners.com" class="footer-contact">latam@userdesigners.com</a>
-        <a href="https://wa.me/593961026799" target="_blank" rel="noopener" class="footer-contact">(+593)0961026799</a>
-      </div>
+  <div class="f-main">
 
-      <div class="footer-col">
-        <h5>Nuestra Presencia</h5>
-        <ul>
-          <li>Ecuador</li>
-          <li>México</li>
-          <li>Colombia</li>
-          <li>España</li>
-          <li>Estados Unidos</li>
-        </ul>
-      </div>
-
-      <div class="footer-col">
-        <h5>Enlaces rápidos</h5>
-        <ul>
-          <li><a href="/proyectos">Proyectos</a></li>
-          <li><a href="/servicios">Nuestros servicios</a></li>
-          <li><a href="/nosotros">Conoce al team</a></li>
-          <li><a href="/contacto">Contáctanos</a></li>
-        </ul>
-      </div>
-
-      <div class="footer-col">
-        <h5>Social Media</h5>
-        <ul>
-          <li><a href="https://www.instagram.com/userdesigners" target="_blank" rel="noopener">Instagram</a></li>
-          <li><a href="https://www.facebook.com/userdesigners" target="_blank" rel="noopener">Facebook</a></li>
-          <li><a href="https://www.linkedin.com/company/user-designers" target="_blank" rel="noopener">LinkedIn</a></li>
-        </ul>
-      </div>
+    <div class="f-grid-lines">
+      <div class="f-grid-line"></div>
+      <div class="f-grid-line"></div>
+      <div class="f-grid-line"></div>
+      <div class="f-grid-line"></div>
     </div>
 
-    <div class="footer-bottom">
-      <p>&copy; 2025 Userdesigners. All rights reserved.</p>
-      <a href="/">Privacy policy</a>
+    <div class="f-content-wrap">
+      <div class="f-tagline"><p>Agencia de diseñadores UX/UI.</p></div>
+
+      <div class="f-cols">
+        <div class="f-col f-col-brand">
+          <div class="f-brand-inner">
+            <div class="f-brand-info">
+              <a href="/" class="f-logo"><img src="/assets/local/THPlYhmIylZZQK7C2oB2vUpYec.png" alt="UserDesigners" /></a>
+              <a href="mailto:latam@userdesigners.com" class="f-contact">latam@userdesigners.com</a>
+              <a href="https://wa.me/593961026799" target="_blank" rel="noopener" class="f-contact">(+593)0961026799</a>
+            </div>
+            <div class="f-copy">&copy; 2026 Userdesigners.<br />All rights reserved.</div>
+          </div>
+        </div>
+
+        <div class="f-col-extra">
+          <div class="f-col-sub">
+            <h5>Nuestra Presencia</h5>
+            <ul>
+              <li>Ecuador</li><li>México</li><li>Colombia</li><li>España</li><li>Estados Unidos</li>
+            </ul>
+          </div>
+          <div class="f-col-sub">
+            <h5>Enlaces r&aacute;pidos</h5>
+            <ul>
+              <li><a href="/proyectos">Proyectos</a></li>
+              <li><a href="/servicios">Nuestros servicios</a></li>
+              <li><a href="/nosotros">Conoce al team</a></li>
+              <li><a href="/contacto">Cont&aacute;ctanos</a></li>
+            </ul>
+          </div>
+          <div class="f-col-sub">
+            <h5>Social Media</h5>
+            <ul>
+              <li><a href="https://www.instagram.com/userdesigners" target="_blank" rel="noopener">Instagram</a></li>
+              <li><a href="https://www.facebook.com/userdesigners" target="_blank" rel="noopener">Facebook</a></li>
+              <li><a href="https://www.linkedin.com/company/user-designers" target="_blank" rel="noopener">LinkedIn</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="f-bottom"><a href="/">Privacy policy</a></div>
     </div>
   </div>
 </footer>
 
+<script>
+  import { animate, spring } from "motion";
+
+  const footer = document.getElementById("footer");
+  if (footer) {
+    const blurs = [
+      footer.querySelector(".f-blur-1"),
+      footer.querySelector(".f-blur-2"),
+      footer.querySelector(".f-blur-3"),
+    ];
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          blurs.forEach((el, i) => {
+            if (!el) return;
+            const inner = el.querySelector("[class$=-inner]");
+            setTimeout(() => {
+              el.style.opacity = "1";
+              el.style.transform = "translate(-50%, -50%) perspective(1200px)";
+              if (inner) {
+                animate(inner, {
+                  transform: ["scale(0.83) rotate(0deg)", "scale(0.83) rotate(360deg)"],
+                }, { duration: 25, repeat: Infinity, ease: "linear" });
+              }
+            }, i * 150);
+          });
+          observer.disconnect();
+        }
+      });
+    }, { threshold: 0.1 });
+
+    observer.observe(footer);
+
+    // Hover effects on footer links
+    footer.querySelectorAll(".f-col-sub a, .f-contact, .f-bottom a").forEach(link => {
+      link.addEventListener("mouseenter", () => {
+        animate(link, { color: ["rgb(206,206,206)", "#fff"] }, { type: spring, stiffness: 300, damping: 25 });
+      });
+      link.addEventListener("mouseleave", () => {
+        animate(link, { color: ["#fff", "rgb(206,206,206)"] }, { type: spring, stiffness: 300, damping: 25 });
+      });
+    });
+  }
+</script>
+
 <style>
-  .site-footer {
+  .f-footer {
     position: relative;
-    background: #000;
-    border-top: 1px solid rgba(101, 103, 113, 0.15);
-    overflow: hidden;
-    font-family: "Manrope", sans-serif;
+    overflow: visible;
+    font-family: "Manrope", "Manrope Placeholder", sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 60px 0 0;
+    width: 100%;
   }
 
-  .footer-effects {
+  .f-effects {
     position: absolute;
-    inset: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
     pointer-events: none;
     z-index: 0;
   }
-
-  .footer-grid {
+  .f-blur-wrap {
     position: absolute;
-    inset: 0;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    opacity: 0.15;
+    top: 30%;
+    right: 0;
+    left: 0;
+    height: min-content;
+    transform: translateY(-50%);
+    opacity: 0.32;
+  }
+  .f-blur-container {
+    width: 100%;
+    height: 522px;
+    position: relative;
+    overflow: visible;
   }
 
-  .footer-grid-line {
+  .f-blur-1, .f-blur-2, .f-blur-3 {
+    position: absolute;
+    border-radius: 50%;
+    will-change: transform, opacity;
+    opacity: 0;
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .f-blur-1 {
+    width: 300px; height: 300px;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) translateY(60px) perspective(1200px);
+    filter: blur(70px);
+  }
+  .f-blur-1-inner {
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, rgb(208, 69, 255), rgb(153, 141, 208), rgb(0, 68, 255), rgb(255, 191, 0), rgb(208, 69, 255));
+    opacity: 0.64;
+  }
+  .f-blur-2 {
+    width: 260px; height: 260px;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) translateY(60px) perspective(1200px);
+    filter: blur(32px);
+  }
+  .f-blur-2-inner {
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, rgb(246, 198, 95), rgb(26, 36, 59), rgb(11, 25, 59));
+    opacity: 1;
+  }
+  .f-blur-3 {
+    width: 260px; height: 260px;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) translateY(60px) perspective(1200px);
+    filter: blur(32px);
+    mix-blend-mode: overlay;
+  }
+  .f-blur-3-inner {
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, rgb(132, 217, 250), rgb(18, 61, 255), rgb(74, 222, 255));
+    opacity: 1;
+  }
+
+  .f-main {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    padding: 0 20px;
+  }
+
+  .f-grid-lines {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: space-between;
+    max-width: 1224px;
+    margin: 0 auto;
+    opacity: 0.15;
+    pointer-events: none;
+  }
+  .f-grid-line {
+    flex: 1 0 0;
+    width: 1px;
+    height: 100%;
     border-left: 1px solid rgba(101, 103, 113, 0.5);
     border-right: 1px solid rgba(101, 103, 113, 0.5);
   }
 
-  .footer-blur {
-    position: absolute;
-    top: -100px;
-    left: 50%;
-    width: 600px;
-    height: 300px;
-    transform: translateX(-50%);
-    background: conic-gradient(from 0deg, rgb(208, 69, 255), rgb(153, 141, 208), rgb(0, 68, 255), rgb(255, 191, 0), rgb(208, 69, 255));
-    border-radius: 50%;
-    filter: blur(70px);
-    opacity: 0.08;
+  .f-content-wrap {
+    width: 100%;
+    max-width: 1224px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 80px;
+    padding: 0 0 62px;
   }
 
-  .footer-flare {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 100%;
-    filter: blur(30px);
-    opacity: 0.7;
+  .f-tagline {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 40px 0 0;
+  }
+  .f-tagline p {
+    font-size: 14px;
+    line-height: 1.7;
+    color: #fff;
+    text-align: center;
+    margin: 0;
   }
 
-  .footer-inner {
-    position: relative;
-    z-index: 1;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 60px 24px 32px;
+  .f-cols {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
   }
-
-  .footer-content {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr;
-    gap: 40px;
+  f-col-brand {
+    width: 24%;
+    flex: none;
+    height: 183px;
+    overflow: hidden;
   }
-
-  .footer-logo {
-    display: block;
-    margin-bottom: 16px;
+  .f-brand-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: 0 20px;
   }
-  .footer-logo img {
+  .f-brand-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .f-logo {
+    display: flex;
+    width: 180px;
+    text-decoration: none;
+  }
+  .f-logo img {
     display: block;
     height: 24px;
     width: auto;
     object-fit: contain;
     object-position: left center;
   }
-
-  .footer-tagline {
-    color: #fff;
-    font-size: 14px;
-    line-height: 1.7;
-    margin: 0 0 24px;
-    max-width: 280px;
-  }
-
-  .footer-contact {
+  .f-contact {
     display: block;
     color: #fff;
     font-size: 17px;
     font-weight: 500;
     line-height: 1.4;
     text-decoration: none;
-    margin-bottom: 10px;
     transition: opacity 0.2s;
   }
-  .footer-contact:hover { opacity: 0.6; }
+  .f-contact:hover { opacity: 0.6; }
+  .f-copy {
+    font-size: 14px;
+    line-height: 1.4;
+    color: rgb(206, 206, 206);
+    width: 100%;
+  }
 
-  .footer-col h5 {
+  .f-col-extra {
+    flex: 1;
+    display: flex;
+  }
+  .f-col-sub {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+  }
+  .f-col-sub:nth-child(1) { padding: 0 40px 0 20px; }
+  .f-col-sub:nth-child(2) { padding: 0 40px 0 20px; }
+  .f-col-sub:nth-child(3) { padding: 0 0 0 24px; }
+
+  .f-col-sub h5 {
     font-family: "Clash Grotesk", "Clash Grotesk Placeholder", sans-serif;
     font-size: 18px;
     font-weight: 500;
     color: #fff;
-    margin: 0 0 20px;
+    margin: 0;
     line-height: 1.4;
   }
-
-  .footer-col ul {
+  .f-col-sub ul {
     list-style: none;
-    padding: 0;
     margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    width: 100%;
   }
-
-  .footer-col li {
+  .f-col-sub li {
     color: rgb(206, 206, 206);
     font-size: 14px;
     line-height: 1.4;
-    margin-bottom: 10px;
+    width: 100%;
   }
-
-  .footer-col a {
+  .f-col-sub a {
     color: rgb(206, 206, 206);
     text-decoration: none;
     transition: color 0.2s;
-    font-size: 14px;
   }
-  .footer-col a:hover { color: #fff; }
+  .f-col-sub a:hover { color: #fff; }
 
-  .footer-bottom {
-    margin-top: 48px;
-    padding-top: 24px;
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
+  .f-bottom {
+    width: 100%;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: flex-start;
+    padding: 0 0 0 20px;
   }
-
-  .footer-bottom p {
-    color: rgb(206, 206, 206);
-    font-size: 13px;
-    margin: 0;
-  }
-
-  .footer-bottom a {
-    color: rgb(206, 206, 206);
-    font-size: 13px;
+  .f-bottom a {
+    color: #fff;
+    font-size: 14px;
     text-decoration: none;
   }
-  .footer-bottom a:hover { color: #fff; }
+  .f-bottom a:hover { opacity: 0.6; }
 
   @media (max-width: 809.98px) {
-    .footer-content {
-      grid-template-columns: 1fr 1fr;
-      gap: 32px;
-    }
-    .footer-brand { grid-column: 1 / -1; }
-    .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
-    .footer-grid { grid-template-columns: repeat(2, 1fr); }
+    .f-footer { padding: 80px 0 0; }
+    .f-cols { flex-direction: column; gap: 64px; }
+    .f-col-brand { width: 100%; height: auto; }
+    .f-col-extra { flex-direction: column; gap: 64px; }
+    .f-col-sub { padding: 0 20px !important; }
+    .f-grid-lines { display: none; }
+    .f-content-wrap { gap: 64px; }
   }
 </style>

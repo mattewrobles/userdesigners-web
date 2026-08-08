@@ -97,6 +97,8 @@ async function sync() {
     const slug = props.Slug?.rich_text?.[0]?.plain_text || "";
     const desc = props.Description?.rich_text?.[0]?.plain_text || "";
     const cat = props.Category?.select?.name || "";
+    const author = props.Author?.select?.name || "UserDesigners";
+    const tags = props.Tags?.multi_select?.map(t => t.name) || [];
     const heroImg = props["Hero Image"]?.url || "";
     const date = props.Date?.date?.start || page.created_time.slice(0, 10);
 
@@ -139,6 +141,8 @@ async function sync() {
 title: "${title.replace(/"/g, '\\"')}"
 description: "${desc.replace(/"/g, '\\"')}"
 category: "${cat}"
+author: "${author}"
+tags: [${tags.map(t => `"${t.replace(/"/g, '\\"')}"`).join(", ")}]
 heroImage: "${imgPath || ""}"
 date: "${date}"
 readTime: "${readTime}"

@@ -1,0 +1,366 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  posts: CollectionEntry<"blog">[];
+  currentPage: number;
+  totalPages: number;
+  baseUrl: string;
+  categories: string[];
+  totalPosts: number;
+}
+
+const { posts, currentPage, totalPages, baseUrl, categories, totalPosts } = Astro.props;
+const featured = posts[0];
+
+const projects = [
+  { name: "Kaito", url: "/proyectos/kaito", desc: "Fintech App" },
+  { name: "Novo", url: "/proyectos/novo", desc: "Banca Digital" },
+  { name: "Utransfer", url: "/proyectos/utransfer", desc: "UX Research" },
+  { name: "Score Fintech", url: "/proyectos/verificacion-biometrica", desc: "Biometría UX" },
+];
+---
+
+{
+  posts.length > 0 && currentPage === 1 && (
+    <a href={`/blog/${featured.id}`} class="featured-entrance" style="text-decoration:none;display:block;margin-bottom:64px;border-radius:20px;overflow:hidden;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);transition:border-color 0.3s,background 0.3s;position:relative">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0">
+        {featured.data.heroImage && (
+          <div style="height:100%;min-height:320px;overflow:hidden">
+            <img src={featured.data.heroImage} alt={featured.data.title} style="width:100%;height:100%;object-fit:cover;display:block" />
+          </div>
+        )}
+        <div style="padding:48px;display:flex;flex-direction:column;justify-content:center">
+          <span style="display:inline-block;padding:4px 12px;background:rgba(0,240,255,0.08);border:1px solid rgba(0,240,255,0.12);border-radius:20px;font-size:12px;font-weight:500;color:#00f0ff;margin-bottom:16px;width:fit-content">
+            {featured.data.category || "Destacado"}
+          </span>
+          <h2 style="font-family:'Familjen Grotesk',sans-serif;font-size:28px;font-weight:500;line-height:1.3;letter-spacing:-0.02em;color:#fff;margin:0 0 16px">
+            {featured.data.title}
+          </h2>
+          <p style="color:rgba(255,255,255,0.45);font-size:15px;line-height:1.7;margin:0 0 24px">
+            {featured.data.description}
+          </p>
+          <div style="display:flex;gap:16px;color:rgba(255,255,255,0.3);font-size:13px">
+            <time datetime={featured.data.date}>{new Date(featured.data.date).toLocaleDateString("es-EC", { year: "numeric", month: "long", day: "numeric" })}</time>
+            {featured.data.readTime && <span>{featured.data.readTime} de lectura</span>}
+          </div>
+        </div>
+      </div>
+    </a>
+  )
+}
+
+<div class="blog-layout">
+  <div class="blog-main">
+    {posts.length > 0 && currentPage === 1 && (
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:24px">
+        {posts.slice(1).map(post => (
+          <a href={`/blog/${post.id}`} class="blog-card" style="text-decoration:none;border-radius:16px;overflow:hidden;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);transition:all 0.3s ease">
+            {post.data.heroImage && (
+              <div style="height:200px;overflow:hidden">
+                <img src={post.data.heroImage} alt={post.data.title} style="width:100%;height:100%;object-fit:cover;transition:transform 0.6s ease" loading="lazy" />
+              </div>
+            )}
+            <div style="padding:24px">
+              {post.data.category && (
+                <span style="display:inline-block;padding:3px 10px;background:rgba(0,240,255,0.06);border:1px solid rgba(0,240,255,0.1);border-radius:12px;font-size:11px;font-weight:500;color:#00f0ff;margin-bottom:12px;letter-spacing:0.02em;text-transform:uppercase">
+                  {post.data.category}
+                </span>
+              )}
+              <h2 style="font-family:'Familjen Grotesk',sans-serif;font-size:18px;font-weight:500;line-height:1.35;letter-spacing:-0.01em;color:#fff;margin:0 0 12px">
+                {post.data.title}
+              </h2>
+              {post.data.description && (
+                <p style="color:rgba(255,255,255,0.4);font-size:14px;line-height:1.6;margin:0 0 16px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">
+                  {post.data.description}
+                </p>
+              )}
+              <div style="display:flex;gap:16px;color:rgba(255,255,255,0.25);font-size:12px">
+                <time datetime={post.data.date}>{new Date(post.data.date).toLocaleDateString("es-EC", { year: "numeric", month: "short", day: "numeric" })}</time>
+                {post.data.readTime && <span>{post.data.readTime}</span>}
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    )}
+
+    {posts.length > 0 && currentPage !== 1 && (
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:24px">
+        {posts.map(post => (
+          <a href={`/blog/${post.id}`} class="blog-card" style="text-decoration:none;border-radius:16px;overflow:hidden;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);transition:all 0.3s ease">
+            {post.data.heroImage && (
+              <div style="height:200px;overflow:hidden">
+                <img src={post.data.heroImage} alt={post.data.title} style="width:100%;height:100%;object-fit:cover;transition:transform 0.6s ease" loading="lazy" />
+              </div>
+            )}
+            <div style="padding:24px">
+              {post.data.category && (
+                <span style="display:inline-block;padding:3px 10px;background:rgba(0,240,255,0.06);border:1px solid rgba(0,240,255,0.1);border-radius:12px;font-size:11px;font-weight:500;color:#00f0ff;margin-bottom:12px;letter-spacing:0.02em;text-transform:uppercase">
+                  {post.data.category}
+                </span>
+              )}
+              <h2 style="font-family:'Familjen Grotesk',sans-serif;font-size:18px;font-weight:500;line-height:1.35;letter-spacing:-0.01em;color:#fff;margin:0 0 12px">
+                {post.data.title}
+              </h2>
+              {post.data.description && (
+                <p style="color:rgba(255,255,255,0.4);font-size:14px;line-height:1.6;margin:0 0 16px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">
+                  {post.data.description}
+                </p>
+              )}
+              <div style="display:flex;gap:16px;color:rgba(255,255,255,0.25);font-size:12px">
+                <time datetime={post.data.date}>{new Date(post.data.date).toLocaleDateString("es-EC", { year: "numeric", month: "short", day: "numeric" })}</time>
+                {post.data.readTime && <span>{post.data.readTime}</span>}
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    )}
+
+    {totalPages > 1 && (
+      <nav class="pagination" style="display:flex;justify-content:center;align-items:center;gap:8px;margin-top:64px;padding-top:48px;border-top:1px solid rgba(255,255,255,0.06)">
+        {currentPage > 1 && (
+          <a href={currentPage === 2 ? "/blog" : `${baseUrl}/page/${currentPage - 1}`} class="pagination-arrow" style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.5);font-size:14px;text-decoration:none;transition:all 0.2s">
+            ←
+          </a>
+        )}
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+          <a
+            href={page === 1 ? "/blog" : `${baseUrl}/page/${page}`}
+            class={`pagination-page${page === currentPage ? " active" : ""}`}
+            aria-current={page === currentPage ? "page" : undefined}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "36px",
+              height: "36px",
+              borderRadius: "8px",
+              fontSize: "14px",
+              fontWeight: page === currentPage ? "600" : "400",
+              textDecoration: "none",
+              fontFamily: "Inter, sans-serif",
+              background: page === currentPage ? "rgba(255,255,255,0.08)" : "transparent",
+              color: page === currentPage ? "#fff" : "rgba(255,255,255,0.4)",
+              border: page === currentPage ? "1px solid rgba(255,255,255,0.1)" : "none",
+              transition: "all 0.2s",
+            }}
+          >
+            {page}
+          </a>
+        ))}
+        {currentPage < totalPages && (
+          <a href={`${baseUrl}/page/${currentPage + 1}`} class="pagination-arrow" style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.5);font-size:14px;text-decoration:none;transition:all 0.2s">
+            →
+          </a>
+        )}
+      </nav>
+    )}
+  </div>
+
+  <aside class="blog-sidebar">
+    <div class="sidebar-section">
+      <h3 class="sidebar-title">Categorías</h3>
+      <div class="sidebar-categories">
+        {categories.map(cat => (
+          <span class="sidebar-cat">{cat}</span>
+        ))}
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <h3 class="sidebar-title">Proyectos destacados</h3>
+      <div class="sidebar-projects">
+        {projects.map(p => (
+          <a href={p.url} class="sidebar-project">
+            <div class="sidebar-project-icon">{p.name.charAt(0)}</div>
+            <div class="sidebar-project-info">
+              <span class="sidebar-project-name">{p.name}</span>
+              <span class="sidebar-project-desc">{p.desc}</span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+
+    <div class="sidebar-section sidebar-cta">
+      <h3 class="sidebar-title" style="color:#fff">¿Tienes un proyecto?</h3>
+      <p style="color:rgba(255,255,255,0.5);font-size:14px;line-height:1.6;margin:0 0 20px;font-family:Inter,sans-serif">
+        Hablemos de cómo podemos ayudarte a diseñar productos digitales que funcionen.
+      </p>
+      <a href="https://wa.me/593961026799?text=Hola%20UserDesigners%2C%20quiero%20agendar%20una%20sesi%C3%B3n" target="_blank" rel="noopener" class="sidebar-cta-btn">Charlemos</a>
+    </div>
+  </aside>
+</div>
+
+<style is:global>
+  .blog-layout {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 48px;
+    align-items: start;
+  }
+  .blog-main {
+    min-width: 0;
+  }
+  .blog-sidebar {
+    position: sticky;
+    top: 100px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+  .sidebar-section {
+    padding: 24px;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .sidebar-title {
+    font-family: 'Familjen Grotesk', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: rgba(255,255,255,0.8);
+    margin: 0 0 16px;
+  }
+  .sidebar-categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .sidebar-cat {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.5);
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    font-family: Inter, sans-serif;
+  }
+  .sidebar-projects {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .sidebar-project {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    padding: 8px;
+    border-radius: 10px;
+    transition: background 0.2s;
+  }
+  .sidebar-project:hover {
+    background: rgba(255,255,255,0.03);
+  }
+  .sidebar-project-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Familjen Grotesk', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    background: rgba(255,255,255,0.06);
+    flex-shrink: 0;
+  }
+  .sidebar-project-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+  .sidebar-project-name {
+    font-family: 'Familjen Grotesk', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.7);
+  }
+  .sidebar-project-desc {
+    font-size: 11px;
+    color: rgba(255,255,255,0.3);
+    font-family: Inter, sans-serif;
+  }
+  .sidebar-cta {
+    background: rgba(0,240,255,0.03);
+    border-color: rgba(0,240,255,0.08);
+  }
+  .sidebar-cta-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 48px;
+    padding: 0 28px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.25s ease;
+  }
+  .sidebar-cta-btn:hover {
+    background: rgba(255,255,255,0.12);
+    border-color: rgba(255,255,255,0.25);
+    transform: translateY(-1px);
+  }
+  .pagination-page:hover {
+    background: rgba(255,255,255,0.04) !important;
+    color: rgba(255,255,255,0.7) !important;
+  }
+  .pagination-arrow:hover {
+    border-color: rgba(255,255,255,0.15) !important;
+    color: rgba(255,255,255,0.7) !important;
+  }
+  @media (max-width: 900px) {
+    .blog-layout {
+      grid-template-columns: 1fr;
+    }
+    .blog-sidebar {
+      position: static;
+      order: -1;
+    }
+    .sidebar-cta {
+      display: none;
+    }
+  }
+  @media (max-width: 768px) {
+    .blog-main {
+      padding: 0 4px;
+    }
+    .featured-entrance {
+      margin-bottom: 40px !important;
+    }
+    .featured-entrance > div {
+      grid-template-columns: 1fr !important;
+    }
+    .featured-entrance img {
+      min-height: 200px !important;
+      height: 200px !important;
+    }
+    .featured-entrance > div > div:last-child {
+      padding: 24px !important;
+    }
+    .featured-entrance h2 {
+      font-size: 22px !important;
+    }
+  }
+  @media (max-width: 480px) {
+    .featured-entrance > div > div:last-child {
+      padding: 20px !important;
+    }
+    .featured-entrance h2 {
+      font-size: 20px !important;
+    }
+  }
+</style>
