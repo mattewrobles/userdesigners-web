@@ -75,13 +75,28 @@ import SkeletonMatch from "../components/ui/SkeletonMatch.astro";
   </div>
 
   <h2>Glows ambientales (blobs)</h2>
-  <p class="sub" style="margin-bottom:16px">Gradientes conic extraídos del CSS Framer original. Se usan con <code>filter: blur(32-70px)</code> + opacidad baja como fondos decorativos.</p>
-  <div class="swatches">
-    <div class="swatch"><div class="swatch-color" style="background:var(--glow-1);filter:blur(30px);transform:scale(1.4)"></div><div class="swatch-name">--glow-1<code>conic púrpura→azul→amarillo</code></div></div>
-    <div class="swatch"><div class="swatch-color" style="background:var(--glow-2);filter:blur(30px);transform:scale(1.4)"></div><div class="swatch-name">--glow-2<code>conic dorado→navy</code></div></div>
-    <div class="swatch"><div class="swatch-color" style="background:var(--glow-3);filter:blur(30px);transform:scale(1.4)"></div><div class="swatch-name">--glow-3<code>conic cielo→azul→cian</code></div></div>
-    <div class="swatch"><div class="swatch-color" style="background:var(--glow-hero);filter:blur(24px);transform:scale(1.4)"></div><div class="swatch-name">--glow-hero<code>linear dorado→rosa→lila</code></div></div>
-    <div class="swatch"><div class="swatch-color" style="background:var(--stroke-glow)"></div><div class="swatch-name">--stroke-glow<code>radial borde botón hero</code></div></div>
+  <p class="sub" style="margin-bottom:16px">Gradientes conic extraídos del CSS Framer original. Los blobs se usan con <code>filter: blur(32-70px)</code> + opacidad baja como fondos decorativos. Acá se muestran en su color real (izquierda: conic crudo, derecha: con blur como en producción).</p>
+  <div style="display:grid;gap:12px;max-width:720px">
+    <div style="display:flex;gap:12px;align-items:center">
+      <div style="width:110px;height:110px;border-radius:50%;background:var(--glow-1);border:1px solid var(--border-subtle)"></div>
+      <div style="width:110px;height:110px;border-radius:50%;background:var(--glow-1);filter:blur(32px);opacity:0.7"></div>
+      <div class="swatch-name">--glow-1<code style="display:block;color:var(--text-secondary);margin-top:4px">púrpura→azul→amarillo</code></div>
+    </div>
+    <div style="display:flex;gap:12px;align-items:center">
+      <div style="width:110px;height:110px;border-radius:50%;background:var(--glow-2);border:1px solid var(--border-subtle)"></div>
+      <div style="width:110px;height:110px;border-radius:50%;background:var(--glow-2);filter:blur(32px);opacity:0.7"></div>
+      <div class="swatch-name">--glow-2<code style="display:block;color:var(--text-secondary);margin-top:4px">dorado→navy</code></div>
+    </div>
+    <div style="display:flex;gap:12px;align-items:center">
+      <div style="width:110px;height:110px;border-radius:50%;background:var(--glow-3);border:1px solid var(--border-subtle)"></div>
+      <div style="width:110px;height:110px;border-radius:50%;background:var(--glow-3);filter:blur(32px);opacity:0.7"></div>
+      <div class="swatch-name">--glow-3<code style="display:block;color:var(--text-secondary);margin-top:4px">cielo→azul→cian</code></div>
+    </div>
+    <div style="display:flex;gap:12px;align-items:center">
+      <div style="width:110px;height:110px;border-radius:50%;background:var(--glow-hero);border:1px solid var(--border-subtle)"></div>
+      <div style="width:110px;height:110px;border-radius:50%;background:var(--glow-hero);filter:blur(24px);opacity:0.7"></div>
+      <div class="swatch-name">--glow-hero<code style="display:block;color:var(--text-secondary);margin-top:4px">dorado→rosa→lila</code></div>
+    </div>
   </div>
 
   <h2>Blur scale</h2>
@@ -232,6 +247,33 @@ import SkeletonMatch from "../components/ui/SkeletonMatch.astro";
     <div class="token">Breakpoints<br /><code>1440 / 810 / 480px</code></div>
     <div class="token">Motion easing<br /><code>ease-out cubic-bezier(0.22,1,0.36,1)</code></div>
     <div class="token">Duración<br /><code>0.1 / 0.2 / 0.3 / 0.5 / 0.7s</code></div>
+  </div>
+
+  <h2>Demo — todo junto</h2>
+  <p class="sub" style="margin-bottom:20px">Hero de muestra con todos los componentes combinados: LetterReveal, botones, badges, cards, glow y marquee.</p>
+  <div style="position:relative;border:1px solid var(--border-subtle);border-radius:24px;overflow:hidden;padding:64px 48px">
+    <div style="position:absolute;inset:0;pointer-events:none;overflow:hidden" aria-hidden="true">
+      <div style="position:absolute;top:-160px;right:-100px;width:480px;height:480px;border-radius:50%;background:var(--glow-3);filter:blur(70px);opacity:0.35"></div>
+      <div style="position:absolute;bottom:-180px;left:-80px;width:420px;height:420px;border-radius:50%;background:var(--glow-1);filter:blur(70px);opacity:0.25"></div>
+    </div>
+    <div style="position:relative;z-index:1">
+      <Badge variant="outline">UX · UI · Producto</Badge>
+      <div style="height:20px"></div>
+      <LetterReveal as="h1" role="display-2" style="font-family:var(--font-display);font-size:clamp(32px,5vw,56px);letter-spacing:-0.03em">Diseño digital que convierte usuarios en clientes</LetterReveal>
+      <div style="height:16px"></div>
+      <Text role="body-lg" style="max-width:520px">Design system, investigación y prototipado para bancos y fintechs en Latinoamérica.</Text>
+      <div style="height:32px"></div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <Button variant="primary" size="lg">Ver servicios</Button>
+        <Button variant="stroke" size="lg">Agenda una sesión</Button>
+      </div>
+      <div style="height:40px"></div>
+      <Marquee speed={30}>
+        <span style="display:flex;align-items:center;gap:12px;color:var(--text-secondary);font-size:14px;white-space:nowrap">
+          <Icon name="sparkle" size="sm" /> Productos reales <Icon name="sparkle" size="sm" /> Métricas medibles <Icon name="sparkle" size="sm" /> Diseño con propósito <Icon name="sparkle" size="sm" /> Equipo latinoamericano
+        </span>
+      </Marquee>
+    </div>
   </div>
 </main>
 

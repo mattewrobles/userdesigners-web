@@ -7,35 +7,39 @@ interface Props {
 
 const { speed = 20, reverse = false, gap = 48 } = Astro.props;
 const trackId = `marquee-${Math.random().toString(36).slice(2, 8)}`;
-const secondId = `${trackId}-copy`;
 ---
 
-<div class="marquee" id={trackId}>
+<div class="marquee" id={trackId} data-speed={speed} data-reverse={reverse} data-gap={gap}>
   <div class="marquee-track">
     <div class="marquee-group"><slot /></div>
     <div class="marquee-group" aria-hidden="true"><slot /></div>
   </div>
 </div>
 
-<script define:vars={{ speed, reverse, gap }}>
+<script>
   import { animate } from "motion";
 
-  const track = document.querySelector(`#${trackId} .marquee-track`);
-  const groups = track ? track.querySelectorAll(".marquee-group") : [];
+  document.querySelectorAll(".marquee").forEach((root) => {
+    const track = root.querySelector(".marquee-track");
+    const groups = root.querySelectorAll(".marquee-group");
+    const speed = Number(root.dataset.speed || 20);
+    const reverse = root.dataset.reverse === "true";
+    const gap = Number(root.dataset.gap || 48);
 
-  if (track && groups.length >= 2) {
-    const distance = groups[0].scrollWidth + gap;
-    animate(
-      track,
-      { x: [0, `-${distance}px`] },
-      {
-        duration: speed,
-        repeat: Infinity,
-        ease: "linear",
-        direction: reverse ? "reverse" : "normal",
-      }
-    );
-  }
+    if (track && groups.length >= 2) {
+      const distance = groups[0].scrollWidth + gap;
+      animate(
+        track,
+        { x: [0, `-${distance}px`] },
+        {
+          duration: speed,
+          repeat: Infinity,
+          ease: "linear",
+          direction: reverse ? "reverse" : "normal",
+        }
+      );
+    }
+  });
 </script>
 
 <style>

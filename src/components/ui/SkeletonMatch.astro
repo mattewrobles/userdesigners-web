@@ -15,9 +15,8 @@ const elId = `skmatch-${Math.random().toString(36).slice(2, 8)}`;
   </div>
 </div>
 
-<script define:vars={{ elId }}>
-  const el = document.getElementById(elId);
-  if (el) {
+<script is:inline>
+  document.querySelectorAll(".skmatch").forEach((el) => {
     const overlay = el.querySelector(".skmatch-overlay");
     const content = el.querySelector(".skmatch-content");
     const blocks = el.querySelector(".skmatch-blocks");
@@ -59,7 +58,7 @@ const elId = `skmatch-${Math.random().toString(36).slice(2, 8)}`;
       if (isLoad) renderBlocks();
     };
     sync();
-  }
+  });
 </script>
 
 <style>

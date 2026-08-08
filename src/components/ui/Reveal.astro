@@ -12,16 +12,29 @@ const Tag = as;
 const elId = `reveal-${Math.random().toString(36).slice(2, 8)}`;
 ---
 
-<Tag id={elId} class="reveal" style={`transition-delay:${delay}s`}>
+<Tag
+  id={elId}
+  class="reveal"
+  data-y={y}
+  data-blur={blur}
+  data-delay={delay}
+  data-once={once}
+  style={`transition-delay:${delay}s`}
+>
   <slot />
 </Tag>
 
-<script define:vars={{ elId, y, blur, delay, once }}>
+<script>
   import { animate, inView } from "motion";
 
   const el = document.getElementById(elId);
 
   if (el) {
+    const y = Number(el.dataset.y || 30);
+    const blur = el.dataset.blur === "true";
+    const delay = Number(el.dataset.delay || 0);
+    const once = el.dataset.once !== "false";
+
     const initial = {
       opacity: 0,
       transform: `translateY(${y}px)${blur ? " scale(0.99)" : ""}`,
