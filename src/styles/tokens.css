@@ -28,6 +28,9 @@
   /* ---------- Tipografía: fuentes ---------- */
   --ud-font-display: "Familjen Grotesk", "Inter", sans-serif;
   --ud-font-body: "DM Sans", "Inter", -apple-system, sans-serif;
+  --ud-font-subhead: "General Sans", "Inter", sans-serif;
+  --ud-font-ui: "Manrope", "Inter", sans-serif;
+  --ud-font-accent: "Clash Grotesk", "Inter", sans-serif;
   --ud-font-mono: "Geist Mono", "SF Mono", monospace;
 
   /* ---------- Radii ---------- */
@@ -93,26 +96,52 @@
   --glow-3: conic-gradient(from 0deg at 50% 50%, rgb(132, 217, 250) 0deg, rgb(18, 61, 255) 180deg, rgb(74, 222, 255) 360deg);
   --glow-hero: linear-gradient(#f6c65f 0%, rgba(227, 103, 83, 0.55) 48.13%, #998dd0 100%);
 
-  /* ---------- Tipografía: escala ---------- */
+  /* ---------- Tipografía: escala (reales Framer) ---------- */
   --font-display: var(--ud-font-display);
   --font-body: var(--ud-font-body);
+  --font-subhead: var(--ud-font-subhead);
+  --font-ui: var(--ud-font-ui);
+  --font-accent: var(--ud-font-accent);
   --font-mono: var(--ud-font-mono);
 
+  /* Escala cruda */
   --text-2xs: 11px;
-  --text-xs: 13px;
+  --text-xs: 12px;
   --text-sm: 14px;
-  --text-base: 16px;
-  --text-lg: 17px;
-  --text-xl: 19px;
+  --text-base: 15px;
+  --text-md: 17px;
+  --text-lg: 18px;
+  --text-xl: 20px;
   --text-2xl: 22px;
   --text-3xl: 24px;
-  --text-4xl: 42px;
-  --text-5xl: 49px;
-  --text-6xl: 64px;
-  --text-display: clamp(40px, 6.5vw, 76px);
-  --text-title: clamp(28px, 4vw, 48px);
+  --text-4xl: 32px;
+  --text-5xl: 40px;
+  --text-6xl: 42px;
+  --text-7xl: 49px;
+  --text-8xl: 64px;
+  --text-9xl: 74px;
+
+  /* Roles semánticos */
+  --display-1: clamp(42px, 6.5vw, 74px);        /* h1 hero */
+  --display-2: clamp(36px, 5vw, 49px);          /* h1 sección grande */
+  --heading-1: clamp(30px, 4vw, 42px);          /* h2 sección */
+  --heading-2: clamp(26px, 3.5vw, 40px);        /* h3 cards grandes */
+  --heading-3: clamp(22px, 3vw, 32px);          /* h3/h4 sub-sección */
+  --subheading: 22px;                            /* General Sans subtítulos */
+  --title: clamp(20px, 2.5vw, 24px);             /* títulos de card */
+  --body-lg: 17px;                               /* párrafos principales */
+  --body: 15px;                                  /* párrafos base */
+  --body-sm: 14px;                               /* textos secundarios */
+  --caption: 12px;                               /* captions */
+  --overline: 11px;                              /* labels */
+
+  --weight-light: 300;
+  --weight-regular: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
 
   --tracking-tight: -0.03em;
+  --tracking-snug: -0.02em;
   --tracking-normal: 0;
   --tracking-wide: 0.02em;
   --tracking-label: 0.12em;

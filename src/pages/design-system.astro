@@ -12,6 +12,7 @@ import SectionLabel from "../components/ui/SectionLabel.astro";
 import Marquee from "../components/ui/Marquee.astro";
 import LetterReveal from "../components/ui/LetterReveal.astro";
 import Skeleton from "../components/ui/Skeleton.astro";
+import SkeletonMatch from "../components/ui/SkeletonMatch.astro";
 ---
 
 <!doctype html>
@@ -96,14 +97,26 @@ import Skeleton from "../components/ui/Skeleton.astro";
   </div>
 
   <h2>Tipografía</h2>
-  <div style="display:grid;gap:16px">
-    <Text as="h1" size="display">Display</Text>
-    <Text as="h2" size="title">Title</Text>
-    <Text as="h2" size="3xl">Heading 3xl — 24px</Text>
-    <Text as="h3" size="xl">Heading xl — 19px</Text>
-    <Text size="base">Body base — 16px, DM Sans. El texto normal de la web.</Text>
-    <Text size="sm" color="secondary">Body small — 14px, secundario</Text>
-    <Text size="xs" color="tertiary" tracking="label">Label uppercase — 11px</Text>
+  <p class="sub" style="margin-bottom:16px">Familias reales: <code>Familjen Grotesk</code> (display + body), <code>General Sans</code> (subtítulos), <code>Manrope</code> (UI/nav), <code>Clash Grotesk</code> (acentos). Pesos: 300 / 500 / 600 / 700.</p>
+  <div style="display:grid;gap:14px;border:1px solid var(--border-subtle);border-radius:16px;padding:28px">
+    <Text as="h1" role="display-1">Display-1 — h1 hero (74px)</Text>
+    <Text as="h1" role="display-2">Display-2 — h1 sección grande (49px)</Text>
+    <Text as="h2" role="heading-1">Heading-1 — h2 sección (42px)</Text>
+    <Text as="h3" role="heading-2">Heading-2 — h3 cards grandes (40px)</Text>
+    <Text as="h4" role="heading-3">Heading-3 — h4 sub-sección (32px)</Text>
+    <Text as="h5" role="subheading">Subheading — General Sans (22px)</Text>
+    <Text as="h5" role="title">Title — título de card (24px)</Text>
+    <Text role="body-lg">Body-lg — párrafo principal (17px)</Text>
+    <Text role="body">Body — párrafo base (15px)</Text>
+    <Text role="body-sm">Body-sm — texto secundario (14px)</Text>
+    <Text role="caption">Caption — (12px)</Text>
+    <Text role="overline">Overline — label uppercase (11px)</Text>
+  </div>
+  <div style="display:flex;gap:24px;flex-wrap:wrap;margin-top:20px;align-items:center">
+    <span style="font-weight:300;font-size:20px">Light 300</span>
+    <span style="font-weight:500;font-size:20px">Regular 500</span>
+    <span style="font-weight:600;font-size:20px">Semibold 600</span>
+    <span style="font-weight:700;font-size:20px">Bold 700</span>
   </div>
 
   <h2>Botones</h2>
@@ -170,6 +183,18 @@ import Skeleton from "../components/ui/Skeleton.astro";
     <Skeleton variant="image" width="200px" />
     <Skeleton variant="button" />
   </div>
+  <h3 style="margin-top:24px">SkeletonMatch — se adapta al contenido real</h3>
+  <p class="sub" style="margin-bottom:16px">Envuelve el componente y muestra el skeleton sobre su forma exacta (mide el layout). Mismo patrón que skeleton-elements.</p>
+  <SkeletonMatch>
+    <Card style="width:360px">
+      <h3 style="font-size:16px;margin-bottom:8px">Card con skeleton adaptativo</h3>
+      <p style="color:var(--text-secondary);font-size:14px;line-height:1.6">Este contenido real es el que se mide. El skeleton se dibuja encima con la misma forma: títulos, párrafos y el card.</p>
+      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+        <span style="padding:4px 12px;border:1px solid var(--border-subtle);border-radius:20px;font-size:12px">Tag uno</span>
+        <span style="padding:4px 12px;border:1px solid var(--border-subtle);border-radius:20px;font-size:12px">Tag dos</span>
+      </div>
+    </Card>
+  </SkeletonMatch>
 
   <h2>Animaciones (motion.dev)</h2>
   <div style="display:grid;gap:24px">
