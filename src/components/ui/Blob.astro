@@ -51,6 +51,15 @@ const position = [top && `top:${top}`, right && `right:${right}`, bottom && `bot
   }
   function randomBetween(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
 
+  // forma orgánica aleatoria: border-radius asimétrico (30-70% por esquina)
+  function randomBlobRadius() {
+    const r1 = randomBetween(35, 65), r2 = randomBetween(35, 65);
+    const r3 = randomBetween(35, 65), r4 = randomBetween(35, 65);
+    const r5 = randomBetween(35, 65), r6 = randomBetween(35, 65);
+    const r7 = randomBetween(35, 65), r8 = randomBetween(35, 65);
+    return `${r1}% ${r2}% ${r3}% ${r4}% / ${r5}% ${r6}% ${r7}% ${r8}%`;
+  }
+
   document.querySelectorAll(".blob").forEach((el, i) => {
     const speed = Number(el.dataset.speed || 30);
     const reverse = i % 2 === 1;
@@ -65,6 +74,20 @@ const position = [top && `top:${top}`, right && `right:${right}`, bottom && `bot
     const c3 = `hsl(${(hue + randomBetween(140, 200)) % 360}, ${sat}%, ${Math.min(70, light + 10)}%)`;
     if (shape) {
       shape.style.background = `linear-gradient(140deg, ${base} 0%, ${alt} 45%, ${c3} 75%, ${base} 100%)`;
+      // forma orgánica inicial aleatoria (distinta en cada carga)
+      shape.style.borderRadius = randomBlobRadius();
+    }
+
+    // deformación continua: el border-radius morphea entre formas orgánicas
+    if (el.dataset.float === "true" && shape) {
+      animate(
+        shape,
+        {
+          borderRadius: [randomBlobRadius(), randomBlobRadius(), randomBlobRadius(), randomBlobRadius(), randomBlobRadius()],
+          scale: [1, 1.12, 0.94, 1.08, 1],
+        },
+        { duration: speed * 2.4, repeat: Infinity, ease: "easeInOut" }
+      );
     }
 
     // flotación suave del contenedor
@@ -78,7 +101,7 @@ const position = [top && `top:${top}`, right && `right:${right}`, bottom && `bot
         { duration: speed * 1.8, repeat: Infinity, ease: "easeInOut" }
       );
     }
-    // rotación del óvalo (el gradiente gira → el color se mueve)
+    // rotación del óvalo
     if (el.dataset.rotate === "true" && shape) {
       animate(
         shape,
@@ -98,14 +121,13 @@ const position = [top && `top:${top}`, right && `right:${right}`, bottom && `bot
     width: var(--blob-size);
     height: calc(var(--blob-size) * 1.27);
   }
-  /* el óvalo con gradiente: rota para que el color se mueva */
+  /* el blob orgánico: border-radius aleatorio (lo genera el JS por carga) */
   .blob-shape {
     position: absolute;
     inset: 0;
-    border-radius: 888px;
     filter: blur(var(--blob-blur));
     -webkit-filter: blur(var(--blob-blur));
     opacity: var(--blob-opacity);
-    will-change: transform, background;
+    will-change: transform, border-radius, background, scale;
   }
 </style>
