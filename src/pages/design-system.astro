@@ -76,14 +76,11 @@ import Blob from "../components/ui/Blob.astro";
   </div>
 
   <h2>Glows ambientales (blobs)</h2>
-  <p class="sub" style="margin-bottom:16px">En Framer los blobs son figuras orgánicas con blur <strong>moderado</strong> — el color se sigue notando (no blur exagerado). El home usa un canvas que dibuja gradientes dinámicos que cambian de forma y color.</p>
-  <div style="position:relative;border:1px solid var(--border-subtle);border-radius:20px;overflow:hidden;height:320px;background:var(--surface-1)">
-    <Blob variant="1" size={420} blur={12} opacity={0.55} top="10px" left="8%" speed={36} />
-    <Blob variant="2" size={340} blur={10} opacity={0.5} bottom="0px" right="4%" speed={42} />
-    <Blob variant="3" size={380} blur={14} opacity={0.55} top="25%" left="58%" speed={28} />
-    <Blob variant="hero" size={280} blur={8} opacity={0.5} bottom="8%" left="32%" speed={50} />
+  <p class="sub" style="margin-bottom:16px">Patrón real del home: el blob va en una esquina (no cubre todo), es una figura orgánica SVG (elipses rotadas + gradientes fade) con <code>blur 60px</code> + <code>mix-blend-mode: hard-light</code>. El color cambia en cada carga, como el canvas del home.</p>
+  <div style="position:relative;border:1px solid var(--border-subtle);border-radius:20px;overflow:hidden;height:300px;background:var(--surface-1)">
+    <Blob variant="1" size={320} top="12%" left="50%" speed={25} />
     <div style="position:relative;z-index:1;padding:24px;color:var(--text-secondary);font-size:14px">
-      Blobs animados — forma orgánica + blur moderado (el color se nota), como el canvas del home
+      Un blob en el hero — figura orgánica, blur 60px, hard-light. Refresca para ver el color cambiar.
     </div>
   </div>
 
@@ -250,12 +247,9 @@ import Blob from "../components/ui/Blob.astro";
   <p class="sub" style="margin-top:16px">Convención para componentes nuevos: <code>@media (max-width: 809.98px)</code> para mobile, <code>@media (min-width: 810px) and (max-width: 1439.98px)</code> para tablet. Ejemplo: <code>--space-section</code> baja de 110px → 80px en mobile, y la escala tipográfica se ajusta en compact (&lt;480px).</p>
 
   <h2>Demo — todo junto</h2>
-  <p class="sub" style="margin-bottom:20px">Hero de muestra con todos los componentes combinados: LetterReveal, botones, badges, cards, glow y marquee.</p>
+  <p class="sub" style="margin-bottom:20px">Hero de muestra con todos los componentes combinados: LetterReveal, botones, badges, un solo blob en la esquina (como el home) y marquee.</p>
   <div style="position:relative;border:1px solid var(--border-subtle);border-radius:24px;overflow:hidden;padding:64px 48px">
-    <div style="position:absolute;inset:0;pointer-events:none;overflow:hidden" aria-hidden="true">
-      <div style="position:absolute;top:-160px;right:-100px;width:480px;height:480px;border-radius:50%;background:var(--glow-3);filter:blur(70px);opacity:0.35"></div>
-      <div style="position:absolute;bottom:-180px;left:-80px;width:420px;height:420px;border-radius:50%;background:var(--glow-1);filter:blur(70px);opacity:0.25"></div>
-    </div>
+    <Blob variant="3" size={340} blur={60} opacity={0.4} top="8%" right="-60px" speed={30} />
     <div style="position:relative;z-index:1">
       <Badge variant="outline">UX · UI · Producto</Badge>
       <div style="height:20px"></div>

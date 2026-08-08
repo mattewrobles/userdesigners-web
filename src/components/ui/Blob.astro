@@ -1,11 +1,12 @@
 ---
 interface Props {
   variant?: "1" | "2" | "3" | "hero";
-  size?: number;      // ancho en px del blob
-  blur?: number;      // blur en px (moderado: 8-24, NO exagerado)
+  size?: number;      // tamaño del blob en px
+  blur?: number;      // blur en px
   opacity?: number;
-  rotate?: boolean;   // animar rotación
-  speed?: number;     // segundos por rotación
+  blend?: "hard-light" | "overlay" | "normal";
+  rotate?: boolean;
+  speed?: number;
   top?: string;
   right?: string;
   bottom?: string;
@@ -15,15 +16,15 @@ interface Props {
 
 const {
   variant = "3",
-  size = 500,
-  blur = 14,
-  opacity = 0.5,
+  size = 320,
+  blur = 60,
+  opacity = 0.4,
+  blend = "hard-light",
   rotate = true,
   speed = 30,
   top, right, bottom, left,
   style: extraStyle,
 } = Astro.props;
-const glowVar = variant === "1" ? "var(--glow-1)" : variant === "2" ? "var(--glow-2)" : variant === "hero" ? "var(--glow-hero)" : "var(--glow-3)";
 const position = [top && `top:${top}`, right && `right:${right}`, bottom && `bottom:${bottom}`, left && `left:${left}`].filter(Boolean).join(";");
 ---
 
@@ -31,54 +32,86 @@ const position = [top && `top:${top}`, right && `right:${right}`, bottom && `bot
   class="blob"
   data-rotate={rotate}
   data-speed={speed}
-  style={`--blob-size:${size}px;--blob-blur:${blur}px;--blob-opacity:${opacity};--blob-glow:${glowVar};${position}${extraStyle ? ";" + extraStyle : ""}`}
+  data-variant={variant}
+  style={`--blob-size:${size}px;--blob-blur:${blur}px;--blob-opacity:${opacity};--blob-blend:${blend};${position}${extraStyle ? ";" + extraStyle : ""}`}
   aria-hidden="true"
 ></div>
+
+<script>
+  // Patrón del blog (generateBlobSVG): elipses orgánicas + gradientes fade + hard-light.
+  // Los colores son dinámicos por variante, como el canvas del home que cambia por página.
+  function rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+  function randomBetween(min, max) { return rand(min, max); }
+  function randomHue() {
+    const ranges = [[0, 100], [170, 360]];
+    const r = ranges[Math.floor(Math.random() * ranges.length)];
+    return r[0] + Math.floor(Math.random() * (r[1] - r[0]));
+  }
+  function randomSaturation() { return 80 + Math.floor(Math.random() * 20); }
+  function randomLightness() { return 50 + Math.floor(Math.random() * 20); }
+  function randomAngle() { return Math.floor(Math.random() * 360); }
+
+  function generateBlobSVG(index) {
+    const hue = randomHue();
+    const sat = randomSaturation();
+    const light = randomLightness();
+    const baseColor = `hsl(${hue}, ${sat}%, ${light}%)`;
+    const altHue = (hue + randomBetween(30, 120)) % 360;
+    const altColor = `hsl(${altHue}, ${sat}%, ${light}%)`;
+    const cx = 300, cy = 300;
+    const ellipses = [];
+    const grads = [];
+    const letters = ["a", "b", "c", "d"];
+    const rx1 = randomBetween(80, 160);
+    const ry1 = randomBetween(200, 350);
+    const rot1 = randomAngle();
+    const t1 = `matrix(${Math.cos(rot1 * Math.PI / 180)}, ${Math.sin(rot1 * Math.PI / 180)}, ${-Math.sin(rot1 * Math.PI / 180)}, ${Math.cos(rot1 * Math.PI / 180)}, ${cx}, ${cy})`;
+    ellipses.push(`<ellipse cx="${rx1}" cy="${ry1}" fill="${baseColor}" rx="${rx1}" ry="${ry1}" transform="${t1}"></ellipse>`);
+    for (let i = 0; i < 4; i++) {
+      const rx = randomBetween(60, 150);
+      const ry = randomBetween(180, 350);
+      const rot = randomAngle();
+      const gradId = `blob-${index}-${letters[i]}`;
+      const color = i % 2 === 0 ? baseColor : altColor;
+      const t = `matrix(${Math.cos(rot * Math.PI / 180)}, ${Math.sin(rot * Math.PI / 180)}, ${-Math.sin(rot * Math.PI / 180)}, ${Math.cos(rot * Math.PI / 180)}, ${cx + randomBetween(-40, 40)}, ${cy + randomBetween(-40, 40)})`;
+      ellipses.push(`<ellipse cx="${rx}" cy="${ry}" fill="url(#${gradId})" rx="${rx}" ry="${ry}" transform="${t}"></ellipse>`);
+      grads.push(`<linearGradient gradientUnits="userSpaceOnUse" id="${gradId}" x1="${rx}" x2="${rx}" y1="0" y2="${ry * 2}"><stop stop-color="${color}"></stop><stop offset="1" stop-opacity="0"></stop></linearGradient>`);
+    }
+    return `<svg viewBox="0 0 600 600" fill="none" xmlns="http://www.w3.org/2000/svg"><g opacity="0.4" style="mix-blend-mode:hard-light">${ellipses.join("")}</g><defs>${grads.join("")}</defs></svg>`;
+  }
+
+  document.querySelectorAll(".blob").forEach((el, index) => {
+    el.innerHTML = generateBlobSVG(index);
+    el.style.opacity = "1";
+
+    const svg = el.querySelector("svg");
+    if (svg && el.dataset.rotate === "true") {
+      const speed = Number(el.dataset.speed || 30);
+      const reverse = index % 2 === 1;
+      import("motion").then(({ animate }) => {
+        animate(
+          svg,
+          { transform: ["rotate(0deg)", `rotate(${reverse ? -360 : 360}deg)`] },
+          { duration: speed, repeat: Infinity, ease: "linear" }
+        );
+      });
+    }
+  });
+</script>
 
 <style>
   .blob {
     position: absolute;
+    border-radius: 0;
+    will-change: transform, opacity;
     pointer-events: none;
     z-index: 0;
+    opacity: 0; /* aparece cuando el JS genera el SVG */
   }
-  /* forma orgánica: elipse suave, radio alto, blur MODERADO (el color se nota) */
-  .blob::before {
-    content: "";
-    position: absolute;
+  .blob svg {
     width: var(--blob-size);
-    height: calc(var(--blob-size) * 0.68);
-    border-radius: 60% 40% 55% 45% / 50% 55% 45% 50%;
-    background: var(--blob-glow);
-    filter: blur(var(--blob-blur));
-    -webkit-filter: blur(var(--blob-blur));
-    opacity: var(--blob-opacity);
-    transform: translate(-50%, -50%);
-  }
-  /* capa interna con variación de forma */
-  .blob::after {
-    content: "";
-    position: absolute;
-    width: calc(var(--blob-size) * 0.55);
-    height: calc(var(--blob-size) * 0.55);
-    border-radius: 50% 50% 45% 55% / 55% 45% 55% 45%;
-    background: var(--blob-glow);
-    filter: blur(calc(var(--blob-blur) * 0.6));
-    -webkit-filter: blur(calc(var(--blob-blur) * 0.6));
-    opacity: calc(var(--blob-opacity) * 0.7);
-    transform: translate(-50%, -50%) rotate(35deg);
+    height: var(--blob-size);
+    display: block;
+    will-change: transform;
   }
 </style>
-
-<script>
-  import { animate } from "motion";
-
-  document.querySelectorAll(".blob").forEach((el) => {
-    if (el.dataset.rotate !== "true") return;
-    const speed = Number(el.dataset.speed || 30);
-    animate(
-      el,
-      { transform: ["rotate(0deg)", "rotate(360deg)"] },
-      { duration: speed, repeat: Infinity, ease: "linear" }
-    );
-  });
-</script>

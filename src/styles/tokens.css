@@ -180,7 +180,7 @@
   --radius-lg: var(--ud-radius-lg);
   --radius-xl: var(--ud-radius-xl);
   --radius-card: var(--ud-radius-xl);
-  --radius-btn: var(--ud-radius-lg);
+  --radius-btn: 12px; /* botones del hero home (Ver servicios) — uniforme para todas las variantes */
   --radius-pill: var(--ud-radius-full);
 
   /* ---------- Blur (semánticos) ---------- */

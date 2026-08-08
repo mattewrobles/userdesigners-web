@@ -90,12 +90,11 @@ const classes = `btn btn--${variant} btn--${size}`;
     text-underline-offset: 4px;
   }
   .btn--link:hover { opacity: 0.85; }
-
   /* Stroke — botón del hero (borde blanco animado, como Framer) */
   .btn--stroke {
     background: rgba(255, 255, 255, 0.05);
     border: none;
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius-btn);
     color: var(--text-primary);
     overflow: visible;
     padding: 12px 20px;
@@ -103,7 +102,7 @@ const classes = `btn btn--${variant} btn--${size}`;
   .btn-stroke {
     position: absolute;
     inset: 0;
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius-btn);
     padding: 1px;
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
@@ -126,7 +125,7 @@ const classes = `btn btn--${variant} btn--${size}`;
     position: absolute;
     inset: 2px;
     background: var(--stroke-fill);
-    border-radius: calc(var(--radius-sm) - 2px);
+    border-radius: calc(var(--radius-btn) - 2px);
     pointer-events: none;
   }
   .btn-label { position: relative; z-index: 1; }
