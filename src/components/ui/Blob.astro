@@ -2,7 +2,7 @@
 interface Props {
   variant?: "1" | "2" | "3" | "hero";
   size?: number;      // ancho en px del blob
-  blur?: number;      // blur en px
+  blur?: number;      // blur en px (moderado: 8-24, NO exagerado)
   opacity?: number;
   rotate?: boolean;   // animar rotación
   speed?: number;     // segundos por rotación
@@ -16,20 +16,18 @@ interface Props {
 const {
   variant = "3",
   size = 500,
-  blur = 32,
-  opacity = 0.32,
+  blur = 14,
+  opacity = 0.5,
   rotate = true,
   speed = 30,
   top, right, bottom, left,
   style: extraStyle,
 } = Astro.props;
-const elId = `blob-${Math.random().toString(36).slice(2, 8)}`;
 const glowVar = variant === "1" ? "var(--glow-1)" : variant === "2" ? "var(--glow-2)" : variant === "hero" ? "var(--glow-hero)" : "var(--glow-3)";
 const position = [top && `top:${top}`, right && `right:${right}`, bottom && `bottom:${bottom}`, left && `left:${left}`].filter(Boolean).join(";");
 ---
 
 <div
-  id={elId}
   class="blob"
   data-rotate={rotate}
   data-speed={speed}
@@ -43,31 +41,31 @@ const position = [top && `top:${top}`, right && `right:${right}`, bottom && `bot
     pointer-events: none;
     z-index: 0;
   }
-  /* capa exterior: elipse orgánica (radius 500px = forma blob, no círculo) */
+  /* forma orgánica: elipse suave, radio alto, blur MODERADO (el color se nota) */
   .blob::before {
     content: "";
     position: absolute;
     width: var(--blob-size);
-    height: calc(var(--blob-size) * 0.72); /* 72% = forma estirada tipo blob, no perfecta */
-    border-radius: 500px;
+    height: calc(var(--blob-size) * 0.68);
+    border-radius: 60% 40% 55% 45% / 50% 55% 45% 50%;
     background: var(--blob-glow);
     filter: blur(var(--blob-blur));
     -webkit-filter: blur(var(--blob-blur));
     opacity: var(--blob-opacity);
     transform: translate(-50%, -50%);
   }
-  /* capa interior: conic con radio más pequeño para variación orgánica */
+  /* capa interna con variación de forma */
   .blob::after {
     content: "";
     position: absolute;
     width: calc(var(--blob-size) * 0.55);
     height: calc(var(--blob-size) * 0.55);
-    border-radius: 50%;
+    border-radius: 50% 50% 45% 55% / 55% 45% 55% 45%;
     background: var(--blob-glow);
-    filter: blur(calc(var(--blob-blur) * 0.5));
-    -webkit-filter: blur(calc(var(--blob-blur) * 0.5));
-    opacity: 0.5;
-    transform: translate(-50%, -50%) rotate(30deg);
+    filter: blur(calc(var(--blob-blur) * 0.6));
+    -webkit-filter: blur(calc(var(--blob-blur) * 0.6));
+    opacity: calc(var(--blob-opacity) * 0.7);
+    transform: translate(-50%, -50%) rotate(35deg);
   }
 </style>
 
@@ -77,8 +75,6 @@ const position = [top && `top:${top}`, right && `right:${right}`, bottom && `bot
   document.querySelectorAll(".blob").forEach((el) => {
     if (el.dataset.rotate !== "true") return;
     const speed = Number(el.dataset.speed || 30);
-    // rota la capa conic (::before no es animable por JS directamente,
-    // así que aplicamos rotación al contenedor con la forma orgánica)
     animate(
       el,
       { transform: ["rotate(0deg)", "rotate(360deg)"] },

@@ -76,14 +76,14 @@ import Blob from "../components/ui/Blob.astro";
   </div>
 
   <h2>Glows ambientales (blobs)</h2>
-  <p class="sub" style="margin-bottom:16px">En Framer los blobs NO son círculos: son elipses orgánicas con <code>border-radius:500px</code> + blur + rotación lenta animada. Este es el componente <code>Blob</code> que lo replica.</p>
+  <p class="sub" style="margin-bottom:16px">En Framer los blobs son figuras orgánicas con blur <strong>moderado</strong> — el color se sigue notando (no blur exagerado). El home usa un canvas que dibuja gradientes dinámicos que cambian de forma y color.</p>
   <div style="position:relative;border:1px solid var(--border-subtle);border-radius:20px;overflow:hidden;height:320px;background:var(--surface-1)">
-    <Blob variant="1" size={460} blur={48} opacity={0.4} top="20px" left="10%" speed={36} />
-    <Blob variant="2" size={380} blur={32} opacity={0.35} bottom="0px" right="5%" speed={42} />
-    <Blob variant="3" size={420} blur={40} opacity={0.38} top="30%" left="60%" speed={28} />
-    <Blob variant="hero" size={300} blur={24} opacity={0.3} bottom="10%" left="35%" speed={50} />
+    <Blob variant="1" size={420} blur={12} opacity={0.55} top="10px" left="8%" speed={36} />
+    <Blob variant="2" size={340} blur={10} opacity={0.5} bottom="0px" right="4%" speed={42} />
+    <Blob variant="3" size={380} blur={14} opacity={0.55} top="25%" left="58%" speed={28} />
+    <Blob variant="hero" size={280} blur={8} opacity={0.5} bottom="8%" left="32%" speed={50} />
     <div style="position:relative;z-index:1;padding:24px;color:var(--text-secondary);font-size:14px">
-      Blobs animados — formas orgánicas con rotación lenta (motion.dev)
+      Blobs animados — forma orgánica + blur moderado (el color se nota), como el canvas del home
     </div>
   </div>
 
