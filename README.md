@@ -1,46 +1,41 @@
-# Astro Starter Kit: Basics
+# UserDesigners Web
 
-```sh
-npm create astro@latest -- --template basics
+Sitio web de [UserDesigners](https://www.userdesigners.com) — Agencia de UX/UI especializada en Fintechs.
+
+## Stack
+
+- **Framework:** Astro 7 (static output)
+- **Despliegue:** Cloudflare Pages (auto-deploy via GitHub Actions)
+- **Blog:** Content collections (Markdown)
+
+## Estado del proyecto
+
+El sitio fue migrado de Framer a Astro. Migración en progreso:
+- **Páginas nativas Astro:** `/blog`, `/blog/:slug`, `/seo-doctores`
+- **Páginas Framer (HTML estático):** `/`, `/servicios`, `/nosotros`, `/contacto`, `/proyectos`, `/proyectos/:slug`
+- **Plan de refactor:** `REFACTOR-PLAN.md`
+
+## Comandos
+
+```bash
+npm run dev          # localhost:4321
+npm run build        # build a dist/
+npm run preview      # preview build local
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Estructura
 
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
+```
+src/
+├── components/      # Navbar, Footer, secciones
+├── content/blog/    # Blog posts en markdown
+├── layouts/         # BaseLayout, BlogPost
+├── pages/           # Páginas Astro + proxies Framer
+├── styles/          # CSS global + CSS heredado de Framer
+└── assets/          # Assets locales (SVG, etc.)
 ```
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+## Branches
 
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+- `main` — producción
+- `refactor/test-fase1` — refactor en progreso (Fase 1)

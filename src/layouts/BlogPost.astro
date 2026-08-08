@@ -12,7 +12,7 @@ interface Props {
 const { post } = Astro.props;
 const { title, category, date, updatedDate, readTime, heroImage, ogImage } = post.data;
 const { Content } = await render(post);
-const framerCSS = fs.readFileSync("src/styles/framer-global.css", "utf-8");
+const framerCSS = fs.readFileSync("src/styles/framer.css", "utf-8");
 const ogImgFinal = ogImage || heroImage;
 ---
 
