@@ -24,7 +24,7 @@ const classes = `btn btn--${variant} btn--${size}`;
     <a href={href} class={classes} target={target} rel={rel || (target === "_blank" ? "noopener" : undefined)}>
       {variant === "stroke" && (
         <>
-          <span class="btn-stroke" aria-hidden="true"></span>
+          <span class="btn-stroke" aria-hidden="true"><span class="btn-orbit"></span></span>
           <span class="btn-fill" aria-hidden="true"></span>
         </>
       )}
@@ -34,7 +34,7 @@ const classes = `btn btn--${variant} btn--${size}`;
     <button class={classes}>
       {variant === "stroke" && (
         <>
-          <span class="btn-stroke" aria-hidden="true"></span>
+          <span class="btn-stroke" aria-hidden="true"><span class="btn-orbit"></span></span>
           <span class="btn-fill" aria-hidden="true"></span>
         </>
       )}
@@ -99,29 +99,36 @@ const classes = `btn btn--${variant} btn--${size}`;
     overflow: visible;
     padding: 12px 20px;
   }
-  /* Halo exterior: el spot de luz recorre el borde por fuera (como Framer) */
+  /* Halo exterior: spot de luz que orbita el borde por fuera (fluido, como Framer Motion) */
   .btn-stroke {
     position: absolute;
     inset: -2px; /* se proyecta por fuera del botón */
     border-radius: calc(var(--radius-btn) + 2px);
     overflow: hidden;
     pointer-events: none;
-    filter: blur(2px);
-    -webkit-filter: blur(2px);
   }
-  .btn-stroke::before {
+  /* contenedor de órbita: más ancho que alto → la rotación genera elipse fluida */
+  .btn-orbit {
+    position: absolute;
+    inset: -20px -60px;
+    animation: btn-orbit-spin 4s linear infinite;
+    will-change: transform;
+  }
+  .btn--stroke:hover .btn-orbit {
+    animation-duration: 1.8s; /* acelerar en hover */
+  }
+  /* el spot en el borde superior del contenedor rotante */
+  .btn-orbit::before {
     content: "";
     position: absolute;
-    width: 40%;
-    height: 60%;
     left: 50%;
-    top: 50%;
-    background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.35) 45%, rgba(255, 255, 255, 0) 75%);
+    top: 0;
+    width: 44px;
+    height: 44px;
     transform: translate(-50%, -50%);
-    animation: btn-stroke-orbit 4s var(--ease-in-out) infinite;
-  }
-  .btn--stroke:hover .btn-stroke::before {
-    animation-duration: 1.8s; /* acelerar en hover */
+    background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.35) 45%, rgba(255, 255, 255, 0) 75%);
+    filter: blur(2px);
+    -webkit-filter: blur(2px);
   }
   .btn-fill {
     position: absolute;
@@ -132,13 +139,10 @@ const classes = `btn btn--${variant} btn--${size}`;
   }
   .btn-label { position: relative; z-index: 1; }
 
-  /* El spot orbita el borde del botón */
-  @keyframes btn-stroke-orbit {
-    0%   { transform: translate(-50%, -50%) translate(-150%, 0) rotate(0deg); }
-    25%  { transform: translate(-50%, -50%) translate(0, -150%) rotate(90deg); }
-    50%  { transform: translate(-50%, -50%) translate(150%, 0) rotate(180deg); }
-    75%  { transform: translate(-50%, -50%) translate(0, 150%) rotate(270deg); }
-    100% { transform: translate(-50%, -50%) translate(-150%, 0) rotate(360deg); }
+  /* rotación lineal continua = órbita fluida, sin saltos */
+  @keyframes btn-orbit-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
   }
 
   /* Danger — para acciones destructivas */
