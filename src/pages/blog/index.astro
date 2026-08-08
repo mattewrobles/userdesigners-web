@@ -58,7 +58,8 @@ const framerCSS = fs.readFileSync("src/styles/framer.css", "utf-8")
   })} />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600&family=Inter:wght@400;500;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles/tokens.css" />
   <style is:global set:html={framerCSS}></style>
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-PDZVJDG9Y5"></script>
@@ -77,7 +78,7 @@ const framerCSS = fs.readFileSync("src/styles/framer.css", "utf-8")
     })(window, document, "clarity", "script", "xytbbmamwh");
   </script>
 </head>
-<body style="margin:0;background-color:#030303;color:#fff;font-family:Inter,sans-serif;overflow-x:hidden">
+<body style="margin:0;background-color:#030303;color:var(--text-primary);font-family:Inter,sans-serif;overflow-x:hidden">
   <Navbar />
 
   <main style="position:relative;z-index:1;padding:0">
@@ -121,11 +122,11 @@ const framerCSS = fs.readFileSync("src/styles/framer.css", "utf-8")
           {categories.length <= 6 ? (
             <div style="display:flex;gap:8px;flex-wrap:wrap" id="blog-filters">
               {categories.map(cat => (
-                <button class="blog-filter" data-filter={cat} style="all:unset;cursor:pointer;padding:6px 16px;border-radius:40px;font-size:14px;font-family:Inter,sans-serif;color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);transition:all 0.2s">{cat}</button>
+                <button class="blog-filter" data-filter={cat} style="all:unset;cursor:pointer;padding:6px 16px;border-radius:40px;font-size:14px;font-family:Inter,sans-serif;color:var(--text-secondary);background:var(--surface-2);border:1px solid var(--border-subtle);transition:all 0.2s">{cat}</button>
               ))}
             </div>
           ) : (
-            <select id="blog-filters" style="padding:8px 16px;border-radius:12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.7);font-size:14px;font-family:Inter,sans-serif;outline:none;cursor:pointer">
+            <select id="blog-filters" style="padding:8px 16px;border-radius:12px;background:var(--surface-2);border:1px solid var(--border-subtle);color:var(--text-primary);font-size:14px;font-family:Inter,sans-serif;outline:none;cursor:pointer">
               <option value="all" style="background:#030303">Todas las categorías</option>
               {categories.map(cat => (
                 <option value={cat} style="background:#030303">{cat}</option>
@@ -289,9 +290,9 @@ const framerCSS = fs.readFileSync("src/styles/framer.css", "utf-8")
           filterContainer.querySelectorAll(".blog-filter").forEach(b => {
             const isActive = b === btn;
             b.setAttribute("aria-pressed", String(isActive));
-            b.style.color = isActive ? "#030303" : "rgba(255,255,255,0.5)";
-            b.style.background = isActive ? "#fff" : "rgba(255,255,255,0.03)";
-            b.style.borderColor = isActive ? "#fff" : "rgba(255,255,255,0.06)";
+            b.style.color = isActive ? "#030303" : "var(--text-secondary)";
+            b.style.background = isActive ? "#fff" : "var(--surface-2)";
+            b.style.borderColor = isActive ? "#fff" : "var(--border-subtle)";
           });
           applyFilter(value);
         });
@@ -322,9 +323,9 @@ const framerCSS = fs.readFileSync("src/styles/framer.css", "utf-8")
   .framer-wse24v { margin-left: auto !important; margin-right: auto !important; }
   .framer-WOlJs { background-color: #030303 !important; padding-top: 0 !important; margin-left: auto !important; margin-right: auto !important; }
   .framer-WOlJs.framer-v-ib24dp { padding-top: 0 !important; }
-  .blog-card:hover { border-color: rgba(255,255,255,0.15) !important; background: rgba(255,255,255,0.04) !important; }
+  .blog-card:hover { border-color: var(--border-strong) !important; background: var(--surface-2) !important; }
   .blog-card:hover img { transform: scale(1.05); }
-  main section:nth-child(2) > a:hover { border-color: rgba(255,255,255,0.15) !important; }
+  main section:nth-child(2) > a:hover { border-color: var(--border-strong) !important; }
 
   .blog-hero {
     position: relative;
@@ -401,9 +402,9 @@ const framerCSS = fs.readFileSync("src/styles/framer.css", "utf-8")
     font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.6);
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.06);
+    color: var(--text-primary);
+    background: var(--surface-2);
+    border: 1px solid var(--border-subtle);
     margin-bottom: 24px;
     opacity: 0;
     filter: blur(10px);
@@ -415,7 +416,7 @@ const framerCSS = fs.readFileSync("src/styles/framer.css", "utf-8")
     font-weight: 500;
     line-height: 1.05;
     letter-spacing: -0.04em;
-    color: #fff;
+    color: var(--text-primary);
     margin: 0 0 24px;
     text-wrap: balance;
   }
@@ -430,7 +431,7 @@ const framerCSS = fs.readFileSync("src/styles/framer.css", "utf-8")
     white-space: nowrap;
   }
   .hero-sub {
-    color: rgba(255,255,255,0.4);
+    color: var(--text-tertiary);
     font-size: 18px;
     max-width: 520px;
     line-height: 1.7;
@@ -459,21 +460,21 @@ const framerCSS = fs.readFileSync("src/styles/framer.css", "utf-8")
     font-family: "Familjen Grotesk", sans-serif;
     font-size: 32px;
     font-weight: 600;
-    color: #fff;
+    color: var(--text-primary);
     letter-spacing: -0.03em;
     line-height: 1;
   }
   .hero-stat-label {
     font-family: "Inter", sans-serif;
     font-size: 13px;
-    color: rgba(255,255,255,0.35);
+    color: var(--text-secondary);
     letter-spacing: 0.02em;
     text-transform: uppercase;
   }
   .hero-stat-divider {
     width: 1px;
     height: 40px;
-    background: rgba(255,255,255,0.08);
+    background: var(--surface-glass);
   }
   .featured-entrance {
     opacity: 0;
