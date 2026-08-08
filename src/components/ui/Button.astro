@@ -1,0 +1,70 @@
+---
+interface Props {
+  href?: string;
+  variant?: "primary" | "ghost" | "link";
+  size?: "md" | "lg";
+  target?: "_blank" | "_self";
+  rel?: string;
+}
+
+const { href = "#", variant = "primary", size = "md", target = "_self", rel } = Astro.props;
+const classes = `btn btn--${variant} btn--${size}`;
+---
+
+{
+  href ? (
+    <a href={href} class={classes} target={target} rel={rel || (target === "_blank" ? "noopener" : undefined)}>
+      <slot />
+    </a>
+  ) : (
+    <button class={classes}><slot /></button>
+  )
+}
+
+<style>
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-family: var(--font-body);
+    font-weight: 500;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: background var(--duration-fast) ease, border-color var(--duration-fast) ease, color var(--duration-fast) ease, opacity var(--duration-fast) ease;
+    border: 2px solid transparent;
+    box-sizing: border-box;
+  }
+
+  .btn--md { padding: 12px 28px; font-size: 15px; }
+  .btn--lg { padding: 16px 32px; font-size: 16px; }
+
+  .btn--primary {
+    background: var(--surface-glass);
+    border-color: var(--color-border-strong);
+    color: var(--color-text);
+  }
+  .btn--primary:hover { background: rgba(255, 255, 255, 0.13); }
+
+  .btn--ghost {
+    background: transparent;
+    border-color: var(--color-border);
+    color: var(--color-muted);
+  }
+  .btn--ghost:hover { color: var(--color-text); border-color: var(--color-border-strong); }
+
+  .btn--link {
+    background: transparent;
+    border: none;
+    color: var(--color-accent);
+    padding: 0;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .btn--link:hover { opacity: 0.85; }
+
+  .btn:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+</style>

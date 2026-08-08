@@ -1,0 +1,22 @@
+---
+interface Props {
+  as?: "span" | "p" | "div";
+}
+
+const { as = "span" } = Astro.props;
+const Tag = as;
+---
+
+<Tag class="section-label"><slot /></Tag>
+
+<style>
+  .section-label {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    margin: 0 0 28px;
+  }
+</style>

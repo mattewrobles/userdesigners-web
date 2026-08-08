@@ -1,0 +1,64 @@
+:root {
+  /* ===== Primitivos (design tokens) ===== */
+  --ud-black: #030303;
+  --ud-white: #ffffff;
+  --ud-gray-400: rgb(161, 161, 168);
+  --ud-gray-300: rgb(206, 206, 206);
+  --ud-gray-200: rgb(198, 198, 198);
+  --ud-gray-100: rgb(204, 204, 204);
+  --ud-blue: #0099ff;
+
+  /* ===== Semánticos ===== */
+  --color-bg: var(--ud-black);
+  --color-bg-card: rgba(255, 255, 255, 0.04);
+  --color-bg-card-hover: rgba(255, 255, 255, 0.06);
+  --color-border: rgba(255, 255, 255, 0.06);
+  --color-border-strong: rgba(130, 130, 130, 0.15);
+  --color-text: var(--ud-white);
+  --color-muted: var(--ud-gray-400);
+  --color-dim: var(--ud-gray-300);
+  --color-accent: var(--ud-blue);
+  --color-accent-muted: rgba(0, 153, 255, 0.08);
+
+  /* ===== Superficies ===== */
+  --surface-glass: rgba(255, 255, 255, 0.08);
+
+  /* ===== Tipografía ===== */
+  --font-display: "Familjen Grotesk", "Inter", sans-serif;
+  --font-body: "DM Sans", "Inter", -apple-system, sans-serif;
+  --text-xs: 13px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-lg: 19px;
+  --text-display: clamp(40px, 6.5vw, 76px);
+  --text-title: clamp(28px, 4vw, 48px);
+
+  /* ===== Espaciado ===== */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+  --space-10: 120px;
+  --space-section: 110px;
+  --space-pad: clamp(20px, 5vw, 80px);
+
+  /* ===== Radios ===== */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+
+  /* ===== Layout ===== */
+  --container-max: 1120px;
+  --container-blog: 1100px;
+
+  /* ===== Motion ===== */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 0.2s;
+  --duration-base: 0.3s;
+}
