@@ -43,11 +43,13 @@ const position = [top && `top:${top}`, right && `right:${right}`, bottom && `bot
 <script>
   import { animate } from "motion";
 
-  // colores dinámicos por carga (patrón del blog): al refrescar cambia el color
+  // colores dinámicos por carga (patrón del blog + coral del home)
   function randomHue() {
-    const ranges = [[0, 100], [170, 360]];
-    const r = ranges[Math.floor(Math.random() * ranges.length)];
-    return r[0] + Math.floor(Math.random() * (r[1] - r[0]));
+    // 40% rojos/corales (0-30), 30% azul-verdes (170-360), 30% cálidos (31-100)
+    const roll = Math.random();
+    if (roll < 0.4) return Math.floor(Math.random() * 31);      // rojos y corales
+    if (roll < 0.7) return 170 + Math.floor(Math.random() * 191); // azul/verde
+    return 31 + Math.floor(Math.random() * 70);                  // naranja/amarillo
   }
   function randomBetween(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
 
@@ -73,7 +75,13 @@ const position = [top && `top:${top}`, right && `right:${right}`, bottom && `bot
     const alt = `hsl(${(hue + randomBetween(30, 120)) % 360}, ${sat}%, ${light}%)`;
     const c3 = `hsl(${(hue + randomBetween(140, 200)) % 360}, ${sat}%, ${Math.min(70, light + 10)}%)`;
     if (shape) {
-      shape.style.background = `linear-gradient(140deg, ${base} 0%, ${alt} 45%, ${c3} 75%, ${base} 100%)`;
+      // si el hue es rojizo (0-30), usar el patrón coral del home real (Gears Content)
+      if (hue <= 30) {
+        const coral = "rgb(227, 103, 83)";
+        shape.style.background = `linear-gradient(140deg, ${base} 0%, ${coral} 35%, rgb(153,141,208) 75%, rgb(132,217,250) 100%)`;
+      } else {
+        shape.style.background = `linear-gradient(140deg, ${base} 0%, ${alt} 45%, ${c3} 75%, ${base} 100%)`;
+      }
       // forma orgánica inicial aleatoria (distinta en cada carga)
       shape.style.borderRadius = randomBlobRadius();
     }
