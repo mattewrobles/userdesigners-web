@@ -1,0 +1,59 @@
+---
+interface Props {
+  speed?: number; // segundos por loop
+  reverse?: boolean;
+  gap?: number;
+}
+
+const { speed = 20, reverse = false, gap = 48 } = Astro.props;
+const trackId = `marquee-${Math.random().toString(36).slice(2, 8)}`;
+const secondId = `${trackId}-copy`;
+---
+
+<div class="marquee" id={trackId}>
+  <div class="marquee-track">
+    <div class="marquee-group"><slot /></div>
+    <div class="marquee-group" aria-hidden="true"><slot /></div>
+  </div>
+</div>
+
+<script define:vars={{ speed, reverse, gap }}>
+  import { animate } from "motion";
+
+  const track = document.querySelector(`#${trackId} .marquee-track`);
+  const groups = track ? track.querySelectorAll(".marquee-group") : [];
+
+  if (track && groups.length >= 2) {
+    const distance = groups[0].scrollWidth + gap;
+    animate(
+      track,
+      { x: [0, `-${distance}px`] },
+      {
+        duration: speed,
+        repeat: Infinity,
+        ease: "linear",
+        direction: reverse ? "reverse" : "normal",
+      }
+    );
+  }
+</script>
+
+<style>
+  .marquee {
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 12.5%, rgba(0, 0, 0, 1) 87.5%, rgba(0, 0, 0, 0) 100%);
+    mask-image: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 12.5%, rgba(0, 0, 0, 1) 87.5%, rgba(0, 0, 0, 0) 100%);
+  }
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    will-change: transform;
+  }
+  .marquee-group {
+    display: flex;
+    align-items: center;
+    gap: var(--space-9);
+    padding-right: var(--space-9);
+    flex-shrink: 0;
+  }
+</style>

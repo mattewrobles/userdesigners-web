@@ -9,6 +9,9 @@ import Icon from "../components/ui/Icon.astro";
 import Divider from "../components/ui/Divider.astro";
 import Input from "../components/ui/Input.astro";
 import SectionLabel from "../components/ui/SectionLabel.astro";
+import Marquee from "../components/ui/Marquee.astro";
+import LetterReveal from "../components/ui/LetterReveal.astro";
+import Skeleton from "../components/ui/Skeleton.astro";
 ---
 
 <!doctype html>
@@ -68,6 +71,28 @@ import SectionLabel from "../components/ui/SectionLabel.astro";
     <div class="swatch"><div class="swatch-color" style="background:#0099ff"></div><div class="swatch-name">--ud-blue<code>#0099ff</code></div></div>
     <div class="swatch"><div class="swatch-color" style="background:rgb(10,10,10);border-bottom:1px solid #333"></div><div class="swatch-name">--ud-card<code>rgb(10,10,10)</code></div></div>
     <div class="swatch"><div class="swatch-color" style="background:rgb(62,62,65)"></div><div class="swatch-name">--ud-border-card<code>rgb(62,62,65)</code></div></div>
+  </div>
+
+  <h2>Glows ambientales (blobs)</h2>
+  <p class="sub" style="margin-bottom:16px">Gradientes conic extraídos del CSS Framer original. Se usan con <code>filter: blur(32-70px)</code> + opacidad baja como fondos decorativos.</p>
+  <div class="swatches">
+    <div class="swatch"><div class="swatch-color" style="background:var(--glow-1);filter:blur(30px);transform:scale(1.4)"></div><div class="swatch-name">--glow-1<code>conic púrpura→azul→amarillo</code></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:var(--glow-2);filter:blur(30px);transform:scale(1.4)"></div><div class="swatch-name">--glow-2<code>conic dorado→navy</code></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:var(--glow-3);filter:blur(30px);transform:scale(1.4)"></div><div class="swatch-name">--glow-3<code>conic cielo→azul→cian</code></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:var(--glow-hero);filter:blur(24px);transform:scale(1.4)"></div><div class="swatch-name">--glow-hero<code>linear dorado→rosa→lila</code></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:var(--stroke-glow)"></div><div class="swatch-name">--stroke-glow<code>radial borde botón hero</code></div></div>
+  </div>
+
+  <h2>Blur scale</h2>
+  <p class="sub" style="margin-bottom:16px">La web usa blur para todo: glow del footer (32-70px), navbar (24px), cartas (18px).</p>
+  <div class="grid">
+    <div style="width:80px;height:80px;border-radius:16px;background:var(--glow-3);filter:blur(10px)"></div>
+    <div style="width:80px;height:80px;border-radius:16px;background:var(--glow-3);filter:blur(18px)"></div>
+    <div style="width:80px;height:80px;border-radius:16px;background:var(--glow-3);filter:blur(24px)"></div>
+    <div style="width:80px;height:80px;border-radius:16px;background:var(--glow-3);filter:blur(32px)"></div>
+    <div style="width:80px;height:80px;border-radius:16px;background:var(--glow-3);filter:blur(48px)"></div>
+    <div style="width:80px;height:80px;border-radius:16px;background:var(--glow-3);filter:blur(70px)"></div>
+    <div style="width:80px;height:80px;border-radius:16px;background:var(--glow-3);filter:blur(80px)"></div>
   </div>
 
   <h2>Tipografía</h2>
@@ -135,6 +160,29 @@ import SectionLabel from "../components/ui/SectionLabel.astro";
   <div style="max-width:360px;display:grid;gap:16px">
     <Input label="Nombre" placeholder="Tu nombre" />
     <Input label="Email" type="email" placeholder="tucorreo@email.com" />
+  </div>
+
+  <h2>Skeleton</h2>
+  <div class="grid">
+    <div style="width:220px;display:grid;gap:8px"><Skeleton variant="title" /><Skeleton lines={3} /></div>
+    <Skeleton variant="card" width="200px" />
+    <Skeleton variant="avatar" />
+    <Skeleton variant="image" width="200px" />
+    <Skeleton variant="button" />
+  </div>
+
+  <h2>Animaciones (motion.dev)</h2>
+  <div style="display:grid;gap:24px">
+    <div>
+      <h3>LetterReveal — título letra por letra (hero Framer)</h3>
+      <LetterReveal as="h1" size="2xl" style="font-family:var(--font-display);font-size:28px">Diseño que convierte búsquedas en pacientes</LetterReveal>
+    </div>
+    <div>
+      <h3>Marquee — ticker infinito (SocialProof Framer)</h3>
+      <Marquee speed={24}>
+        <span style="font-size:15px;color:var(--text-secondary);white-space:nowrap">Bancos · Fintechs · Banca digital · Design Systems · Prototipado · UX Research</span>
+      </Marquee>
+    </div>
   </div>
 
   <h2>Spacing (4px grid)</h2>
