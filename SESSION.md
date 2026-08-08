@@ -1,5 +1,35 @@
 # UserDesigners Web — Astro Migration
 
+## Ago 8 — Audit exhaustivo + fixes (rama refactor/test-fase1)
+
+**Ramas:** main = producción, refactor/test-fase1 = testing. Trabajar SIEMPRE en test-fase1.
+
+**Estructura nueva (cambiada Ago 8):**
+- HTMLs Framer movidos de `public/` a `src/html/` (fuente privada, no se sirven crudos)
+- `src/pages/{index,contacto,nosotros,servicios,proyectos}/index.astro` leen de `src/html/` y sirven con `return new Response()`
+- `src/pages/proyectos/[...slug].astro` lee de `src/html/proyectos/*.html` — ya NO genera duplicados `.html` en dist
+- Eliminado `src/layouts/BaseLayout.astro`, `src/styles/global.css` (tailwind fantasma), `src/styles/framer-global.css`, mixpanel
+- 135 archivos sin uso eliminados de `public/assets/local/` (21MB → 1.8MB)
+
+**Fixes SEO/GEO/AEO:**
+- og:title "My Framer Site" corregido en 4 case studies
+- slug `verificacion-biometrica` (antes `verificaci-n-biom-trica`) + redirects 301 en `public/_redirects`
+- schema: eliminados duplicados Organization/LocalBusiness + SearchAction falso en proyectos
+- meta description duplicada en proyectos eliminada
+- og:image absoluto en BlogPost + seo-doctores (antes relativo/favicon)
+- 404.html reescrito en español (antes inglés, HTML inválido)
+- pipeline Notion: MAX_POSTS 10 (era 2), sort por fecha descendente, description auto-generada si vacía
+
+**Fixes bugs:**
+- filtros de blog ahora funcionan (wiring JS, aria-pressed, focus visible)
+- footer `f-col-brand` selector corregido + año dinámico
+- seo-doctores: Navbar/Footer componentes (antes inline), rediseño premium
+- Giscus verificado OK (repo mattewrobles/userdesigners-web tiene Discussions)
+
+**Pendientes:**
+- Migración total a Astro: template base de proyectos desde CSS Framer (los 4 case studies comparten 100% CSS/components — 94KB idéntico md5)
+- Lazy loading en imágenes de HTMLs Framer (todas `alt=""` + 247 imgs)
+
 ## Ago 4 — Refactor: HTMLs completos vía Response
 
 **Problema resuelto:**
