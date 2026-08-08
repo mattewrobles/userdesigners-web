@@ -24,7 +24,10 @@ const classes = `btn btn--${variant} btn--${size}`;
     <a href={href} class={classes} target={target} rel={rel || (target === "_blank" ? "noopener" : undefined)}>
       {variant === "stroke" && (
         <>
-          <span class="btn-stroke" aria-hidden="true"></span>
+          <span class="btn-stroke" aria-hidden="true">
+            <span class="btn-stroke-glow"></span>
+            <span class="btn-stroke-glow btn-stroke-glow--2"></span>
+          </span>
           <span class="btn-fill" aria-hidden="true"></span>
         </>
       )}
@@ -34,7 +37,10 @@ const classes = `btn btn--${variant} btn--${size}`;
     <button class={classes}>
       {variant === "stroke" && (
         <>
-          <span class="btn-stroke" aria-hidden="true"></span>
+          <span class="btn-stroke" aria-hidden="true">
+            <span class="btn-stroke-glow"></span>
+            <span class="btn-stroke-glow btn-stroke-glow--2"></span>
+          </span>
           <span class="btn-fill" aria-hidden="true"></span>
         </>
       )}
@@ -99,48 +105,52 @@ const classes = `btn btn--${variant} btn--${size}`;
     overflow: visible;
     padding: 12px 20px;
   }
-  /* Borde animado: un anillo de luz que recorre el contorno del botón (como Framer) */
+  /* Borde animado suave: dos glows con blur que giran alrededor (motion.dev) */
   .btn-stroke {
     position: absolute;
-    inset: 0;
-    border-radius: var(--radius-btn);
-    padding: 1.5px; /* grosor del anillo */
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    mask-composite: exclude;
+    inset: -3px; /* halo por fuera del botón */
+    border-radius: calc(var(--radius-btn) + 3px);
+    overflow: hidden;
     pointer-events: none;
-    transition: background 0.35s ease;
   }
-  /* el gradiente que rota por el borde */
-  .btn-stroke::before {
-    content: "";
-    display: block;
-    width: 100%;
-    height: 100%;
+  /* glow que rota alrededor del contorno */
+  .btn-stroke-glow {
+    position: absolute;
+    inset: -40%;
     background: conic-gradient(
       from 0deg,
-      rgba(255, 255, 255, 0) 0deg,
-      rgba(255, 255, 255, 0.9) 80deg,
-      rgba(255, 255, 255, 0.35) 140deg,
-      rgba(255, 255, 255, 0) 220deg
+      transparent 0deg,
+      rgba(255, 255, 255, 0) 40deg,
+      rgba(255, 255, 255, 0.35) 90deg,
+      rgba(255, 255, 255, 0) 140deg
     );
-    animation: btn-stroke-spin 3.5s linear infinite;
+    filter: blur(14px);
+    -webkit-filter: blur(14px);
     will-change: transform;
+    opacity: 0.8;
   }
-  /* Hover: el borde se llena de blanco completo, se detiene la rotación */
-  .btn--stroke:hover .btn-stroke::before {
-    animation: none;
-    background: rgb(255, 255, 255);
+  .btn-stroke-glow--2 {
+    inset: -30%;
+    background: conic-gradient(
+      from 180deg,
+      transparent 0deg,
+      rgba(255, 255, 255, 0) 40deg,
+      rgba(255, 255, 255, 0.2) 100deg,
+      rgba(255, 255, 255, 0) 150deg
+    );
+    filter: blur(20px);
+    -webkit-filter: blur(20px);
+    opacity: 0.5;
   }
+  /* Hover: el borde se llena de blanco suave */
   .btn--stroke:hover .btn-stroke {
-    background: rgb(255, 255, 255);
+    background: rgba(255, 255, 255, 0.55);
   }
   .btn--stroke:hover {
     background: rgba(255, 255, 255, 0.1);
   }
   .btn--stroke:hover .btn-fill {
-    opacity: 0.88;
+    opacity: 0.85;
   }
   .btn-fill {
     position: absolute;
@@ -148,15 +158,9 @@ const classes = `btn btn--${variant} btn--${size}`;
     background: var(--stroke-fill);
     border-radius: calc(var(--radius-btn) - 2px);
     pointer-events: none;
-    transition: opacity 0.35s ease;
+    transition: opacity 0.4s ease;
   }
   .btn-label { position: relative; z-index: 1; }
-
-  /* el anillo de luz gira alrededor del contorno */
-  @keyframes btn-stroke-spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
 
   /* Danger — para acciones destructivas */
   .btn--danger {
@@ -177,3 +181,25 @@ const classes = `btn btn--${variant} btn--${size}`;
     .btn--stroke { padding: 11px 18px; }
   }
 </style>
+
+<script>
+  import { animate } from "motion";
+
+  // rotación suave y continua de los glows del borde (motion.dev)
+  document.querySelectorAll(".btn--stroke").forEach((btn) => {
+    const glows = btn.querySelectorAll(".btn-stroke-glow");
+    if (glows.length < 2) return;
+
+    const speed = 7; // segundos por vuelta
+    animate(
+      glows[0],
+      { transform: ["rotate(0deg)", "rotate(360deg)"] },
+      { duration: speed, repeat: Infinity, ease: "linear" }
+    );
+    animate(
+      glows[1],
+      { transform: ["rotate(360deg)", "rotate(0deg)"] },
+      { duration: speed * 1.4, repeat: Infinity, ease: "linear" }
+    );
+  });
+</script>
