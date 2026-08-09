@@ -1,4 +1,6 @@
 ---
+import Logo from "./ui/Logo.astro";
+
 const links = [
   { href: "/", label: "Inicio" },
   { href: "/nosotros", label: "Nosotros" },
@@ -14,7 +16,7 @@ const currentPath = Astro.url.pathname;
   <div class="nav-inner" id="navInner">
     <div class="nav-wrapper">
       <a href="/" class="nav-logo">
-        <img src="/assets/local/THPlYhmIylZZQK7C2oB2vUpYec.png" alt="UserDesigners" />
+        <Logo height={26} />
       </a>
 
       <div class="nav-list">
