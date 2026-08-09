@@ -27,9 +27,7 @@ const elId = `reveal-${Math.random().toString(36).slice(2, 8)}`;
 <script>
   import { animate, inView } from "motion";
 
-  const el = document.getElementById(elId);
-
-  if (el) {
+  document.querySelectorAll(".reveal").forEach((el) => {
     const y = Number(el.dataset.y || 30);
     const blur = el.dataset.blur === "true";
     const delay = Number(el.dataset.delay || 0);
@@ -57,7 +55,7 @@ const elId = `reveal-${Math.random().toString(36).slice(2, 8)}`;
       },
       { amount: 0.2, once }
     );
-  }
+  });
 </script>
 
 <style>

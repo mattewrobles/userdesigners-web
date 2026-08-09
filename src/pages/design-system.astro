@@ -11,6 +11,7 @@ import Input from "../components/ui/Input.astro";
 import SectionLabel from "../components/ui/SectionLabel.astro";
 import Marquee from "../components/ui/Marquee.astro";
 import LetterReveal from "../components/ui/LetterReveal.astro";
+import Reveal from "../components/ui/Reveal.astro";
 import Skeleton from "../components/ui/Skeleton.astro";
 import SkeletonMatch from "../components/ui/SkeletonMatch.astro";
 import Blob from "../components/ui/Blob.astro";
@@ -215,7 +216,25 @@ import Logo from "../components/ui/Logo.astro";
   </SkeletonMatch>
 
   <h2>Animaciones (motion.dev)</h2>
+  <p class="sub" style="margin-bottom:16px">Todo el motion de la web usa <code>motion</code> (el fork de Framer Motion). Los tokens de easing y duración se definen en <code>tokens.css</code>.</p>
+
+  <div class="tokens-grid" style="margin-bottom:24px">
+    <div class="token">--ease-out<code>cubic-bezier(0.22,1,0.36,1)</code></div>
+    <div class="token">--ease-in<code>cubic-bezier(0.36,0,0.66,-0.56)</code></div>
+    <div class="token">--ease-in-out<code>cubic-bezier(0.65,0,0.35,1)</code></div>
+    <div class="token">Elástico (overshoot)<code>cubic-bezier(0.34,1.56,0.64,1)</code></div>
+    <div class="token">--duration-fast<code>0.2s</code></div>
+    <div class="token">--duration-base<code>0.3s</code></div>
+    <div class="token">--duration-slow<code>0.5s</code></div>
+    <div class="token">--duration-slower<code>0.7s</code></div>
+  </div>
+
   <div style="display:grid;gap:24px">
+    <div>
+      <h3>Reveal — entrada on-scroll (aparecer de Framer)</h3>
+      <p class="sub">opacity 0→1 + blur 10→0 + translateY(30)→0, con inView de motion. <code>ease-out</code>, 0.7s.</p>
+      <Reveal><Card style="width:360px"><h3 style="font-size:16px;margin-bottom:8px">Aparece al hacer scroll</h3><p style="color:var(--text-secondary);font-size:14px">Este card se revela cuando entra al viewport.</p></Card></Reveal>
+    </div>
     <div>
       <h3>LetterReveal — título letra por letra (hero Framer)</h3>
       <LetterReveal as="h1" size="2xl" style="font-family:var(--font-display);font-size:28px">Diseño que convierte búsquedas en pacientes</LetterReveal>
@@ -225,6 +244,14 @@ import Logo from "../components/ui/Logo.astro";
       <Marquee speed={24}>
         <span style="font-size:15px;color:var(--text-secondary);white-space:nowrap">Bancos · Fintechs · Banca digital · Design Systems · Prototipado · UX Research</span>
       </Marquee>
+    </div>
+    <div>
+      <h3>Blob — forma orgánica animada (canvas del home)</h3>
+      <p class="sub">color HSL aleatorio por carga + border-radius morph (elástico) + flotación + rotación. Es el patrón del hero.</p>
+      <div style="position:relative;border:1px solid var(--border-subtle);border-radius:16px;overflow:hidden;height:180px">
+        <Blob variant="3" placement="top-right" size={200} blur={40} opacity={0.5} speed={25} />
+        <div style="position:relative;z-index:1;padding:16px;font-size:13px;color:var(--text-secondary)">Blob dinámico: refresca para ver otro color y forma.</div>
+      </div>
     </div>
   </div>
 
