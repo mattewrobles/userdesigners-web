@@ -62,7 +62,7 @@ const hasToc = headings && headings.length > 0;
   })} />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600&family=Inter:wght@400;500;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/styles/tokens.css" />
   <style is:global set:html={framerCSS}></style>
   <!-- Google Analytics -->
@@ -82,7 +82,7 @@ const hasToc = headings && headings.length > 0;
     })(window, document, "clarity", "script", "xytbbmamwh");
   </script>
 </head>
-<body style="margin:0;background-color:var(--surface-1);color:var(--text-primary);font-family:Inter,sans-serif">
+<body style="margin:0;background-color:var(--surface-1);color:var(--text-primary);font-family:var(--font-body)">
   <div class="bg-blob"></div>
   <div id="reading-progress"></div>
   <Navbar />
@@ -277,7 +277,7 @@ const hasToc = headings && headings.length > 0;
     font-weight: 500;
     color: var(--accent-default);
     margin-bottom: 20px;
-    font-family: Inter, sans-serif;
+    font-family: var(--font-body);
   }
   .post-title {
     font-family: var(--font-display);
@@ -293,7 +293,7 @@ const hasToc = headings && headings.length > 0;
     line-height: 1.6;
     color: var(--text-secondary);
     margin: 0 0 24px;
-    font-family: Inter, sans-serif;
+    font-family: var(--font-body);
   }
   .post-meta {
     display: flex;
@@ -301,7 +301,7 @@ const hasToc = headings && headings.length > 0;
     align-items: center;
     color: var(--text-secondary);
     font-size: 14px;
-    font-family: Inter, sans-serif;
+    font-family: var(--font-body);
     flex-wrap: wrap;
   }
 
@@ -402,7 +402,7 @@ const hasToc = headings && headings.length > 0;
     color: var(--text-tertiary);
     text-decoration: none;
     line-height: 1.4;
-    font-family: Inter, sans-serif;
+    font-family: var(--font-body);
     transition: color 0.2s;
     display: block;
   }
@@ -502,7 +502,7 @@ const hasToc = headings && headings.length > 0;
     color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.02em;
-    font-family: Inter, sans-serif;
+    font-family: var(--font-body);
   }
   .related-card-title {
     font-family: var(--font-display);
@@ -519,7 +519,7 @@ const hasToc = headings && headings.length > 0;
   .related-card-meta {
     font-size: 12px;
     color: var(--text-disabled);
-    font-family: Inter, sans-serif;
+    font-family: var(--font-body);
   }
 
   .post-footer {
@@ -530,7 +530,7 @@ const hasToc = headings && headings.length > 0;
     color: var(--text-tertiary);
     text-decoration: none;
     font-size: 14px;
-    font-family: Inter, sans-serif;
+    font-family: var(--font-body);
     transition: color 0.2s;
   }
   .back-link:hover {

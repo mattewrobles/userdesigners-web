@@ -110,12 +110,12 @@ import Logo from "../components/ui/Logo.astro";
     }
     .progress-fill {
       height: 100%;
-      width: 0%;
+      width: 100%;
+      transform-origin: left center;
+      transform: scaleX(0);
       background: linear-gradient(90deg, var(--ud-brand-sky), var(--ud-brand-lilac), var(--ud-brand-gold));
       border-radius: var(--radius-pill);
       position: relative;
-      box-shadow: 0 0 12px rgba(122, 215, 244, 0.35);
-      transition: width 0.1s linear;
     }
     /* punto brillante en el frente de la barra */
     .progress-fill::after {
@@ -128,7 +128,7 @@ import Logo from "../components/ui/Logo.astro";
       height: 12px;
       border-radius: 50%;
       background: var(--text-primary);
-      box-shadow: 0 0 10px 2px rgba(122, 215, 244, 0.5);
+      border: 2px solid var(--surface-1);
     }
     .progress-label {
       display: flex;
@@ -225,7 +225,7 @@ import Logo from "../components/ui/Logo.astro";
     if (reduced) {
       [logo, status, title, progress, desc, links].forEach(el => { if (el) el.style.opacity = "1"; });
       document.querySelectorAll(".boot-line").forEach(l => (l.style.opacity = "1"));
-      fill.style.width = "72%";
+      fill.style.transform = "scaleX(0.72)";
       pct.textContent = "72%";
     } else {
       animate(logo, { opacity: 1, y: [-16, 0] }, { duration: 0.6 });
@@ -240,8 +240,8 @@ import Logo from "../components/ui/Logo.astro";
       const target = 72;
       // la barra aparece con las boot lines y arranca con un ancho inicial visible
       animate(progress, { opacity: 1 }, { duration: 0.4, delay: 0.8 });
-      animate(fill, { width: "4%" }, { duration: 0.5, delay: 0.8 });
-      animate(fill, { width: target + "%" }, { duration: 6, delay: 1.4, ease: [0.22, 1, 0.36, 1] });
+      animate(fill, { transform: "scaleX(0.04)" }, { duration: 0.5, delay: 0.8 });
+      animate(fill, { transform: `scaleX(${target / 100})` }, { duration: 6, delay: 1.4, ease: [0.22, 1, 0.36, 1] });
 
       const start = performance.now() + 1400;
       function tick(now) {

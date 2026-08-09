@@ -58,7 +58,7 @@ const framerCSS = fs.readFileSync("src/styles/framer.css", "utf-8")
   })} />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600&family=Inter:wght@400;500;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/styles/tokens.css" />
   <style is:global set:html={framerCSS}></style>
   <!-- Google Analytics -->
@@ -78,7 +78,7 @@ const framerCSS = fs.readFileSync("src/styles/framer.css", "utf-8")
     })(window, document, "clarity", "script", "xytbbmamwh");
   </script>
 </head>
-<body style="margin:0;background-color:#030303;color:var(--text-primary);font-family:Inter,sans-serif;overflow-x:hidden">
+<body style="margin:0;background-color:#030303;color:var(--text-primary);font-family:var(--font-body);overflow-x:hidden">
   <Navbar />
 
   <main style="position:relative;z-index:1;padding:0">
@@ -122,11 +122,11 @@ const framerCSS = fs.readFileSync("src/styles/framer.css", "utf-8")
           {categories.length <= 6 ? (
             <div style="display:flex;gap:8px;flex-wrap:wrap" id="blog-filters">
               {categories.map(cat => (
-                <button class="blog-filter" data-filter={cat} style="all:unset;cursor:pointer;padding:6px 16px;border-radius:40px;font-size:14px;font-family:Inter,sans-serif;color:var(--text-secondary);background:var(--surface-2);border:1px solid var(--border-subtle);transition:all 0.2s">{cat}</button>
+                <button class="blog-filter" data-filter={cat} style="all:unset;cursor:pointer;padding:6px 16px;border-radius:40px;font-size:14px;font-family:var(--font-body);color:var(--text-secondary);background:var(--surface-2);border:1px solid var(--border-subtle);transition:all 0.2s">{cat}</button>
               ))}
             </div>
           ) : (
-            <select id="blog-filters" style="padding:8px 16px;border-radius:12px;background:var(--surface-2);border:1px solid var(--border-subtle);color:var(--text-primary);font-size:14px;font-family:Inter,sans-serif;outline:none;cursor:pointer">
+            <select id="blog-filters" style="padding:8px 16px;border-radius:12px;background:var(--surface-2);border:1px solid var(--border-subtle);color:var(--text-primary);font-size:14px;font-family:var(--font-body);outline:none;cursor:pointer">
               <option value="all" style="background:#030303">Todas las categorías</option>
               {categories.map(cat => (
                 <option value={cat} style="background:#030303">{cat}</option>
@@ -436,7 +436,7 @@ const framerCSS = fs.readFileSync("src/styles/framer.css", "utf-8")
     max-width: 520px;
     line-height: 1.7;
     margin: 0 0 48px;
-    font-family: "Inter", sans-serif;
+    font-family: var(--font-body);
     opacity: 0;
     filter: blur(10px);
     transform: translateY(25px);
@@ -465,7 +465,7 @@ const framerCSS = fs.readFileSync("src/styles/framer.css", "utf-8")
     line-height: 1;
   }
   .hero-stat-label {
-    font-family: "Inter", sans-serif;
+    font-family: var(--font-body);
     font-size: 13px;
     color: var(--text-secondary);
     letter-spacing: 0.02em;
