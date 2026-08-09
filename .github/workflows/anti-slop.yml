@@ -1,0 +1,22 @@
+name: Anti-slop Check
+
+on:
+  push:
+    branches: [main, refactor/test-fase1]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  slop:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install deps
+        run: npm ci
+      - name: Detect UI anti-patterns
+        run: npx impeccable detect src --ci
