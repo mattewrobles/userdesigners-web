@@ -41,10 +41,20 @@
       font-weight: var(--weight-light);
       line-height: var(--leading-none);
       letter-spacing: var(--tracking-tight);
+      display: flex;
+      justify-content: center;
+      gap: 0.08em;
+      perspective: 600px;
+    }
+    /* cada dígito es una letra que cae con gravedad */
+    .code span {
+      display: inline-block;
       background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
+      opacity: 0;
+      will-change: transform, opacity;
     }
     h1 {
       font-family: var(--font-display);
@@ -52,18 +62,24 @@
       font-weight: var(--weight-regular);
       letter-spacing: var(--tracking-snug);
       margin: var(--space-6) 0 var(--space-3);
+      opacity: 0;
+      transform: translateY(12px);
     }
     p {
       color: var(--text-secondary);
       font-size: var(--body);
       line-height: var(--leading-relaxed);
       margin-bottom: var(--space-7);
+      opacity: 0;
+      transform: translateY(12px);
     }
     .actions {
       display: flex;
       gap: var(--space-3);
       justify-content: center;
       flex-wrap: wrap;
+      opacity: 0;
+      transform: translateY(12px);
     }
     .btn {
       display: inline-flex;
@@ -75,7 +91,7 @@
       font-weight: var(--weight-regular);
       text-decoration: none;
       border: 2px solid transparent;
-      transition: background var(--duration-fast) ease, border-color var(--duration-fast) ease, color var(--duration-fast) ease, transform var(--duration-fast) ease;
+      transition: background var(--duration-fast) ease, border-color var(--duration-fast) ease, color var(--duration-fast) ease;
     }
     .btn--primary {
       background: var(--surface-glass);
@@ -97,14 +113,58 @@
 </head>
 <body>
   <main class="wrapper">
-    <div class="code">404</div>
-    <h1>Página no encontrada</h1>
-    <p>La página que buscas no existe o fue movida. Mientras tanto, mira nuestro trabajo o cuéntanos tu proyecto.</p>
-    <div class="actions">
+    <div class="code" id="code404" aria-label="404">
+      <span>4</span><span>0</span><span>4</span>
+    </div>
+    <h1 id="title404">Página no encontrada</h1>
+    <p id="desc404">La página que buscas no existe o fue movida. Mientras tanto, mira nuestro trabajo o cuéntanos tu proyecto.</p>
+    <div class="actions" id="actions404">
       <a class="btn btn--primary" href="/" role="button">Volver al inicio</a>
       <a class="btn btn--ghost" href="/proyectos" role="button">Ver proyectos</a>
       <a class="btn btn--ghost" href="/contacto" role="button">Contáctanos</a>
     </div>
   </main>
+
+  <script type="module">
+    import { animate, spring } from "https://esm.sh/motion@13";
+
+    const digits = document.querySelectorAll("#code404 span");
+    const title = document.getElementById("title404");
+    const desc = document.getElementById("desc404");
+    const actions = document.getElementById("actions404");
+
+    // respeta prefers-reduced-motion: muestra todo sin animar
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!reduced) {
+      // las letras caen desde arriba con gravedad (spring de rebote)
+      digits.forEach((d, i) => {
+        const delay = i * 0.18;
+        animate(d, { y: [-220, 0] }, {
+          type: spring,
+          stiffness: 320,
+          damping: 18,
+          mass: 1.2,
+          delay,
+        });
+        animate(d, { opacity: [0, 1] }, { duration: 0.3, delay });
+      });
+
+      // título, descripción y botones entran después con fade + subida
+      const rest = [
+        { el: title, delay: 0.7 },
+        { el: desc, delay: 0.9 },
+        { el: actions, delay: 1.1 },
+      ];
+      rest.forEach(({ el, delay }) => {
+        if (!el) return;
+        animate(el, { opacity: 1, y: 0 }, { duration: 0.5, delay });
+      });
+    } else {
+      digits.forEach(d => (d.style.opacity = "1"));
+      title.style.opacity = "1";
+      desc.style.opacity = "1";
+      actions.style.opacity = "1";
+    }
+  </script>
 </body>
 </html>
