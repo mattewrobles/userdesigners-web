@@ -16,12 +16,6 @@
   --ud-glass: rgba(255, 255, 255, 0.08);
   --ud-glass-hover: rgba(255, 255, 255, 0.13);
 
-  /* ---------- Color: marca (la U del logo, con blur en el original) ---------- */
-  --ud-brand-sky: #7ad7f4;    /* celeste */
-  --ud-brand-lilac: #8f82dc;  /* lila */
-  --ud-brand-gold: #dec063;   /* dorado */
-  --ud-brand-coral: #e35d52;  /* coral */
-
   /* ---------- Color: superficies reales Framer ---------- */
   --ud-card: rgb(10, 10, 10);
   --ud-card-dark: rgb(7, 7, 7);

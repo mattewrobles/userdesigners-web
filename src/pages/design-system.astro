@@ -14,7 +14,6 @@ import LetterReveal from "../components/ui/LetterReveal.astro";
 import Skeleton from "../components/ui/Skeleton.astro";
 import SkeletonMatch from "../components/ui/SkeletonMatch.astro";
 import Blob from "../components/ui/Blob.astro";
-import Logo from "../components/ui/Logo.astro";
 ---
 
 <!doctype html>
@@ -66,19 +65,6 @@ import Logo from "../components/ui/Logo.astro";
   <Divider />
 
   <h2>Color</h2>
-  <p class="sub" style="margin-bottom:16px">Marca: los 4 colores de la U del logo (con blur en el original) — para usos puntuales.</p>
-  <div class="swatches">
-    <div class="swatch"><div class="swatch-color" style="background:#7ad7f4"></div><div class="swatch-name">--ud-brand-sky<code>#7AD7F4 celeste</code></div></div>
-    <div class="swatch"><div class="swatch-color" style="background:#8f82dc"></div><div class="swatch-name">--ud-brand-lilac<code>#8F82DC lila</code></div></div>
-    <div class="swatch"><div class="swatch-color" style="background:#dec063"></div><div class="swatch-name">--ud-brand-gold<code>#DEC063 dorado</code></div></div>
-    <div class="swatch"><div class="swatch-color" style="background:#e35d52"></div><div class="swatch-name">--ud-brand-coral<code>#E35D52 coral</code></div></div>
-  </div>
-  <div style="display:flex;gap:32px;flex-wrap:wrap;margin-top:20px;align-items:center">
-    <Logo height={32} />
-    <Logo height={32} colored />
-    <Logo variant="symbol" height={32} />
-    <Logo variant="symbol" height={32} colored />
-  </div>
   <div class="swatches">
     <div class="swatch"><div class="swatch-color" style="background:#030303;border-bottom:1px solid #333"></div><div class="swatch-name">--ud-black<code>#030303</code></div></div>
     <div class="swatch"><div class="swatch-color" style="background:#ffffff"></div><div class="swatch-name">--ud-white<code>#ffffff</code></div></div>
