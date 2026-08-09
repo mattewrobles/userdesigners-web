@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="es-EC">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <title>En mantenimiento | UserDesigners</title>
+  <meta name="description" content="Estamos trabajando en el sitio. Volveremos pronto."/>
+  <meta name="robots" content="noindex"/>
+  <link rel="icon" href="/assets/local/THPlYhmIylZZQK7C2oB2vUpYec.png" />
+  <link rel="stylesheet" href="/styles/tokens.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@300;400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%;
+      background: var(--surface-1);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      -webkit-font-smoothing: antialiased;
+    }
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: var(--space-6);
+      overflow: hidden;
+      position: relative;
+    }
+    /* glow de marca sutil detrás */
+    .ambient {
+      position: fixed;
+      width: 560px;
+      height: 560px;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.12;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .ambient--1 { top: -180px; right: -120px; background: var(--ud-brand-sky); }
+    .ambient--2 { bottom: -220px; left: -140px; background: var(--ud-brand-lilac); }
+
+    .wrapper {
+      position: relative;
+      z-index: 1;
+      max-width: 520px;
+      width: 100%;
+      text-align: center;
+    }
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: var(--space-11);
+      opacity: 0;
+    }
+    .logo img {
+      height: 32px;
+      width: auto;
+      display: block;
+    }
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-pill);
+      font-size: var(--caption);
+      font-weight: var(--weight-semibold);
+      letter-spacing: var(--tracking-label);
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-bottom: var(--space-6);
+      opacity: 0;
+    }
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--ud-brand-sky);
+      animation: status-pulse 1.8s ease-in-out infinite;
+    }
+    @keyframes status-pulse {
+      0%, 100% { opacity: 0.3; transform: scale(0.85); }
+      50% { opacity: 1; transform: scale(1); }
+    }
+    h1 {
+      font-family: var(--font-display);
+      font-size: var(--heading-1);
+      font-weight: var(--weight-light);
+      letter-spacing: var(--tracking-snug);
+      line-height: var(--leading-tight);
+      margin-bottom: var(--space-4);
+    }
+    /* boot lines: cada línea con su acento de marca */
+    .boot {
+      margin: var(--space-7) 0 var(--space-9);
+      text-align: left;
+      font-family: var(--font-body);
+      font-size: var(--body-sm);
+      line-height: var(--leading-normal);
+      min-height: 104px;
+    }
+    .boot-line {
+      opacity: 0;
+      padding: 2px 0;
+    }
+    .boot-line .prompt { color: var(--text-tertiary); margin-right: 8px; }
+    .boot-line--sky .prompt { color: var(--ud-brand-sky); }
+    .boot-line--lilac .prompt { color: var(--ud-brand-lilac); }
+    .boot-line--gold .prompt { color: var(--ud-brand-gold); }
+    .boot-line--coral .prompt { color: var(--ud-brand-coral); }
+    .boot-line .text { color: var(--text-secondary); }
+
+    .progress {
+      width: 100%;
+      max-width: 320px;
+      margin: 0 auto var(--space-9);
+      opacity: 0;
+    }
+    .progress-bar {
+      height: 2px;
+      background: var(--border-subtle);
+      border-radius: var(--radius-pill);
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--ud-brand-sky), var(--ud-brand-lilac), var(--ud-brand-gold));
+      border-radius: var(--radius-pill);
+    }
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: var(--caption);
+      color: var(--text-tertiary);
+      margin-top: var(--space-3);
+      letter-spacing: var(--tracking-wide);
+    }
+    p.sub {
+      color: var(--text-secondary);
+      font-size: var(--body);
+      line-height: var(--leading-relaxed);
+      max-width: 420px;
+      margin: 0 auto;
+      opacity: 0;
+    }
+    .links {
+      margin-top: var(--space-8);
+      display: flex;
+      gap: var(--space-5);
+      justify-content: center;
+      flex-wrap: wrap;
+      opacity: 0;
+    }
+    .links a {
+      color: var(--text-tertiary);
+      text-decoration: none;
+      font-size: var(--body-sm);
+      transition: color var(--duration-fast) ease;
+    }
+    .links a:hover { color: var(--text-primary); }
+    .links a .accent { color: var(--accent-default); }
+  </style>
+</head>
+<body>
+  <div class="ambient ambient--1" aria-hidden="true"></div>
+  <div class="ambient ambient--2" aria-hidden="true"></div>
+
+  <main class="wrapper">
+    <div class="logo" id="logo">
+      <img src="/assets/local/THPlYhmIylZZQK7C2oB2vUpYec.png" alt="UserDesigners" />
+    </div>
+
+    <div class="status" id="status">
+      <span class="status-dot"></span>
+      En mantenimiento
+    </div>
+
+    <h1 id="title">Volvemos con algo mejor.</h1>
+
+    <div class="boot" id="boot" aria-hidden="true">
+      <div class="boot-line boot-line--sky"><span class="prompt">›</span><span class="text">desplegando mejoras en el sitio</span></div>
+      <div class="boot-line boot-line--lilac"><span class="prompt">›</span><span class="text">tiempo estimado: 20 minutos</span></div>
+      <div class="boot-line boot-line--gold"><span class="prompt">›</span><span class="text">tu trabajo seguro · vuelve en un rato</span></div>
+    </div>
+
+    <div class="progress" id="progress">
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-label">
+        <span id="progressPct">0%</span>
+        <span>en curso</span>
+      </div>
+    </div>
+
+    <p class="sub" id="desc">Estamos trabajando para que el sitio vuelva mejor que antes. Disculpa la interrupción.</p>
+
+    <div class="links" id="links">
+      <a href="https://wa.me/593961026799" target="_blank" rel="noopener">Escríbenos por <span class="accent">WhatsApp</span></a>
+      <a href="https://instagram.com/userdesigners" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://linkedin.com/company/userdesigners" target="_blank" rel="noopener">LinkedIn</a>
+    </div>
+  </main>
+
+  <script type="module">
+    import { animate, spring } from "https://esm.sh/motion@13";
+
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const logo = document.getElementById("logo");
+    const status = document.getElementById("status");
+    const title = document.getElementById("title");
+    const boot = document.getElementById("boot");
+    const progress = document.getElementById("progress");
+    const desc = document.getElementById("desc");
+    const links = document.getElementById("links");
+    const fill = document.getElementById("progressFill");
+    const pct = document.getElementById("progressPct");
+
+    if (reduced) {
+      [logo, status, title, boot, progress, desc, links].forEach(el => { if (el) el.style.opacity = "1"; });
+      document.querySelectorAll(".boot-line").forEach(l => (l.style.opacity = "1"));
+      fill.style.width = "60%";
+      pct.textContent = "60%";
+    } else {
+      // entrada del logo
+      animate(logo, { opacity: 1, y: [-16, 0] }, { duration: 0.6 });
+      // status pill
+      animate(status, { opacity: 1, y: [-10, 0] }, { duration: 0.5, delay: 0.2 });
+      // título
+      animate(title, { opacity: 1, y: [10, 0] }, { type: spring, stiffness: 200, damping: 20, delay: 0.4 });
+      // boot lines una a una con los acentos
+      const lines = document.querySelectorAll(".boot-line");
+      lines.forEach((l, i) => {
+        animate(l, { opacity: 1, x: [-14, 0] }, { duration: 0.4, delay: 0.7 + i * 0.35 });
+      });
+      const target = 72;
+      animate(fill, { width: "0%" }, { duration: 0.001 });
+      animate(fill, { width: target + "%" }, { duration: 6, delay: 1.4, ease: [0.22, 1, 0.36, 1] });
+      animate(progress, { opacity: 1 }, { duration: 0.5, delay: 1.4 });
+      // contador sincronizado con el progress
+      const start = performance.now() + 1400;
+      function tick(now) {
+        const t = Math.min(1, Math.max(0, (now - start) / 6000));
+        pct.textContent = Math.round(target * t) + "%";
+        if (t < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+      // descripción y links
+      animate(desc, { opacity: 1, y: [12, 0] }, { duration: 0.5, delay: 1.6 });
+      animate(links, { opacity: 1, y: [12, 0] }, { duration: 0.5, delay: 1.8 });
+    }
+  </script>
+</body>
+</html>
