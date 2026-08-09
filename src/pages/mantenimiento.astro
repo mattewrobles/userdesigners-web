@@ -1,3 +1,8 @@
+---
+import Blob from "../components/ui/Blob.astro";
+import Logo from "../components/ui/Logo.astro";
+---
+
 <!DOCTYPE html>
 <html lang="es-EC">
 <head>
@@ -6,7 +11,6 @@
   <title>En mantenimiento | UserDesigners</title>
   <meta name="description" content="Estamos trabajando en el sitio. Volveremos pronto."/>
   <meta name="robots" content="noindex"/>
-  <link rel="icon" href="/assets/local/THPlYhmIylZZQK7C2oB2vUpYec.png" />
   <link rel="stylesheet" href="/styles/tokens.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -29,26 +33,6 @@
       overflow: hidden;
       position: relative;
     }
-    /* glow blob: forma orgánica con gradiente de marca (patrón del DS Blob) */
-    .blob {
-      position: fixed;
-      pointer-events: none;
-      z-index: 0;
-      will-change: transform, border-radius;
-    }
-    .blob-shape {
-      position: absolute;
-      inset: 0;
-      filter: blur(48px);
-      -webkit-filter: blur(48px);
-      opacity: 0.16;
-      will-change: transform, border-radius;
-    }
-    .blob--1 { width: 460px; height: 420px; top: -120px; right: -80px; }
-    .blob--1 .blob-shape { background: linear-gradient(140deg, var(--ud-brand-sky), var(--ud-brand-lilac) 60%, var(--ud-brand-gold)); }
-    .blob--2 { width: 380px; height: 350px; bottom: -140px; left: -100px; }
-    .blob--2 .blob-shape { background: linear-gradient(140deg, var(--ud-brand-coral), var(--ud-brand-lilac) 55%, var(--ud-brand-sky)); }
-
     .wrapper {
       position: relative;
       z-index: 1;
@@ -57,16 +41,10 @@
       text-align: center;
     }
     .logo {
-      display: inline-flex;
-      align-items: center;
+      display: flex;
       justify-content: center;
-      margin-bottom: var(--space-11);
+      margin-bottom: var(--space-5);
       opacity: 0;
-    }
-    .logo img {
-      height: 32px;
-      width: auto;
-      display: block;
     }
     .status {
       display: inline-flex;
@@ -80,7 +58,7 @@
       letter-spacing: var(--tracking-label);
       text-transform: uppercase;
       color: var(--text-secondary);
-      margin-bottom: var(--space-6);
+      margin-bottom: var(--space-5);
       opacity: 0;
     }
     .status-dot {
@@ -102,7 +80,6 @@
       line-height: var(--leading-tight);
       margin-bottom: var(--space-4);
     }
-    /* boot lines: cada línea con su acento de marca */
     .boot {
       margin: var(--space-7) 0 var(--space-9);
       text-align: center;
@@ -111,34 +88,47 @@
       line-height: var(--leading-normal);
       min-height: 104px;
     }
-    .boot-line {
-      opacity: 0;
-      padding: 2px 0;
-    }
+    .boot-line { opacity: 0; padding: 2px 0; }
     .boot-line .prompt { color: var(--text-tertiary); margin-right: 8px; }
     .boot-line--sky .prompt { color: var(--ud-brand-sky); }
     .boot-line--lilac .prompt { color: var(--ud-brand-lilac); }
     .boot-line--gold .prompt { color: var(--ud-brand-gold); }
-    .boot-line--coral .prompt { color: var(--ud-brand-coral); }
     .boot-line .text { color: var(--text-secondary); }
-
     .progress {
       width: 100%;
-      max-width: 320px;
+      max-width: 340px;
       margin: 0 auto var(--space-9);
       opacity: 0;
     }
     .progress-bar {
-      height: 2px;
-      background: var(--border-subtle);
+      height: 6px;
+      background: var(--surface-2);
+      border: 1px solid var(--border-subtle);
       border-radius: var(--radius-pill);
       overflow: hidden;
+      position: relative;
     }
     .progress-fill {
       height: 100%;
       width: 0%;
       background: linear-gradient(90deg, var(--ud-brand-sky), var(--ud-brand-lilac), var(--ud-brand-gold));
       border-radius: var(--radius-pill);
+      position: relative;
+      box-shadow: 0 0 12px rgba(122, 215, 244, 0.35);
+      transition: width 0.1s linear;
+    }
+    /* punto brillante en el frente de la barra */
+    .progress-fill::after {
+      content: "";
+      position: absolute;
+      right: -3px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--text-primary);
+      box-shadow: 0 0 10px 2px rgba(122, 215, 244, 0.5);
     }
     .progress-label {
       display: flex;
@@ -147,6 +137,11 @@
       color: var(--text-tertiary);
       margin-top: var(--space-3);
       letter-spacing: var(--tracking-wide);
+    }
+    .progress-label .pct {
+      color: var(--ud-brand-sky);
+      font-weight: var(--weight-semibold);
+      font-size: var(--body-sm);
     }
     p.sub {
       color: var(--text-secondary);
@@ -175,12 +170,12 @@
   </style>
 </head>
 <body>
-  <div class="blob blob--1" aria-hidden="true"><span class="blob-shape"></span></div>
-  <div class="blob blob--2" aria-hidden="true"><span class="blob-shape"></span></div>
+  <Blob variant="1" placement="top-right" size={420} blur={48} opacity={0.2} speed={28} />
+  <Blob variant="2" placement="bottom-left" size={360} blur={48} opacity={0.18} speed={34} />
 
   <main class="wrapper">
     <div class="logo" id="logo">
-      <img src="/assets/local/THPlYhmIylZZQK7C2oB2vUpYec.png" alt="UserDesigners" />
+      <Logo height={32} />
     </div>
 
     <div class="status" id="status">
@@ -199,7 +194,7 @@
     <div class="progress" id="progress">
       <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
       <div class="progress-label">
-        <span id="progressPct">0%</span>
+        <span class="pct" id="progressPct">0%</span>
         <span>en curso</span>
       </div>
     </div>
@@ -213,37 +208,14 @@
     </div>
   </main>
 
-  <script type="module">
-    import { animate, spring } from "https://esm.sh/motion@13";
+  <script>
+    import { animate, spring } from "motion";
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    // blobs: forma orgánica aleatoria + flotación + rotación (como el Blob del DS)
-    function rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
-    function randomRadius() {
-      const v = () => rand(35, 65);
-      return `${v()}% ${v()}% ${v()}% ${v()}% / ${v()}% ${v()}% ${v()}% ${v()}%`;
-    }
-    if (!reduced) {
-      document.querySelectorAll(".blob").forEach((el, i) => {
-        const shape = el.querySelector(".blob-shape");
-        if (!shape) return;
-        shape.style.borderRadius = randomRadius();
-        // flotación elástica
-        animate(el, { y: [0, -22, 0, 16, 0], x: [0, 12, 0, -10, 0] }, {
-          duration: i % 2 === 0 ? 18 : 22, repeat: Infinity, ease: [0.34, 1.56, 0.64, 1],
-        });
-        // rotación del shape (el gradiente gira)
-        animate(shape, { transform: ["rotate(0deg)", `rotate(${i % 2 === 1 ? -360 : 360}deg)`] }, {
-          duration: i % 2 === 0 ? 26 : 32, repeat: Infinity, ease: "linear",
-        });
-      });
-    }
 
     const logo = document.getElementById("logo");
     const status = document.getElementById("status");
     const title = document.getElementById("title");
-    const boot = document.getElementById("boot");
     const progress = document.getElementById("progress");
     const desc = document.getElementById("desc");
     const links = document.getElementById("links");
@@ -251,27 +223,26 @@
     const pct = document.getElementById("progressPct");
 
     if (reduced) {
-      [logo, status, title, boot, progress, desc, links].forEach(el => { if (el) el.style.opacity = "1"; });
+      [logo, status, title, progress, desc, links].forEach(el => { if (el) el.style.opacity = "1"; });
       document.querySelectorAll(".boot-line").forEach(l => (l.style.opacity = "1"));
-      fill.style.width = "60%";
-      pct.textContent = "60%";
+      fill.style.width = "72%";
+      pct.textContent = "72%";
     } else {
-      // entrada del logo
       animate(logo, { opacity: 1, y: [-16, 0] }, { duration: 0.6 });
-      // status pill
       animate(status, { opacity: 1, y: [-10, 0] }, { duration: 0.5, delay: 0.2 });
-      // título
       animate(title, { opacity: 1, y: [10, 0] }, { type: spring, stiffness: 200, damping: 20, delay: 0.4 });
-      // boot lines una a una con los acentos
+
       const lines = document.querySelectorAll(".boot-line");
       lines.forEach((l, i) => {
         animate(l, { opacity: 1, x: [-14, 0] }, { duration: 0.4, delay: 0.7 + i * 0.35 });
       });
+
       const target = 72;
-      animate(fill, { width: "0%" }, { duration: 0.001 });
+      // la barra aparece con las boot lines y arranca con un ancho inicial visible
+      animate(progress, { opacity: 1 }, { duration: 0.4, delay: 0.8 });
+      animate(fill, { width: "4%" }, { duration: 0.5, delay: 0.8 });
       animate(fill, { width: target + "%" }, { duration: 6, delay: 1.4, ease: [0.22, 1, 0.36, 1] });
-      animate(progress, { opacity: 1 }, { duration: 0.5, delay: 1.4 });
-      // contador sincronizado con el progress
+
       const start = performance.now() + 1400;
       function tick(now) {
         const t = Math.min(1, Math.max(0, (now - start) / 6000));
@@ -279,7 +250,7 @@
         if (t < 1) requestAnimationFrame(tick);
       }
       requestAnimationFrame(tick);
-      // descripción y links
+
       animate(desc, { opacity: 1, y: [12, 0] }, { duration: 0.5, delay: 1.6 });
       animate(links, { opacity: 1, y: [12, 0] }, { duration: 0.5, delay: 1.8 });
     }
