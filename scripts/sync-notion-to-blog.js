@@ -87,7 +87,7 @@ async function sync() {
   const MAX_POSTS = 10;
   const filter = { property: "Status", select: { equals: "Ready" } };
 
-  const pages = await queryAll(filter, [{ property: "Date", direction: "descending" }]);
+  const pages = await queryAll(filter, [{ timestamp: "created_time", direction: "descending" }]);
 
   const today = new Date().toISOString().slice(0, 10);
   let count = 0;
