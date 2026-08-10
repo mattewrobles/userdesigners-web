@@ -42,6 +42,38 @@ Sitio web de [UserDesigners](https://www.userdesigners.com), agencia de diseño 
 
 ---
 
+## Estado de la migración Framer → Astro
+
+> El sitio se migró de Framer a Astro. Estado actual del avance (actualizado: ago 2026):
+
+### ✅ Migrado a Astro nativo
+- [x] **Blog** (lista + posts + paginación + categorías)
+- [x] **SEO Doctores** (`/seo-doctores`)
+- [x] **Mantenimiento** (`/mantenimiento`)
+- [x] **Design System** (17 componentes + tokens)
+- [x] **404** rediseñado
+- [x] **Navbar y Footer como componentes** (`Navbar.astro` / `Footer.astro`) — usados en páginas Astro nativas
+- [x] **CI anti-slop** en push/PR
+
+### 🔄 En progreso
+- [ ] **Etapa 2 — Limpieza de CSS y assets** (Framer CSS 200+ líneas @font-face, 200+ assets sin organizar)
+- [ ] **Etapa 3 — Navbar/Footer en páginas Framer** (hoy duplicados: embebidos en HTML Framer + componentes Astro)
+
+### ⏳ Pendiente (marketing en Framer)
+- [ ] **Etapa 4 — Reconstruir en Astro nativo** (6 páginas):
+  - [ ] Home (`/`)
+  - [ ] Servicios (`/servicios`)
+  - [ ] Nosotros (`/nosotros`)
+  - [ ] Contacto (`/contacto`)
+  - [ ] Proyectos (`/proyectos`)
+  - [ ] Proyectos individuales (`/proyectos/:slug`)
+- [ ] **Etapa 5 — Eliminar dependencia de Framer** (quitar 17 scripts `.mjs` remotos por página + ~463KB JS no usado)
+- [ ] **Etapa 6 — SEO + Performance final**
+
+**Progreso estimado:** ~30% del sitio en Astro nativo (blog, DS, utilidades) · ~70% aún sirve HTML de Framer (marketing).
+
+---
+
 ## Comandos
 
 ```bash
