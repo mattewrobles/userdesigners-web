@@ -1,0 +1,82 @@
+---
+interface Props {
+  as?: "h1" | "h2" | "h3" | "p" | "div";
+  stagger?: number;
+  duration?: number;
+  blur?: boolean;
+  delay?: number;
+}
+
+const { as = "h1", stagger = 0.02, duration = 0.5, blur = true, delay = 0 } = Astro.props;
+const Tag = as;
+const elId = `letters-${Math.random().toString(36).slice(2, 8)}`;
+---
+
+<Tag
+  id={elId}
+  class="letter-reveal"
+  data-stagger={stagger}
+  data-duration={duration}
+  data-blur={blur}
+  data-delay={delay}
+>
+  <slot />
+</Tag>
+
+<script>
+  import { animate, inView } from "motion";
+
+  document.querySelectorAll(".letter-reveal").forEach((el) => {
+    const stagger = Number(el.dataset.stagger || 0.02);
+    const duration = Number(el.dataset.duration || 0.5);
+    const blur = el.dataset.blur !== "false";
+    const delay = Number(el.dataset.delay || 0);
+
+    // divide en palabras → letras
+    const text = el.textContent.trim();
+    el.innerHTML = "";
+    const words = text.split(/(\s+)/);
+    const wordEls = [];
+
+    words.forEach((w) => {
+      if (!w.trim()) { el.appendChild(document.createTextNode(" ")); return; }
+      const word = document.createElement("span");
+      word.style.cssText = "display:inline-block;white-space:nowrap";
+      for (const char of w) {
+        const c = document.createElement("span");
+        c.style.cssText = "display:inline-block;will-change:opacity,transform,filter";
+        if (blur) c.style.filter = "blur(10px)";
+        c.style.opacity = "0";
+        c.style.transform = "translateY(20px)";
+        c.textContent = char;
+        word.appendChild(c);
+      }
+      el.appendChild(word);
+      el.appendChild(document.createTextNode(" "));
+      wordEls.push(word);
+    });
+
+    const chars = el.querySelectorAll("span > span");
+    let started = false;
+
+    inView(
+      el,
+      () => {
+        if (started) return;
+        started = true;
+        chars.forEach((c, i) => {
+          animate(
+            c,
+            { opacity: 1, transform: "translateY(0)", filter: "blur(0px)" },
+            { duration, delay: delay + i * stagger, easing: [1, 0.02, 0.69, 1] }
+          );
+        });
+      },
+      { amount: 0.5, once: true }
+    );
+  });
+</script>
+
+<style>
+  .letter-reveal { margin: 0; }
+</style>

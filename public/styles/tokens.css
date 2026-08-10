@@ -1,0 +1,276 @@
+:root {
+  /* ============================================================
+     PRIMITIVOS — valores crudos de la marca (extraídos de Framer)
+     ============================================================ */
+
+  /* ---------- Color: escala ---------- */
+  --ud-white: #ffffff;
+  --ud-black: #030303;
+  --ud-gray-100: rgb(204, 204, 204);
+  --ud-gray-200: rgb(198, 198, 198);
+  --ud-gray-300: rgb(206, 206, 206);
+  --ud-gray-400: rgb(161, 161, 168);
+  --ud-gray-500: rgb(101, 103, 113);
+  --ud-blue: #0099ff;
+  --ud-cyan: #00f0ff;
+  --ud-glass: rgba(255, 255, 255, 0.08);
+  --ud-glass-hover: rgba(255, 255, 255, 0.13);
+
+  /* ---------- Color: superficies reales Framer ---------- */
+  --ud-card: rgb(10, 10, 10);
+  --ud-card-dark: rgb(7, 7, 7);
+  --ud-card-hover: rgb(13, 13, 14);
+  --ud-border-card: rgb(62, 62, 65);
+  --ud-border-dark: rgb(25, 25, 26);
+  --ud-border-tag: rgb(32, 32, 32);
+  --ud-tag: rgb(21, 21, 21);
+
+  /* ---------- Tipografía: fuentes ---------- */
+  --ud-font-display: "Familjen Grotesk", "Inter", sans-serif;
+  --ud-font-body: "DM Sans", "Inter", -apple-system, sans-serif;
+  --ud-font-subhead: "General Sans", "Inter", sans-serif;
+  --ud-font-ui: "Manrope", "Inter", sans-serif;
+  --ud-font-accent: "Clash Grotesk", "Inter", sans-serif;
+  --ud-font-mono: "Geist Mono", "SF Mono", monospace;
+
+  /* ---------- Radii ---------- */
+  --ud-radius-sm: 8px;
+  --ud-radius-md: 14px;
+  --ud-radius-lg: 16px;
+  --ud-radius-xl: 20px;
+  --ud-radius-full: 999px;
+
+  /* ---------- Blur (valores reales Framer) ---------- */
+  --ud-blur-sm: 10px;
+  --ud-blur-md: 18px;
+  --ud-blur-lg: 24px;
+  --ud-blur-xl: 32px;
+  --ud-blur-2xl: 48px;
+  --ud-blur-3xl: 70px;
+  --ud-blur-4xl: 80px;
+
+  /* ---------- Opacidades ---------- */
+  --ud-opacity-subtle: 0.15;
+  --ud-opacity-mid: 0.32;
+  --ud-opacity-strong: 0.6;
+  --ud-opacity-solid: 1;
+
+  /* ============================================================
+     SEMÁNTICOS — roles funcionales (lo que consume el código)
+     ============================================================ */
+
+  /* ---------- Color: superficies ---------- */
+  --surface-1: var(--ud-black);
+  --surface-2: var(--ud-card);
+  --surface-3: var(--ud-card-dark);
+  --surface-card: var(--ud-card);
+  --surface-card-hover: var(--ud-card-hover);
+  --surface-glass: var(--ud-glass);
+  --surface-glass-hover: var(--ud-glass-hover);
+  --overlay: rgba(3, 3, 3, 0.88);
+
+  /* ---------- Color: texto ---------- */
+  --text-primary: var(--ud-white);
+  --text-secondary: var(--ud-gray-400);
+  --text-tertiary: var(--ud-gray-300);
+  --text-disabled: rgba(255, 255, 255, 0.25);
+  --text-on-accent: var(--ud-black);
+
+  /* ---------- Color: borders ---------- */
+  --border-default: var(--ud-border-card);
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-strong: rgba(130, 130, 130, 0.15);
+  --border-accent: rgba(0, 153, 255, 0.25);
+
+  /* ---------- Color: accent ---------- */
+  --accent-default: var(--ud-blue);
+  --accent-muted: rgba(0, 153, 255, 0.08);
+
+  /* ---------- Efecto "stroke" del botón hero ---------- */
+  --stroke-glow: radial-gradient(20.7% 50% at 50% 100%, rgb(255, 255, 255) 0%, rgba(255, 255, 255, 0) 100%);
+  --stroke-fill: linear-gradient(259deg, rgb(3, 3, 3) 0%, rgb(3, 3, 3) 100%);
+
+  /* ---------- Gradientes glow ambient (reales Framer) ---------- */
+  --glow-1: conic-gradient(from 0deg at 50% 50%, rgb(208, 69, 255) 50.97deg, rgb(153, 141, 208) 129.73deg, rgb(0, 68, 255) 207.57deg, rgb(255, 191, 0) 296.53deg);
+  --glow-2: conic-gradient(from 0deg at 50% 50%, rgb(246, 198, 95) 0deg, rgb(26, 36, 59) 180deg, rgb(11, 25, 59) 360deg);
+  --glow-3: conic-gradient(from 0deg at 50% 50%, rgb(132, 217, 250) 0deg, rgb(18, 61, 255) 180deg, rgb(74, 222, 255) 360deg);
+  --glow-hero: linear-gradient(#f6c65f 0%, rgba(227, 103, 83, 0.55) 48.13%, #998dd0 100%);
+
+  /* ---------- Tipografía: escala (reales Framer) ---------- */
+  --font-display: var(--ud-font-display);
+  --font-body: var(--ud-font-body);
+  --font-subhead: var(--ud-font-subhead);
+  --font-ui: var(--ud-font-ui);
+  --font-accent: var(--ud-font-accent);
+  --font-mono: var(--ud-font-mono);
+
+  /* Escala cruda */
+  --text-2xs: 11px;
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 15px;
+  --text-md: 17px;
+  --text-lg: 18px;
+  --text-xl: 20px;
+  --text-2xl: 22px;
+  --text-3xl: 24px;
+  --text-4xl: 32px;
+  --text-5xl: 40px;
+  --text-6xl: 42px;
+  --text-7xl: 49px;
+  --text-8xl: 64px;
+  --text-9xl: 74px;
+
+  /* Roles semánticos */
+  --display-1: clamp(42px, 6.5vw, 74px);        /* h1 hero */
+  --display-2: clamp(36px, 5vw, 49px);          /* h1 sección grande */
+  --heading-1: clamp(30px, 4vw, 42px);          /* h2 sección */
+  --heading-2: clamp(26px, 3.5vw, 40px);        /* h3 cards grandes */
+  --heading-3: clamp(22px, 3vw, 32px);          /* h3/h4 sub-sección */
+  --subheading: 22px;                            /* General Sans subtítulos */
+  --title: clamp(20px, 2.5vw, 24px);             /* títulos de card */
+  --body-lg: 17px;                               /* párrafos principales */
+  --body: 15px;                                  /* párrafos base */
+  --body-sm: 14px;                               /* textos secundarios */
+  --caption: 12px;                               /* captions */
+  --overline: 11px;                              /* labels */
+
+  --weight-light: 300;
+  --weight-regular: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  --tracking-tight: -0.03em;
+  --tracking-snug: -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.02em;
+  --tracking-label: 0.12em;
+
+  --leading-none: 1;
+  --leading-tight: 1.05;
+  --leading-snug: 1.12;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.75;
+
+  /* ---------- Espaciado (4px base grid) ---------- */
+  --space-0: 0;
+  --space-0-5: 2px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 40px;
+  --space-9: 48px;
+  --space-10: 56px;
+  --space-11: 64px;
+  --space-12: 80px;
+  --space-13: 96px;
+  --space-14: 110px;
+  --space-15: 120px;
+  --space-16: 140px;
+  --space-section: var(--space-14);
+  --space-pad: clamp(20px, 5vw, 80px);
+
+  /* ---------- Radii (semánticos) ---------- */
+  --radius-sm: var(--ud-radius-sm);
+  --radius-md: var(--ud-radius-md);
+  --radius-lg: var(--ud-radius-lg);
+  --radius-xl: var(--ud-radius-xl);
+  --radius-card: var(--ud-radius-xl);
+  --radius-btn: 12px; /* botones del hero home (Ver servicios) — uniforme para todas las variantes */
+  --radius-pill: var(--ud-radius-full);
+
+  /* ---------- Blur (semánticos) ---------- */
+  --blur-nav: var(--ud-blur-lg);
+  --blur-glass: var(--ud-blur-md);
+  --blur-glow: var(--ud-blur-3xl);
+  --blur-glow-xl: var(--ud-blur-4xl);
+
+  /* ---------- Elevación (glass + blur, no shadow) ---------- */
+  --elevation-1: blur(var(--ud-blur-md));
+  --elevation-2: blur(var(--ud-blur-lg));
+  --elevation-3: blur(var(--ud-blur-xl));
+
+  /* ---------- Z-index scale ---------- */
+  --z-base: 0;
+  --z-content: 1;
+  --z-sticky: 100;
+  --z-nav: 1000;
+  --z-overlay: 1000;
+  --z-menu: 1100;
+  --z-modal: 1200;
+  --z-toast: 1300;
+
+  /* ---------- Motion ---------- */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in: cubic-bezier(0.36, 0, 0.66, -0.56);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --duration-instant: 0.1s;
+  --duration-fast: 0.2s;
+  --duration-base: 0.3s;
+  --duration-slow: 0.5s;
+  --duration-slower: 0.7s;
+
+  /* ---------- Layout ---------- */
+  --container-max: 1120px;
+  --container-blog: 1100px;
+  --container-narrow: 720px;
+
+  /* ---------- Breakpoints (reales Framer) ---------- */
+  --bp-desktop: 1440px;
+  --bp-tablet: 810px;
+  --bp-mobile: 480px;
+
+  /* ---------- Estados ---------- */
+  --state-hover: 0.9;
+  --state-disabled: 0.4;
+  --state-focus-ring: 2px solid var(--accent-default);
+
+  /* ---------- Opacidades (semánticas) ---------- */
+  --opacity-hover: 0.9;
+  --opacity-disabled: 0.4;
+}
+
+/* ============================================================
+   RESPONSIVE — breakpoints reales de Framer
+   ============================================================
+   La web usa 3 breakpoints exactos (verificado en src/html/):
+
+   · Desktop  : >= 1440px        (media min-width: 1440px)
+   · Tablet   : 810px – 1439px   (media min-width:810px) and (max-width:1439.98px)
+   · Mobile   : <= 809px         (media max-width: 809.98px)
+   · Compact  : <= 480px         (uso interno para ajustes finos)
+
+   REGLA DE ORO: mobile-first no aplica acá. Framer usa desktop-first:
+   los estilos base son para desktop y se sobreescriben hacia abajo.
+   Mantener el mismo patrón en componentes nuevos:
+     @media (max-width: 809.98px) { ... ajustes mobile ... }
+     @media (min-width: 810px) and (max-width: 1439.98px) { ... tablet ... }
+
+   Tipografía: la escala usa clamp() con vw — es FLUIDA (no salta por breakpoint),
+   solo se sobreescribe el --space-section en mobile.
+
+   Padding lateral: --space-pad: clamp(20px, 5vw, 80px) — fluido.
+*/
+
+/* Mobile: menos espacio de sección */
+@media (max-width: 809.98px) {
+  :root {
+    --space-section: 80px;
+  }
+}
+
+/* Compact: tipografía un poco menor */
+@media (max-width: 479.98px) {
+  :root {
+    --display-1: clamp(34px, 9vw, 48px);
+    --display-2: clamp(30px, 8vw, 40px);
+    --heading-1: clamp(26px, 7vw, 34px);
+    --heading-2: clamp(24px, 6vw, 32px);
+    --heading-3: clamp(20px, 5.5vw, 28px);
+  }
+}

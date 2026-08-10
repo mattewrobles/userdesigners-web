@@ -9,12 +9,15 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "slop": "impeccable detect src --ci"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
     "astro": "^7.1.6",
-    "mixpanel-browser": "^2.81.0",
     "motion": "^13.0.0"
+  },
+  "devDependencies": {
+    "impeccable": "^3.5.0"
   }
 }

@@ -8,3 +8,11 @@
 /seo-doctores/blog/* /blog/:splat 301
 /proyectos/blog /blog 301
 /proyectos/blog/* /blog/:splat 301
+/proyectos/verificaci-n-biom-trica /proyectos/verificacion-biometrica 301
+/proyectos/verificaci-n-biom-trica/* /proyectos/verificacion-biometrica/:splat 301
+/proyectos/verificaci%C3%B3n-biom%C3%A9trica /proyectos/verificacion-biometrica 301
+/proyectos/kaito.html /proyectos/kaito 301
+/proyectos/novo.html /proyectos/novo 301
+/proyectos/utransfer.html /proyectos/utransfer 301
+/proyectos/verificacion-biometrica.html /proyectos/verificacion-biometrica 301
+/proyectos/verificaci-n-biom-trica.html /proyectos/verificacion-biometrica 301

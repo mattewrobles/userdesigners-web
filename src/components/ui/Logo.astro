@@ -1,0 +1,39 @@
+---
+interface Props {
+  // altura del logo (el PNG es 440×73, proporción 6:1)
+  height?: number;
+  // ancho fijo (si quieres exacto, sobreescribe height)
+  width?: number;
+  href?: string;
+  alt?: string;
+}
+
+const { height = 24, width, href = "/", alt = "UserDesigners" } = Astro.props;
+const style = width ? `width:${width}px` : `height:${height}px`;
+---
+
+{
+  href ? (
+    <a href={href} class="logo" aria-label={alt}>
+      <img src="/assets/local/THPlYhmIylZZQK7C2oB2vUpYec.png" alt={alt} style={style} />
+    </a>
+  ) : (
+    <img src="/assets/local/THPlYhmIylZZQK7C2oB2vUpYec.png" alt={alt} style={style} />
+  )
+}
+
+<style>
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    line-height: 0;
+  }
+  .logo img {
+    width: auto;
+    height: auto;
+    max-height: 100%;
+    object-fit: contain;
+    object-position: left center;
+  }
+</style>

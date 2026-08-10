@@ -1,0 +1,43 @@
+---
+interface Props {
+  variant?: "default" | "accent" | "outline";
+  size?: "sm" | "md";
+}
+
+const { variant = "default", size = "md" } = Astro.props;
+---
+
+<span class={`badge badge--${variant} badge--${size}`}>
+  <slot />
+</span>
+
+<style>
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border-radius: var(--radius-pill);
+    font-weight: 500;
+    letter-spacing: var(--tracking-wide);
+    white-space: nowrap;
+  }
+  .badge--sm { padding: 3px 10px; font-size: 11px; }
+  .badge--md { padding: 6px 14px; font-size: 13px; }
+
+  /* tag real Framer: rgb(21,21,21) + border rgb(32,32,32) */
+  .badge--default {
+    background: var(--ud-tag);
+    border: 1px solid var(--ud-border-tag);
+    color: var(--text-secondary);
+  }
+  .badge--outline {
+    background: transparent;
+    border: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+  }
+  .badge--accent {
+    background: var(--accent-muted);
+    border: 1px solid var(--border-accent);
+    color: var(--accent-default);
+  }
+</style>

@@ -1,0 +1,21 @@
+---
+interface Props {
+  variant?: "default" | "subtle" | "strong";
+}
+
+const { variant = "default" } = Astro.props;
+---
+
+<hr class={`divider divider--${variant}`} />
+
+<style>
+  .divider {
+    border: none;
+    height: 1px;
+    width: 100%;
+    margin: 0;
+  }
+  .divider--default { background: var(--border-default); }
+  .divider--subtle { background: var(--border-subtle); }
+  .divider--strong { background: var(--border-strong); }
+</style>

@@ -1,0 +1,210 @@
+---
+interface Props {
+  href?: string;
+  variant?: "primary" | "ghost" | "link" | "stroke" | "danger";
+  size?: "sm" | "md" | "lg";
+  target?: "_blank" | "_self";
+  rel?: string;
+  strokeFill?: boolean;
+}
+
+const {
+  href = "#",
+  variant = "primary",
+  size = "md",
+  target = "_self",
+  rel,
+  strokeFill = true,
+} = Astro.props;
+const classes = `btn btn--${variant} btn--${size}`;
+---
+
+{
+  href ? (
+    <a href={href} class={classes} target={target} rel={rel || (target === "_blank" ? "noopener" : undefined)}>
+      {variant === "stroke" && (
+        <>
+          <span class="btn-stroke" aria-hidden="true">
+            <span class="btn-stroke-glow"></span>
+            <span class="btn-stroke-glow btn-stroke-glow--2"></span>
+          </span>
+          <span class="btn-fill" aria-hidden="true"></span>
+        </>
+      )}
+      <span class="btn-label"><slot /></span>
+    </a>
+  ) : (
+    <button class={classes}>
+      {variant === "stroke" && (
+        <>
+          <span class="btn-stroke" aria-hidden="true">
+            <span class="btn-stroke-glow"></span>
+            <span class="btn-stroke-glow btn-stroke-glow--2"></span>
+          </span>
+          <span class="btn-fill" aria-hidden="true"></span>
+        </>
+      )}
+      <span class="btn-label"><slot /></span>
+    </button>
+  )
+}
+
+<style>
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-family: var(--font-body);
+    font-weight: 500;
+    border-radius: var(--radius-btn);
+    cursor: pointer;
+    position: relative;
+    transition: background var(--duration-fast) ease, border-color var(--duration-fast) ease, color var(--duration-fast) ease, opacity var(--duration-fast) ease;
+    border: 2px solid transparent;
+    box-sizing: border-box;
+    white-space: nowrap;
+  }
+
+  .btn--sm { padding: 10px 18px; font-size: 14px; }
+  .btn--md { padding: 12px 28px; font-size: 15px; }
+  .btn--lg { padding: 16px 32px; font-size: 16px; }
+
+  /* Glass — botón "Filled" del navbar (rgba 255 0.08 + borde 2px) */
+  .btn--primary {
+    background: var(--surface-glass);
+    border-color: var(--border-strong);
+    color: var(--text-primary);
+  }
+  .btn--primary:hover { background: var(--surface-glass-hover); }
+
+  /* Ghost — transparente con borde tenue */
+  .btn--ghost {
+    background: transparent;
+    border-color: var(--border-subtle);
+    color: var(--text-secondary);
+  }
+  .btn--ghost:hover { color: var(--text-primary); border-color: var(--border-strong); }
+
+  /* Link — azul con underline (único uso del accent en botones) */
+  .btn--link {
+    background: transparent;
+    border: none;
+    color: var(--accent-default);
+    padding: 0;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .btn--link:hover { opacity: 0.85; }
+  /* Stroke — botón del hero (borde blanco animado, como Framer) */
+  .btn--stroke {
+    background: rgba(255, 255, 255, 0.05);
+    border: none;
+    border-radius: var(--radius-btn);
+    color: var(--text-primary);
+    overflow: visible;
+    padding: 12px 20px;
+  }
+  /* Borde animado: el brillo rota DENTRO del botón (inset 0), el fill tapa el centro
+     y deja un anillo de 2px donde se ve el brillo recorriendo el borde (como Framer) */
+  .btn-stroke {
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-btn);
+    overflow: hidden;
+    pointer-events: none;
+  }
+  /* glow que rota: el brillo viaja por el borde */
+  .btn-stroke-glow {
+    position: absolute;
+    inset: -45%;
+    background: conic-gradient(
+      from 0deg,
+      transparent 0deg,
+      rgba(255, 255, 255, 0) 50deg,
+      rgba(255, 255, 255, 0.5) 100deg,
+      rgba(255, 255, 255, 0) 160deg
+    );
+    filter: blur(6px);
+    -webkit-filter: blur(6px);
+    will-change: transform;
+    opacity: 0.7;
+  }
+  .btn-stroke-glow--2 {
+    inset: -30%;
+    background: conic-gradient(
+      from 180deg,
+      transparent 0deg,
+      rgba(255, 255, 255, 0) 50deg,
+      rgba(255, 255, 255, 0.25) 100deg,
+      rgba(255, 255, 255, 0) 160deg
+    );
+    filter: blur(10px);
+    -webkit-filter: blur(10px);
+    opacity: 0.45;
+  }
+  /* Hover: el anillo se ilumina un poco más (brillo fino) */
+  .btn--stroke:hover .btn-stroke-glow {
+    opacity: 0.9;
+  }
+  .btn--stroke:hover .btn-stroke-glow--2 {
+    opacity: 0.6;
+  }
+  .btn--stroke:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
+  .btn--stroke:hover .btn-fill {
+    opacity: 0.92;
+  }
+  /* el fill tapa el centro → deja visible el anillo de 2px con el brillo */
+  .btn-fill {
+    position: absolute;
+    inset: 2px;
+    background: var(--stroke-fill);
+    border-radius: calc(var(--radius-btn) - 2px);
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+  }
+  .btn-label { position: relative; z-index: 1; }
+
+  /* Danger — para acciones destructivas */
+  .btn--danger {
+    background: transparent;
+    border-color: rgba(227, 103, 83, 0.5);
+    color: rgb(227, 103, 83);
+  }
+  .btn--danger:hover { background: rgba(227, 103, 83, 0.1); }
+
+  .btn:focus-visible {
+    outline: 2px solid var(--accent-default);
+    outline-offset: 2px;
+  }
+
+  /* Mobile: botones full-width en grids de acción */
+  @media (max-width: 809.98px) {
+    .btn--lg { padding: 14px 26px; font-size: 15px; }
+    .btn--stroke { padding: 11px 18px; }
+  }
+</style>
+
+<script>
+  import { animate } from "motion";
+
+  // rotación suave y continua de los glows del borde (motion.dev)
+  document.querySelectorAll(".btn--stroke").forEach((btn) => {
+    const glows = btn.querySelectorAll(".btn-stroke-glow");
+    if (glows.length < 2) return;
+
+    const speed = 7; // segundos por vuelta
+    animate(
+      glows[0],
+      { transform: ["rotate(0deg)", "rotate(360deg)"] },
+      { duration: speed, repeat: Infinity, ease: "linear" }
+    );
+    animate(
+      glows[1],
+      { transform: ["rotate(360deg)", "rotate(0deg)"] },
+      { duration: speed * 1.4, repeat: Infinity, ease: "linear" }
+    );
+  });
+</script>

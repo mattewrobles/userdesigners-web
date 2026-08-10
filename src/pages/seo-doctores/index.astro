@@ -1,4 +1,10 @@
 ---
+import Navbar from "../../components/Navbar.astro";
+import Footer from "../../components/Footer.astro";
+import Button from "../../components/ui/Button.astro";
+import Card from "../../components/ui/Card.astro";
+import SectionLabel from "../../components/ui/SectionLabel.astro";
+
 const site = "https://www.userdesigners.com"
 const canonical = `${site}/seo-doctores/`
 
@@ -40,10 +46,11 @@ const schema = {
   <meta property="og:title" content="SEO para Médicos y Clínicas | UserDesigners" />
   <meta property="og:description" content="Ayudamos a clínicas y especialistas a aparecer cuando un paciente busca atención médica. SEO local, Google Business y contenido médico confiable." />
   <meta property="og:url" content={canonical} />
-  <meta property="og:image" content={`${site}/assets/local/o5LtTMyVT0hoY6m1F1q3smw3kq4.png`} />
+  <meta property="og:image" content={`${site}/assets/local/bUYh6jy5kjctf6KEV3vRnONhegI.png`} />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="SEO para Médicos y Clínicas | UserDesigners" />
   <meta name="twitter:description" content="Ayudamos a clínicas y especialistas a aparecer cuando un paciente busca atención médica." />
+  <meta name="twitter:image" content={`${site}/assets/local/bUYh6jy5kjctf6KEV3vRnONhegI.png`} />
   <script type="application/ld+json" set:html={JSON.stringify(schema)} />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -55,262 +62,156 @@ const schema = {
     gtag('js', new Date());
     gtag('config', 'G-PDZVJDG9Y5');
   </script>
+  <link rel="stylesheet" href="/styles/tokens.css" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    :root {
-      --bg: #030303;
-      --surface: rgba(255,255,255,0.04);
-      --border: rgba(255,255,255,0.07);
-      --text: #ffffff;
-      --muted: rgba(255,255,255,0.5);
-      --dim: rgba(255,255,255,0.3);
-      --font-body: 'DM Sans', sans-serif;
-      --font-display: 'Familjen Grotesk', sans-serif;
-      --max: 1120px;
-      --pad: clamp(20px, 5vw, 80px);
+    html {
+      background: var(--color-bg);
+      color: var(--color-text);
+      font-family: var(--font-body);
+      scroll-behavior: smooth;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
     }
-
-    html { background: var(--bg); color: var(--text); font-family: var(--font-body); scroll-behavior: smooth; }
     body { min-height: 100vh; overflow-x: hidden; }
 
-    body::before {
-      content: '';
-      position: fixed; top: 50%; left: 50%;
-      width: 900px; height: 900px;
-      transform: translate(-50%, -50%);
-      border-radius: 50%;
-      background: conic-gradient(from 0deg, #d045ff, #998dd0, #0044ff, #ffbf00, #d045ff);
-      filter: blur(140px);
-      opacity: 0.1;
-      pointer-events: none;
-      z-index: 0;
-      animation: spin 30s linear infinite;
-    }
-    @keyframes spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
-
-    nav {
-      position: sticky; top: 0; z-index: 100;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 16px var(--pad);
-      background: rgba(3,3,3,0.88);
-      backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--border);
-    }
-    .nav-logo img { height: 26px; width: auto; display: block; }
-    .nav-links { display: flex; gap: 28px; list-style: none; }
-    .nav-links a { color: var(--muted); text-decoration: none; font-size: 14px; transition: color .2s; }
-    .nav-links a:hover { color: var(--text); }
-    .nav-cta {
-      padding: 8px 20px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      color: var(--text);
-      text-decoration: none;
-      font-size: 14px; font-weight: 500;
-      transition: background .2s;
-    }
-    .nav-cta:hover { background: rgba(255,255,255,0.13); }
-    @media (max-width: 680px) { .nav-links { display: none; } }
-
     main { position: relative; z-index: 1; }
-    .inner { max-width: var(--max); margin: 0 auto; padding: 0 var(--pad); }
-    section { padding: 96px var(--pad); max-width: var(--max); margin: 0 auto; }
-    hr { border: none; border-top: 1px solid var(--border); }
-
-    .label {
-      display: inline-block;
-      font-size: 11px; font-weight: 600;
-      letter-spacing: .12em; text-transform: uppercase;
-      color: var(--dim); margin-bottom: 28px;
-    }
+    section { padding: var(--space-section) var(--space-pad); max-width: var(--container-max); margin: 0 auto; }
+    hr { border: none; border-top: 1px solid var(--color-border); }
 
     /* HERO */
-    .hero { padding-top: 120px; padding-bottom: 80px; }
+    .hero { padding-top: 140px; padding-bottom: 90px; }
     .hero h1 {
       font-family: var(--font-display);
-      font-size: clamp(36px, 6vw, 68px);
-      font-weight: 500; line-height: 1.1;
+      font-size: var(--text-display);
+      font-weight: 500;
+      line-height: 1.05;
       letter-spacing: -0.03em;
-      max-width: 820px; margin-bottom: 24px;
+      max-width: 900px;
+      margin-bottom: 28px;
     }
     .hero p {
       font-size: clamp(16px, 2vw, 19px);
-      color: var(--muted); max-width: 560px;
-      line-height: 1.7; margin-bottom: 36px;
+      color: var(--color-muted);
+      max-width: 580px;
+      line-height: 1.75;
+      margin-bottom: 40px;
     }
-    .tags { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 40px; }
-    .tag {
-      font-size: 13px; color: var(--dim);
-      border: 1px solid var(--border);
-      border-radius: 20px; padding: 4px 14px;
-    }
-    .btn-primary {
-      display: inline-block; padding: 14px 28px;
-      background: var(--text); color: var(--bg);
-      border-radius: 14px; font-weight: 600; font-size: 15px;
-      text-decoration: none; margin-right: 12px; margin-bottom: 12px;
-      transition: opacity .2s;
-    }
-    .btn-primary:hover { opacity: .85; }
-    .btn-ghost {
-      display: inline-block; padding: 14px 28px;
-      border: 1px solid var(--border); border-radius: 14px;
-      color: var(--muted); font-size: 15px; text-decoration: none;
-      margin-bottom: 12px;
-      transition: color .2s, border-color .2s;
-    }
-    .btn-ghost:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+    .hero .actions { display: flex; gap: 12px; flex-wrap: wrap; }
 
     h2.section-title {
       font-family: var(--font-display);
-      font-size: clamp(26px, 4vw, 46px);
-      font-weight: 500; line-height: 1.15;
+      font-size: var(--text-title);
+      font-weight: 500;
+      line-height: 1.12;
       letter-spacing: -0.025em;
-      max-width: 700px; margin-bottom: 20px;
+      max-width: 720px;
+      margin-bottom: 20px;
     }
-    .section-desc { font-size: 16px; color: var(--muted); max-width: 540px; line-height: 1.7; margin-bottom: 48px; }
+    .section-desc { font-size: var(--text-base); color: var(--color-muted); max-width: 560px; line-height: 1.75; margin-bottom: 52px; }
 
-    .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; }
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 16px; padding: 26px;
-    }
-    .card .card-label { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); margin-bottom: 10px; }
-    .card h3 { font-size: 15px; font-weight: 600; margin-bottom: 8px; }
-    .card p { font-size: 14px; color: var(--muted); line-height: 1.6; }
+    .card h3 { font-size: var(--text-base); font-weight: 600; margin-bottom: 8px; }
+    .card p { font-size: var(--text-sm); color: var(--color-muted); line-height: 1.65; }
+    .card-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-muted); margin-bottom: 10px; }
 
     .client-list { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 36px; }
     .pill {
-      padding: 7px 16px;
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      font-size: 14px; color: var(--muted);
+      padding: 8px 18px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-pill);
+      font-size: var(--text-sm);
+      color: var(--color-muted);
+      transition: color var(--duration-fast) ease, border-color var(--duration-fast) ease;
+    }
+    .pill:hover { color: var(--color-text); border-color: var(--color-border-strong); }
+
+    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 56px; }
+    .step {
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      transition: border-color var(--duration-base) ease;
+    }
+    .step:hover { border-color: var(--color-border-strong); }
+    .step-num {
+      font-family: var(--font-display);
+      font-size: 34px;
+      font-weight: 600;
+      color: var(--color-dim);
+      margin-bottom: 16px;
     }
 
-    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 48px; }
-    .step { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 26px; }
-    .step-num { font-family: var(--font-display); font-size: 30px; font-weight: 600; color: var(--dim); margin-bottom: 14px; }
-    .step p { font-size: 14px; color: var(--muted); line-height: 1.6; }
+    .stats { display: flex; gap: 56px; flex-wrap: wrap; }
+    .stat .num {
+      font-family: var(--font-display);
+      font-size: 40px;
+      font-weight: 600;
+      color: var(--color-text);
+    }
+    .stat .desc { font-size: var(--text-sm); color: var(--color-muted); margin-top: 6px; }
 
-    .stats { display: flex; gap: 40px; flex-wrap: wrap; }
-    .stat .num { font-family: var(--font-display); font-size: 34px; font-weight: 600; }
-    .stat .desc { font-size: 13px; color: var(--muted); margin-top: 4px; }
-
-    .cta-final { text-align: center; padding-top: 80px; padding-bottom: 120px; }
+    .cta-final { text-align: center; padding-top: 90px; padding-bottom: 130px; }
     .cta-final h2 {
       font-family: var(--font-display);
-      font-size: clamp(28px, 4vw, 52px);
-      font-weight: 500; letter-spacing: -0.025em;
-      max-width: 680px; margin: 0 auto 24px; line-height: 1.15;
+      font-size: clamp(30px, 4.5vw, 56px);
+      font-weight: 500;
+      letter-spacing: -0.025em;
+      max-width: 720px;
+      margin: 0 auto 28px;
+      line-height: 1.12;
     }
-    .cta-final p { font-size: 16px; color: var(--muted); max-width: 480px; margin: 0 auto 40px; line-height: 1.7; }
-
-    footer {
-      position: relative; z-index: 1;
-      border-top: 1px solid var(--border);
-      max-width: var(--max); margin: 0 auto;
-      padding: 52px var(--pad);
-      display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 36px;
-    }
-    .footer-brand p { font-size: 13px; color: var(--dim); margin-top: 8px; }
-    .footer-brand a { color: var(--muted); text-decoration: none; font-size: 14px; display: block; margin-top: 4px; }
-    .footer-links { display: flex; gap: 48px; flex-wrap: wrap; }
-    .footer-col h4 { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--dim); margin-bottom: 12px; }
-    .footer-col a { display: block; font-size: 14px; color: var(--muted); text-decoration: none; margin-bottom: 8px; transition: color .2s; }
-    .footer-col a:hover { color: var(--text); }
-    .footer-bottom {
-      border-top: 1px solid var(--border);
-      padding: 20px var(--pad); text-align: center;
-      font-size: 12px; color: var(--dim);
-      position: relative; z-index: 1;
-    }
+    .cta-final p { font-size: 17px; color: var(--color-muted); max-width: 500px; margin: 0 auto 44px; line-height: 1.75; }
   </style>
 </head>
 <body>
 
-<nav>
-  <a class="nav-logo" href="/"><img src="/assets/local/THPlYhmIylZZQK7C2oB2vUpYec.png" alt="UserDesigners" height="26" /></a>
-  <ul class="nav-links">
-    <li><a href="/">Inicio</a></li>
-    <li><a href="/nosotros">Nosotros</a></li>
-    <li><a href="/servicios">Servicios</a></li>
-    <li><a href="/proyectos">Proyectos</a></li>
-    <li><a href="/blog">Blog</a></li>
-    <li><a href="/contacto">Contacto</a></li>
-  </ul>
-  <a class="nav-cta" href="https://wa.me/593961026799" target="_blank" rel="noopener">Charlemos</a>
-</nav>
+<Navbar />
 
 <main>
 
   <section class="hero">
-    <span class="label">SEO Médico y Posicionamiento Local</span>
+    <SectionLabel>SEO Médico y Posicionamiento Local</SectionLabel>
     <h1>SEO para doctores que convierte búsquedas en pacientes</h1>
     <p>Ayudamos a clínicas, consultorios y especialistas a aparecer cuando un paciente busca atención médica cerca de él: Google, mapas, contenidos confiables y una estrategia pensada para generar citas.</p>
-    <div class="tags">
-      <span class="tag">SEO local para consultas reales</span>
-      <span class="tag">Contenido confiable y ético</span>
-      <span class="tag">Métricas de visibilidad y citas</span>
+    <div class="actions">
+      <Button href="https://wa.me/593961026799" target="_blank" size="lg">Solicitar diagnóstico</Button>
+      <Button href="#enfoque" variant="ghost" size="lg">Ver enfoque</Button>
     </div>
-    <a class="btn-primary" href="https://wa.me/593961026799" target="_blank" rel="noopener">Solicitar diagnóstico</a>
-    <a class="btn-ghost" href="#enfoque">Ver enfoque</a>
   </section>
 
   <hr />
 
   <section id="enfoque">
-    <span class="label">Posicionamiento para pacientes con intención</span>
+    <SectionLabel>Posicionamiento para pacientes con intención</SectionLabel>
     <h2 class="section-title">No se trata de tener más visitas. Se trata de aparecer cuando alguien necesita atenderse.</h2>
     <p class="section-desc">Para un doctor, una búsqueda como "dermatólogo cerca de mí" o "odontólogo en Cuenca" no es tráfico genérico: es una oportunidad de cita. Construimos la estrategia alrededor de esas búsquedas de alta intención.</p>
-    <div class="card-grid">
-      <div class="card">
-        <h3>Búsquedas con urgencia</h3>
-        <p>Capturamos pacientes que ya están comparando especialistas, ubicación, horarios y reseñas.</p>
-      </div>
-      <div class="card">
-        <h3>Presencia en mapas</h3>
-        <p>Optimizamos el perfil, categorías, servicios, fotos, publicaciones y señales locales.</p>
-      </div>
-      <div class="card">
-        <h3>Confianza antes de la cita</h3>
-        <p>Ordenamos contenido, autoridad y reputación para que la decisión se sienta segura.</p>
-      </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px">
+      <Card><h3>Búsquedas con urgencia</h3><p>Capturamos pacientes que ya están comparando especialistas, ubicación, horarios y reseñas.</p></Card>
+      <Card><h3>Presencia en mapas</h3><p>Optimizamos el perfil, categorías, servicios, fotos, publicaciones y señales locales.</p></Card>
+      <Card><h3>Confianza antes de la cita</h3><p>Ordenamos contenido, autoridad y reputación para que la decisión se sienta segura.</p></Card>
     </div>
   </section>
 
   <hr />
 
   <section>
-    <span class="label">Lo que trabajamos para posicionar tu consulta</span>
+    <SectionLabel>Lo que trabajamos para posicionar tu consulta</SectionLabel>
     <h2 class="section-title">Una estrategia completa conecta tu especialidad, tu ciudad y la confianza que un paciente necesita.</h2>
     <p class="section-desc">Cuatro áreas de trabajo coordinadas para que el SEO se conecte con agenda, llamadas y formularios.</p>
-    <div class="card-grid">
-      <div class="card">
-        <h3>SEO local y Google Business</h3>
-        <p>Especialidad, ubicación, servicios, horarios, reseñas y señales locales para aparecer donde el paciente decide.</p>
-      </div>
-      <div class="card">
-        <h3>Contenido por especialidad</h3>
-        <p>Páginas de tratamientos, síntomas, preguntas frecuentes y guías que responden con claridad sin sonar genéricas.</p>
-      </div>
-      <div class="card">
-        <h3>Base técnica y conversión</h3>
-        <p>Velocidad, estructura, indexación, arquitectura y llamadas a contacto pensadas para pasar de búsqueda a cita.</p>
-      </div>
-      <div class="card">
-        <h3>Autoridad y reputación</h3>
-        <p>Mejoramos señales de confianza: perfiles, reseñas, menciones, enlaces locales y consistencia de marca médica.</p>
-      </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px">
+      <Card><h3>SEO local y Google Business</h3><p>Especialidad, ubicación, servicios, horarios, reseñas y señales locales para aparecer donde el paciente decide.</p></Card>
+      <Card><h3>Contenido por especialidad</h3><p>Páginas de tratamientos, síntomas, preguntas frecuentes y guías que responden con claridad sin sonar genéricas.</p></Card>
+      <Card><h3>Base técnica y conversión</h3><p>Velocidad, estructura, indexación, arquitectura y llamadas a contacto pensadas para pasar de búsqueda a cita.</p></Card>
+      <Card><h3>Autoridad y reputación</h3><p>Mejoramos señales de confianza: perfiles, reseñas, menciones, enlaces locales y consistencia de marca médica.</p></Card>
     </div>
   </section>
 
   <hr />
 
   <section>
-    <span class="label">Doctores, clínicas y nuevas formas de búsqueda</span>
+    <SectionLabel>Doctores, clínicas y nuevas formas de búsqueda</SectionLabel>
     <h2 class="section-title">Clientes que ya entienden que el posicionamiento médico va más allá de Google</h2>
     <p class="section-desc">Trabajamos visibilidad para búsquedas locales, respuestas directas, resultados impulsados por IA y consultas donde el paciente espera una recomendación clara antes de agendar.</p>
     <div class="client-list">
@@ -325,24 +226,16 @@ const schema = {
       <span class="pill">Gabriela Machado</span>
       <span class="pill">Y más…</span>
     </div>
-    <div class="card-grid" style="margin-top:32px">
-      <div class="card">
-        <div class="card-label">GEO — Generative Engine Optimization</div>
-        <h3>También posicionamos en IA</h3>
-        <p>Optimización para que tu marca médica sea entendida, citada o recomendada por motores generativos e inteligencia artificial.</p>
-      </div>
-      <div class="card">
-        <div class="card-label">AEO — Answer Engine Optimization</div>
-        <h3>Respuestas directas donde el paciente pregunta</h3>
-        <p>Fragmentos destacados, búsquedas por voz y consultas tipo "cuál doctor elegir" en Google y asistentes de IA.</p>
-      </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:32px">
+      <Card><div class="card-label">GEO — Generative Engine Optimization</div><h3>También posicionamos en IA</h3><p>Optimización para que tu marca médica sea entendida, citada o recomendada por motores generativos e inteligencia artificial.</p></Card>
+      <Card><div class="card-label">AEO — Answer Engine Optimization</div><h3>Respuestas directas donde el paciente pregunta</h3><p>Fragmentos destacados, búsquedas por voz y consultas tipo "cuál doctor elegir" en Google y asistentes de IA.</p></Card>
     </div>
   </section>
 
   <hr />
 
   <section>
-    <span class="label">Un método claro para escalar la visibilidad médica</span>
+    <SectionLabel>Un método claro para escalar la visibilidad médica</SectionLabel>
     <h2 class="section-title">Cuatro fases, resultados medibles</h2>
     <p class="section-desc">No perseguimos volumen vacío. Priorizamos términos con intención clínica, presencia local y rutas claras de contacto.</p>
     <div class="steps">
@@ -380,38 +273,12 @@ const schema = {
   <section class="cta-final">
     <h2>Veamos qué búsquedas deberían encontrarte primero</h2>
     <p>Solicita un diagnóstico y revisamos tu presencia actual, tus oportunidades por especialidad y las mejoras que pueden conectar tu posicionamiento con más citas.</p>
-    <a class="btn-primary" href="https://wa.me/593961026799" target="_blank" rel="noopener">Hablar sobre SEO médico</a>
+    <Button href="https://wa.me/593961026799" target="_blank" size="lg">Hablar sobre SEO médico</Button>
   </section>
 
 </main>
 
-<footer>
-  <div class="footer-brand">
-    <img src="/assets/local/THPlYhmIylZZQK7C2oB2vUpYec.png" alt="UserDesigners" height="24" />
-    <p>Agencia de diseñadores UX/UI.</p>
-    <a href="mailto:latam@userdesigners.com">latam@userdesigners.com</a>
-    <a href="tel:+593961026799">(+593) 0961026799</a>
-  </div>
-  <div class="footer-links">
-    <div class="footer-col">
-      <h4>Presencia</h4>
-      <span style="font-size:14px;color:var(--muted)">Ecuador · México · Colombia · España · EE.UU.</span>
-    </div>
-    <div class="footer-col">
-      <h4>Enlaces rápidos</h4>
-      <a href="/proyectos">Proyectos</a>
-      <a href="/servicios">Servicios</a>
-      <a href="/nosotros">Nosotros</a>
-      <a href="/contacto">Contacto</a>
-    </div>
-    <div class="footer-col">
-      <h4>Social</h4>
-      <a href="https://instagram.com/userdesigners" target="_blank" rel="noopener">Instagram</a>
-      <a href="https://linkedin.com/company/userdesigners" target="_blank" rel="noopener">LinkedIn</a>
-    </div>
-  </div>
-</footer>
-<div class="footer-bottom">© 2025 Userdesigners. All rights reserved.</div>
+<Footer />
 
 </body>
 </html>

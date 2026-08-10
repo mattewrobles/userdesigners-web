@@ -1,0 +1,68 @@
+---
+interface Props {
+  variant?: "text" | "title" | "card" | "avatar" | "image" | "button";
+  lines?: number;
+  width?: string;
+  height?: string;
+}
+
+const { variant = "text", lines = 3, width = "100%", height } = Astro.props;
+const style = `width:${width};${height ? `height:${height};` : ""}`;
+---
+
+<div class="skeleton-wrap" style={style} aria-hidden="true">
+  {variant === "text" &&
+    Array.from({ length: lines }).map((_, i) => (
+      <span class="sk sk--text" style={{ width: i === lines - 1 ? "60%" : "100%" }}></span>
+    ))}
+
+  {variant === "title" && <span class="sk sk--title"></span>}
+
+  {variant === "card" && <span class="sk sk--card"></span>}
+
+  {variant === "avatar" && <span class="sk sk--avatar"></span>}
+
+  {variant === "image" && <span class="sk sk--image"></span>}
+
+  {variant === "button" && <span class="sk sk--button"></span>}
+</div>
+
+<style>
+  .skeleton-wrap { display: flex; flex-direction: column; gap: var(--space-2); }
+
+  .sk {
+    display: block;
+    background: var(--surface-2);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    position: relative;
+  }
+  .sk::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.05),
+      transparent
+    );
+    transform: translateX(-100%);
+    animation: sk-shimmer 1.6s var(--ease-in-out) infinite;
+  }
+
+  .sk--text { height: 14px; }
+  .sk--title { height: 28px; width: 100%; border-radius: var(--radius-sm); }
+  .sk--card { height: 120px; border-radius: var(--radius-lg); }
+  .sk--avatar { width: var(--space-9); height: var(--space-9); border-radius: 50%; }
+  .sk--image { height: 200px; border-radius: var(--radius-lg); }
+  .sk--button { height: 48px; width: 140px; border-radius: var(--radius-md); }
+
+  @keyframes sk-shimmer {
+    100% { transform: translateX(100%); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sk::after { animation: none; display: none; }
+  }
+</style>

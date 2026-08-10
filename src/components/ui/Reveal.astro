@@ -1,0 +1,63 @@
+---
+interface Props {
+  as?: "div" | "section" | "li" | "span";
+  delay?: number;
+  y?: number;
+  blur?: boolean;
+  once?: boolean;
+}
+
+const { as = "div", delay = 0, y = 30, blur = true, once = true } = Astro.props;
+const Tag = as;
+const elId = `reveal-${Math.random().toString(36).slice(2, 8)}`;
+---
+
+<Tag
+  id={elId}
+  class="reveal"
+  data-y={y}
+  data-blur={blur}
+  data-delay={delay}
+  data-once={once}
+  style={`transition-delay:${delay}s`}
+>
+  <slot />
+</Tag>
+
+<script>
+  import { animate, inView } from "motion";
+
+  document.querySelectorAll(".reveal").forEach((el) => {
+    const y = Number(el.dataset.y || 30);
+    const blur = el.dataset.blur === "true";
+    const delay = Number(el.dataset.delay || 0);
+    const once = el.dataset.once !== "false";
+
+    const initial = {
+      opacity: 0,
+      transform: `translateY(${y}px)${blur ? " scale(0.99)" : ""}`,
+      filter: blur ? "blur(10px)" : "none",
+    };
+    Object.assign(el.style, initial);
+
+    inView(
+      el,
+      () => {
+        animate(
+          el,
+          {
+            opacity: 1,
+            transform: "translateY(0) scale(1)",
+            filter: "blur(0px)",
+          },
+          { duration: 0.7, easing: [1, 0.02, 0.69, 1], delay }
+        );
+      },
+      { amount: 0.2, once }
+    );
+  });
+</script>
+
+<style>
+  .reveal { will-change: opacity, transform, filter; }
+</style>

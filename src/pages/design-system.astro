@@ -1,0 +1,322 @@
+---
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+import Button from "../components/ui/Button.astro";
+import Card from "../components/ui/Card.astro";
+import Badge from "../components/ui/Badge.astro";
+import Text from "../components/ui/Text.astro";
+import Icon from "../components/ui/Icon.astro";
+import Divider from "../components/ui/Divider.astro";
+import Input from "../components/ui/Input.astro";
+import SectionLabel from "../components/ui/SectionLabel.astro";
+import Marquee from "../components/ui/Marquee.astro";
+import LetterReveal from "../components/ui/LetterReveal.astro";
+import Reveal from "../components/ui/Reveal.astro";
+import Skeleton from "../components/ui/Skeleton.astro";
+import SkeletonMatch from "../components/ui/SkeletonMatch.astro";
+import Blob from "../components/ui/Blob.astro";
+import Logo from "../components/ui/Logo.astro";
+---
+
+<!doctype html>
+<html lang="es-EC">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Design System | UserDesigners</title>
+  <meta name="description" content="Design system de UserDesigners: tokens, componentes y guías." />
+  <meta name="robots" content="noindex" />
+  <link rel="icon" href="/assets/local/o5LtTMyVT0hoY6m1F1q3smw3kq4.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Familjen+Grotesk:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles/tokens.css" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { background: var(--surface-1); color: var(--text-primary); font-family: var(--font-body); }
+    body { min-height: 100vh; }
+    main { max-width: var(--container-max); margin: 0 auto; padding: 80px var(--space-pad) 120px; }
+    h1, h2, h3 { font-family: var(--font-display); font-weight: 500; letter-spacing: -0.02em; }
+    h1 { font-size: 42px; margin-bottom: 8px; }
+    h2 { font-size: 24px; margin: 64px 0 20px; }
+    h3 { font-size: 18px; margin: 32px 0 12px; }
+    .sub { color: var(--text-secondary); margin-bottom: 24px; }
+    .grid { display: flex; gap: 16px; flex-wrap: wrap; }
+    .grid > * { flex: 0 0 auto; }
+    .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+    .swatch { border: 1px solid var(--border-subtle); border-radius: var(--radius-md); overflow: hidden; }
+    .swatch-color { height: 64px; }
+    .swatch-name { padding: 10px 12px; font-size: 13px; color: var(--text-secondary); }
+    .swatch-name code { display: block; color: var(--text-primary); margin-top: 4px; font-family: var(--font-mono); font-size: 11px; }
+    .row { display: flex; gap: 24px; flex-wrap: wrap; align-items: center; }
+    .spaces { display: flex; align-items: flex-end; gap: 4px; flex-wrap: wrap; }
+    .space { background: var(--ud-blue); opacity: 0.6; }
+    .tokens-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+    .token { border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 12px 14px; font-size: 13px; }
+    .token code { color: var(--accent-default); font-family: var(--font-mono); font-size: 11px; }
+  </style>
+</head>
+<body>
+
+<Navbar />
+
+<main>
+  <h1>Design System</h1>
+  <p class="sub">UserDesigners — tokens y componentes nativos. Extraído del diseño Framer original.</p>
+
+  <Divider />
+
+  <h2>Color</h2>
+  <div class="swatches">
+    <div class="swatch"><div class="swatch-color" style="background:#030303;border-bottom:1px solid #333"></div><div class="swatch-name">--ud-black<code>#030303</code></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#ffffff"></div><div class="swatch-name">--ud-white<code>#ffffff</code></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:rgb(161,161,168)"></div><div class="swatch-name">--ud-gray-400<code>rgb(161,161,168)</code></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:rgb(206,206,206)"></div><div class="swatch-name">--ud-gray-300<code>rgb(206,206,206)</code></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#0099ff"></div><div class="swatch-name">--ud-blue<code>#0099ff</code></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:rgb(10,10,10);border-bottom:1px solid #333"></div><div class="swatch-name">--ud-card<code>rgb(10,10,10)</code></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:rgb(62,62,65)"></div><div class="swatch-name">--ud-border-card<code>rgb(62,62,65)</code></div></div>
+  </div>
+
+  <h3 style="margin-top:32px">Marca — la U del logo (con blur en el original)</h3>
+  <div class="swatches">
+    <div class="swatch"><div class="swatch-color" style="background:#7ad7f4"></div><div class="swatch-name">--ud-brand-sky<code>#7AD7F4 celeste</code></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#8f82dc"></div><div class="swatch-name">--ud-brand-lilac<code>#8F82DC lila</code></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#dec063"></div><div class="swatch-name">--ud-brand-gold<code>#DEC063 dorado</code></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#e35d52"></div><div class="swatch-name">--ud-brand-coral<code>#E35D52 coral</code></div></div>
+  </div>
+
+  <h3 style="margin-top:24px">Logo</h3>
+  <div style="display:flex;gap:32px;flex-wrap:wrap;align-items:center">
+    <Logo height={32} />
+    <Logo height={20} />
+    <Logo height={40} />
+  </div>
+
+  <h2>Glows ambientales (blobs)</h2>
+  <p class="sub" style="margin-bottom:16px">Patrón real del home: el blob va en una esquina (no cubre todo), es una figura orgánica SVG (elipses rotadas + gradientes fade) con <code>blur 60px</code> + <code>mix-blend-mode: hard-light</code>. El color cambia en cada carga, como el canvas del home.</p>
+  <div style="position:relative;border:1px solid var(--border-subtle);border-radius:20px;overflow:hidden;height:420px;background:var(--surface-1)">
+    <Blob variant="3" placement="top-center" size={300} blur={48} opacity={0.38} speed={30} />
+    <Blob variant="1" placement="bottom-left" size={280} blur={48} opacity={0.32} speed={40} />
+    <Blob variant="2" placement="top-right" size={260} blur={48} opacity={0.3} speed={50} />
+    <div style="position:relative;z-index:1;padding:24px;color:var(--text-secondary);font-size:14px">
+      Blob componente: instancias con <code>placement</code> (esquinas) — misma lógica, formas y colores distintos por carga.
+    </div>
+  </div>
+
+  <h2>Blur scale</h2>
+  <p class="sub" style="margin-bottom:16px">La web usa blur para todo: glow del footer (32-70px), navbar (24px), cartas (18px).</p>
+  <div class="grid">
+    <div style="width:80px;height:80px;border-radius:16px;background:var(--glow-3);filter:blur(10px)"></div>
+    <div style="width:80px;height:80px;border-radius:16px;background:var(--glow-3);filter:blur(18px)"></div>
+    <div style="width:80px;height:80px;border-radius:16px;background:var(--glow-3);filter:blur(24px)"></div>
+    <div style="width:80px;height:80px;border-radius:16px;background:var(--glow-3);filter:blur(32px)"></div>
+    <div style="width:80px;height:80px;border-radius:16px;background:var(--glow-3);filter:blur(48px)"></div>
+    <div style="width:80px;height:80px;border-radius:16px;background:var(--glow-3);filter:blur(70px)"></div>
+    <div style="width:80px;height:80px;border-radius:16px;background:var(--glow-3);filter:blur(80px)"></div>
+  </div>
+
+  <h2>Tipografía</h2>
+  <p class="sub" style="margin-bottom:16px">Familias reales: <code>Familjen Grotesk</code> (display + body), <code>General Sans</code> (subtítulos), <code>Manrope</code> (UI/nav), <code>Clash Grotesk</code> (acentos). Pesos: 300 / 500 / 600 / 700.</p>
+  <div style="display:grid;gap:14px;border:1px solid var(--border-subtle);border-radius:16px;padding:28px">
+    <Text as="h1" role="display-1">Display-1 — h1 hero (74px)</Text>
+    <Text as="h1" role="display-2">Display-2 — h1 sección grande (49px)</Text>
+    <Text as="h2" role="heading-1">Heading-1 — h2 sección (42px)</Text>
+    <Text as="h3" role="heading-2">Heading-2 — h3 cards grandes (40px)</Text>
+    <Text as="h4" role="heading-3">Heading-3 — h4 sub-sección (32px)</Text>
+    <Text as="h5" role="subheading">Subheading — General Sans (22px)</Text>
+    <Text as="h5" role="title">Title — título de card (24px)</Text>
+    <Text role="body-lg">Body-lg — párrafo principal (17px)</Text>
+    <Text role="body">Body — párrafo base (15px)</Text>
+    <Text role="body-sm">Body-sm — texto secundario (14px)</Text>
+    <Text role="caption">Caption — (12px)</Text>
+    <Text role="overline">Overline — label uppercase (11px)</Text>
+  </div>
+  <div style="display:flex;gap:24px;flex-wrap:wrap;margin-top:20px;align-items:center">
+    <span style="font-weight:300;font-size:20px">Light 300</span>
+    <span style="font-weight:500;font-size:20px">Regular 500</span>
+    <span style="font-weight:600;font-size:20px">Semibold 600</span>
+    <span style="font-weight:700;font-size:20px">Bold 700</span>
+  </div>
+
+  <h2>Botones</h2>
+  <div class="row">
+    <Button variant="primary">Primary (glass)</Button>
+    <Button variant="ghost">Ghost</Button>
+    <Button variant="stroke">Stroke (hero)</Button>
+    <Button variant="link">Link</Button>
+    <Button variant="danger">Danger</Button>
+  </div>
+  <div class="row" style="margin-top:12px">
+    <Button variant="primary" size="sm">Small</Button>
+    <Button variant="primary" size="md">Medium</Button>
+    <Button variant="primary" size="lg">Large</Button>
+  </div>
+
+  <h2>Cards</h2>
+  <div class="grid" style="max-width:680px">
+    <Card style="width:320px">
+      <h3 style="font-size:16px;margin-bottom:8px">Card</h3>
+      <p style="color:var(--text-secondary);font-size:14px;line-height:1.6">Superficie rgb(10,10,10) con borde rgb(62,62,65), radius 16px, hover lift.</p>
+    </Card>
+    <Card hover={false} style="width:320px">
+      <h3 style="font-size:16px;margin-bottom:8px">Card sin hover</h3>
+      <p style="color:var(--text-secondary);font-size:14px;line-height:1.6">Misma superficie, sin elevación al pasar el mouse.</p>
+    </Card>
+  </div>
+
+  <h2>Badges</h2>
+  <div class="row">
+    <Badge>Default</Badge>
+    <Badge variant="outline">Outline</Badge>
+    <Badge variant="accent">Accent</Badge>
+  </div>
+
+  <h2>Iconos</h2>
+  <div class="row">
+    <Icon name="arrowRight" size="lg" />
+    <Icon name="check" size="lg" />
+    <Icon name="menu" size="lg" />
+    <Icon name="close" size="lg" />
+    <Icon name="mail" size="lg" />
+    <Icon name="phone" size="lg" />
+    <Icon name="mapPin" size="lg" />
+    <Icon name="external" size="lg" />
+    <Icon name="linkedin" size="lg" />
+    <Icon name="instagram" size="lg" />
+    <Icon name="xTwitter" size="lg" />
+    <Icon name="quote" size="lg" />
+    <Icon name="sparkle" size="lg" />
+  </div>
+
+  <h2>Inputs</h2>
+  <div style="max-width:360px;display:grid;gap:16px">
+    <Input label="Nombre" placeholder="Tu nombre" />
+    <Input label="Email" type="email" placeholder="tucorreo@email.com" />
+  </div>
+
+  <h2>Skeleton</h2>
+  <div class="grid">
+    <div style="width:220px;display:grid;gap:8px"><Skeleton variant="title" /><Skeleton lines={3} /></div>
+    <Skeleton variant="card" width="200px" />
+    <Skeleton variant="avatar" />
+    <Skeleton variant="image" width="200px" />
+    <Skeleton variant="button" />
+  </div>
+  <h3 style="margin-top:24px">SkeletonMatch — se adapta al contenido real</h3>
+  <p class="sub" style="margin-bottom:16px">Envuelve el componente y muestra el skeleton sobre su forma exacta (mide el layout). Mismo patrón que skeleton-elements.</p>
+  <SkeletonMatch>
+    <Card style="width:360px">
+      <h3 style="font-size:16px;margin-bottom:8px">Card con skeleton adaptativo</h3>
+      <p style="color:var(--text-secondary);font-size:14px;line-height:1.6">Este contenido real es el que se mide. El skeleton se dibuja encima con la misma forma: títulos, párrafos y el card.</p>
+      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+        <span style="padding:4px 12px;border:1px solid var(--border-subtle);border-radius:20px;font-size:12px">Tag uno</span>
+        <span style="padding:4px 12px;border:1px solid var(--border-subtle);border-radius:20px;font-size:12px">Tag dos</span>
+      </div>
+    </Card>
+  </SkeletonMatch>
+
+  <h2>Animaciones (motion.dev)</h2>
+  <p class="sub" style="margin-bottom:16px">Todo el motion de la web usa <code>motion</code> (el fork de Framer Motion). Los tokens de easing y duración se definen en <code>tokens.css</code>.</p>
+
+  <div class="tokens-grid" style="margin-bottom:24px">
+    <div class="token">--ease-out<code>cubic-bezier(0.22,1,0.36,1)</code></div>
+    <div class="token">--ease-in<code>cubic-bezier(0.36,0,0.66,-0.56)</code></div>
+    <div class="token">--ease-in-out<code>cubic-bezier(0.65,0,0.35,1)</code></div>
+    <div class="token">Elástico (overshoot)<code>cubic-bezier(0.34,1.56,0.64,1)</code></div>
+    <div class="token">--duration-fast<code>0.2s</code></div>
+    <div class="token">--duration-base<code>0.3s</code></div>
+    <div class="token">--duration-slow<code>0.5s</code></div>
+    <div class="token">--duration-slower<code>0.7s</code></div>
+  </div>
+
+  <div style="display:grid;gap:24px">
+    <div>
+      <h3>Reveal — entrada on-scroll (aparecer de Framer)</h3>
+      <p class="sub">opacity 0→1 + blur 10→0 + translateY(30)→0, con inView de motion. <code>ease-out</code>, 0.7s.</p>
+      <Reveal><Card style="width:360px"><h3 style="font-size:16px;margin-bottom:8px">Aparece al hacer scroll</h3><p style="color:var(--text-secondary);font-size:14px">Este card se revela cuando entra al viewport.</p></Card></Reveal>
+    </div>
+    <div>
+      <h3>LetterReveal — título letra por letra (hero Framer)</h3>
+      <LetterReveal as="h1" size="2xl" style="font-family:var(--font-display);font-size:28px">Diseño que convierte búsquedas en pacientes</LetterReveal>
+    </div>
+    <div>
+      <h3>Marquee — ticker infinito (SocialProof Framer)</h3>
+      <Marquee speed={24}>
+        <span style="font-size:15px;color:var(--text-secondary);white-space:nowrap">Bancos · Fintechs · Banca digital · Design Systems · Prototipado · UX Research</span>
+      </Marquee>
+    </div>
+    <div>
+      <h3>Blob — forma orgánica animada (canvas del home)</h3>
+      <p class="sub">color HSL aleatorio por carga + border-radius morph (elástico) + flotación + rotación. Es el patrón del hero.</p>
+      <div style="position:relative;border:1px solid var(--border-subtle);border-radius:16px;overflow:hidden;height:180px">
+        <Blob variant="3" placement="top-right" size={200} blur={40} opacity={0.5} speed={25} />
+        <div style="position:relative;z-index:1;padding:16px;font-size:13px;color:var(--text-secondary)">Blob dinámico: refresca para ver otro color y forma.</div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Spacing (4px grid)</h2>
+  <div class="spaces">
+    <div class="space" style="width:4px;height:40px"></div>
+    <div class="space" style="width:8px;height:40px"></div>
+    <div class="space" style="width:12px;height:40px"></div>
+    <div class="space" style="width:16px;height:40px"></div>
+    <div class="space" style="width:24px;height:40px"></div>
+    <div class="space" style="width:32px;height:40px"></div>
+    <div class="space" style="width:48px;height:40px"></div>
+    <div class="space" style="width:64px;height:40px"></div>
+    <div class="space" style="width:96px;height:40px"></div>
+    <div class="space" style="width:120px;height:40px"></div>
+  </div>
+
+  <h2>Tokens</h2>
+  <div class="tokens-grid">
+    <div class="token">Radius sm/md/lg/pill<br /><code>8 / 14 / 16 / 999px</code></div>
+    <div class="token">Blur sm→4xl<br /><code>10 / 18 / 24 / 32 / 48 / 70 / 80px</code></div>
+    <div class="token">Z-index<br /><code>1 content · 1000 nav · 1100 menu · 1200 modal</code></div>
+    <div class="token">Breakpoints<br /><code>1440 / 810 / 480px</code></div>
+    <div class="token">Motion easing<br /><code>ease-out cubic-bezier(0.22,1,0.36,1)</code></div>
+    <div class="token">Duración<br /><code>0.1 / 0.2 / 0.3 / 0.5 / 0.7s</code></div>
+  </div>
+
+  <h2>Responsive</h2>
+  <p class="sub" style="margin-bottom:16px">Breakpoints exactos de Framer (verificados en los HTMLs migrados). La web es <strong>desktop-first</strong>: estilos base para desktop, se sobreescriben hacia abajo. Tipografía y padding son fluidos (clamp + vw), no saltan por breakpoint.</p>
+  <div class="tokens-grid">
+    <div class="token">Desktop<br /><code>min-width: 1440px</code></div>
+    <div class="token">Tablet<br /><code>810px — 1439px</code></div>
+    <div class="token">Mobile<br /><code>max-width: 809.98px</code></div>
+    <div class="token">Compact<br /><code>max-width: 479.98px</code></div>
+    <div class="token">Tipografía<br /><code>clamp() + vw — fluida</code></div>
+    <div class="token">Padding sección<br /><code>--space-pad: clamp(20px,5vw,80px)</code></div>
+  </div>
+  <p class="sub" style="margin-top:16px">Convención para componentes nuevos: <code>@media (max-width: 809.98px)</code> para mobile, <code>@media (min-width: 810px) and (max-width: 1439.98px)</code> para tablet. Ejemplo: <code>--space-section</code> baja de 110px → 80px en mobile, y la escala tipográfica se ajusta en compact (&lt;480px).</p>
+
+  <h2>Demo — todo junto</h2>
+  <p class="sub" style="margin-bottom:20px">Hero de muestra con todos los componentes combinados: LetterReveal, botones, badges, un solo blob en la esquina (como el home) y marquee.</p>
+  <div style="position:relative;border:1px solid var(--border-subtle);border-radius:24px;overflow:hidden;padding:64px 48px">
+    <Blob variant="3" size={340} blur={48} opacity={0.3} top="0" right="0" speed={35} />
+    <div style="position:relative;z-index:1">
+      <Badge variant="outline">UX · UI · Producto</Badge>
+      <div style="height:20px"></div>
+      <LetterReveal as="h1" role="display-2" style="font-family:var(--font-display);font-size:clamp(32px,5vw,56px);letter-spacing:-0.03em">Diseño digital que convierte usuarios en clientes</LetterReveal>
+      <div style="height:16px"></div>
+      <Text role="body-lg" style="max-width:520px">Design system, investigación y prototipado para bancos y fintechs en Latinoamérica.</Text>
+      <div style="height:32px"></div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <Button variant="primary" size="lg">Ver servicios</Button>
+        <Button variant="stroke" size="lg">Agenda una sesión</Button>
+      </div>
+      <div style="height:40px"></div>
+      <Marquee speed={30}>
+        <span style="display:flex;align-items:center;gap:12px;color:var(--text-secondary);font-size:14px;white-space:nowrap">
+          <Icon name="sparkle" size="sm" /> Productos reales <Icon name="sparkle" size="sm" /> Métricas medibles <Icon name="sparkle" size="sm" /> Diseño con propósito <Icon name="sparkle" size="sm" /> Equipo latinoamericano
+        </span>
+      </Marquee>
+    </div>
+  </div>
+</main>
+
+<Footer />
+
+</body>
+</html>

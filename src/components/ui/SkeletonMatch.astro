@@ -1,0 +1,101 @@
+---
+interface Props {
+  loading?: boolean;
+  effect?: "pulse" | "shimmer";
+}
+
+const { loading = true, effect = "shimmer" } = Astro.props;
+const elId = `skmatch-${Math.random().toString(36).slice(2, 8)}`;
+---
+
+<div class="skmatch" id={elId} data-loading={loading ? "true" : "false"}>
+  <div class="skmatch-content"><slot /></div>
+  <div class="skmatch-overlay" aria-hidden="true">
+    <div class={`skmatch-blocks skmatch-blocks--${effect}`}></div>
+  </div>
+</div>
+
+<script is:inline>
+  document.querySelectorAll(".skmatch").forEach((el) => {
+    const overlay = el.querySelector(".skmatch-overlay");
+    const content = el.querySelector(".skmatch-content");
+    const blocks = el.querySelector(".skmatch-blocks");
+
+    // Mide el contenido real y genera bloques skeleton que replican su forma
+    function renderBlocks() {
+      if (!content || !blocks) return;
+      blocks.innerHTML = "";
+      const walker = document.createTreeWalker(content, NodeFilter.SHOW_ELEMENT);
+      const nodes = [];
+      while (walker.nextNode()) {
+        const n = walker.currentNode;
+        const rect = n.getBoundingClientRect();
+        const contentRect = content.getBoundingClientRect();
+        if (rect.width < 4 || rect.height < 4) continue;
+        const isText = /^(P|H1|H2|H3|H4|H5|H6|LI|SPAN)$/.test(n.tagName) || (n.children.length === 0 && n.textContent.trim());
+        nodes.push({
+          left: rect.left - contentRect.left,
+          top: rect.top - contentRect.top,
+          width: rect.width,
+          height: rect.height,
+          radius: parseFloat(getComputedStyle(n).borderRadius) || (isText ? 4 : 8),
+          isText,
+        });
+      }
+      nodes.forEach((n) => {
+        const b = document.createElement("div");
+        b.className = "skmatch-block" + (n.isText ? " is-text" : "");
+        b.style.cssText = `left:${n.left}px;top:${n.top}px;width:${n.width}px;height:${n.height}px;border-radius:${n.radius}px`;
+        blocks.appendChild(b);
+      });
+    }
+
+    // Sync con el estado loading
+    const sync = () => {
+      const isLoad = el.dataset.loading === "true";
+      el.classList.toggle("is-loading", isLoad);
+      el.classList.toggle("is-loaded", !isLoad);
+      if (isLoad) renderBlocks();
+    };
+    sync();
+  });
+</script>
+
+<style>
+  .skmatch { position: relative; }
+  .skmatch-overlay {
+    position: absolute;
+    inset: 0;
+    display: none;
+  }
+  .skmatch.is-loading .skmatch-overlay { display: block; }
+  .skmatch.is-loading .skmatch-content { visibility: hidden; }
+
+  .skmatch-blocks { position: absolute; inset: 0; overflow: hidden; }
+  .skmatch-block {
+    position: absolute;
+    background: var(--surface-2);
+    border-radius: 8px;
+  }
+  .skmatch-block.is-text { height: 1.4em !important; top: 0; }
+
+  /* Effects */
+  .skmatch-blocks--pulse .skmatch-block { animation: skmatch-pulse 1.8s var(--ease-in-out) infinite; }
+  .skmatch-blocks--shimmer { position: relative; }
+  .skmatch-blocks--shimmer::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.06), transparent);
+    transform: translateX(-100%);
+    animation: skmatch-shimmer 1.6s var(--ease-in-out) infinite;
+  }
+
+  @keyframes skmatch-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+  @keyframes skmatch-shimmer { 100% { transform: translateX(100%); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .skmatch-blocks--pulse .skmatch-block,
+    .skmatch-blocks--shimmer::after { animation: none; }
+  }
+</style>

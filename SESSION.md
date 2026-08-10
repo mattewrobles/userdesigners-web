@@ -1,5 +1,229 @@
 # UserDesigners Web — Astro Migration
 
+## Ago 9 (parte 16) — FINAL: estado cerrado del blog + componentes ✓
+
+**Estado final del blog hero (validado por Mau en browser):**
+- `<BlobField variant="blog" opacity={0.7} blur={14} />` en `src/pages/blog/index.astro`
+- Esquema blog: 2 blobs `{x:100,y:620,s:1350}`, `{x:380,y:560,s:1250}` (~45% ancho), blur path 52px
+- Colores análogos (saturación 95-100%), un solo SVG + blend lighten, mezcla suave
+- Tipografía: blog/page/[page].astro usa DM Sans (sin Inter)
+
+**Componentes nuevos/modificados en esta sesión:**
+- `src/components/ui/BlobField.astro` (NUEVO) — el componente final de blobs con variantes (blog/home/contacto/servicios/proyectos/left/right/center/bicolor), colores análogos random por refresh, un solo SVG para fusión
+- `src/pages/blog/index.astro` — usa BlobField + limpieza de blobs inline viejos
+- `src/pages/blog/page/[page].astro` — DM Sans en vez de Inter
+
+**Pendiente:** commitear los cambios (rama refactor/test-fase1). SESSION.md actualizado con toda la evolución del componente (partes 1-16).
+
+## Ago 9 (parte 15) — Blog: blobs MÁXIMOS + saturación 100%
+
+**Feedback Mau:** blob más grande + verificar si el color se ve apagado.
+
+**Cambio:**
+- Tamaño: s 1250/1150 (~42% del ancho del hero) — los más grandes hasta ahora
+- **Saturación 100% fija** en colores análogos (95-100%) + luminosidad 60-80% → color vivo garantizado en cualquier refresh
+- Opacity 0.7, gradiente interno alpha 1/0.9/0.65, blur 45px
+- Nota: el modelo vision siempre percibe los blobs difuminados en dark mode como "apagados" (límite del screenshot estático) — el color real con sat 100% se ve vivo en el browser. Mau verifica en vivo.
+
+## Ago 9 (parte 14) — Blog: colores ANÁLOGOS (teoría de color) ★ 8/10
+
+**Feedback Mau:** los 2 blobs con colores random chocaban (ej: lila frío + marrón terracota = opuestos, se veían sucios/desbalanceados). Propuso teoría de color.
+
+**Cambio (opción B de Mau):**
+- Nuevo generador de colores **análogos**: un `hue base` al azar por refresh (familia cálida 35% / violeta-azul 25% / verde-cian 25% / magenta 15%), todos los blobs se derivan de él con variaciones suaves (±22° por paso)
+- Resultado: los blobs SIEMPRE armonizan y se funden (nunca chocan colores opuestos)
+- Blobs siguen grandes (s 1100/1000 = ~37% ancho), blur 45px, un solo SVG + blend lighten
+- **Verificado:** 8/10 en 2 refreshes (azul cobalto + violeta armonizan), título se lee bien
+- **Lección:** para blobs que se fundan → usar colores ANÁLOGOS de una misma familia (teoría de color), no colores independientes que pueden ser opuestos en el círculo cromático
+
+## Ago 9 (parte 13) — Blog: blobs MÁS GRANDES arriba-izquierda
+
+**Feedback Mau:** más grandes y a la izquierda, sin competir con el texto.
+
+**Cambio:** blog blobs → x 110/300, y 420/380 (arriba-izquierda, fuera del centro del título), s 860/720 (≈29% ancho), blur path 30px, opacity 0.55 (título blanco gana contraste).
+- Verificado: 8/10 (gemini vision), blobs a la izquierda como fondo ambiental, título mayormente limpio.
+- Nota: los blobs grandes inevitablemente se extienden hacia el centro — la opacidad baja (0.55) es lo que mantiene el título legible.
+
+## Ago 9 (parte 12) — Blog: blobs grandes que SE MEZCLAN (un solo SVG + blend lighten)
+
+**Feedback Mau:** blobs más grandes (30-40% del hero como referencia), que se mezclen como pintura sin "efecto alfa".
+
+**Implementación final (metaball/mezcla):**
+- **Un solo SVG** (`.bf-canvas`) con todos los paths — mismo lienzo, sin capas HTML superpuestas
+- **`mix-blend-mode: lighten`** en el contenedor + `blur(34px)` en cada path → los colores se funden donde los blobs se tocan
+- Tamaño derivado del esquema: `baseR = s/6` (blog s=820/700 → blobs grandes 27-30% del ancho)
+- Gradientes con alpha 0.85→0.55 (color real, sin quemar a blanco puro)
+- Blog: 2 blobs (x 260/480, y 540/520 — hacia abajo, fuera del área del título)
+- **Verificado:** 8/10 (gemini vision), título legible, mezcla suave. El centro puede verse claro donde 2 blobs se superponen (inherente al lighten).
+- NOTA: `filter: contrast()` (metaball clásico) QUEMA a blanco con colores claros — NO usar. Blend lighten + blur alto es el equilibrio correcto.
+
+## Ago 9 (parte 11) — Blog: 2 blobs grandes a la izquierda, un color c/u
+
+**Feedback Mau:** 2 blobs (no 4), más grandes, más a la izquierda, más blur para mezclarse, y cada blob de UN solo color (el bicolor hacía "rojo centro → celeste borde" = raro).
+
+**Cambio:**
+- Blog usa `<BlobField variant="blog" opacity={0.6} blur={14} />`
+- Variante `blog`: SOLO 2 blobs (antes 4), grandes (520/460px), a la izquierda (x -22 / 46), radios de trayectoria moderados
+- Gradiente monocromo por blob (cada blob = 1 solo color) — el "bicolor" ya no se usa en blog
+- Nuevo prop `blur` en el componente (default 16px) — blog usa 14px
+- **Verificado:** 2 elementos SVG con centros propios, movimiento real (spread X 39%), build OK
+- Nota: el modelo vision tiende a percibir "1 mancha" con 2 blobs grandes difusos en dark mode — verificar en vivo. Si Mau quiere que se distingan más: bajar blur a 10-12 o separar x a (-30, 55).
+
+## Ago 9 (parte 10) — Blog: blobs a la IZQUIERDA + BICOLOR
+
+**Feedback Mau:** mandar la masa más a la izquierda y dejarlo bicolor.
+
+**Cambio:**
+- Blog usa `<BlobField variant="bicolor" opacity={0.55} />`
+- Variante `bicolor` reposicionada: masa compacta a la IZQUIERDA (x -2→44%, y 26→70%), radios bajos (10-13) para mantenerse unida
+- Bicolor: cada blob mezcla 2 colores complementarios (gradiente c1 → c2 → c1)
+- Opacidad 0.55 (el título se lee limpio)
+- **Verificado:** título limpio, masa izquierda + bicolor, movimiento real. El modelo vision nota que la derecha queda más vacía (trade-off de la posición izquierda).
+
+## Ago 9 (parte 9) — Blog: blobs MÁS UNIDOS (masa compacta)
+
+**Feedback Mau:** que los blobs del blog no se separen mucho, se mantengan unidos.
+
+**Cambio:** variante `blog` reposicionada a zona compacta:
+- Antes: x -8→100%, y -6→90% (dispersos en todo el hero)
+- Ahora: x 18→72%, y 18→62%, radios de trayectoria reducidos (rx 10-13, ry 7-9) → los 4 blobs se mantienen en una masa central compacta que se funde
+- Tamaños 420-480px (sus halos se solapan mucho más)
+- **Verificado:** spread X 49-53% / Y 42-49% (antes dispersos 0-116%); siguen moviéndose (translación elíptica)
+- Vision: "masa única, compacta y centralizada, se funden perfectamente, 8/10"
+
+## Ago 9 (parte 8) — BlobField: VARIANTES + colores RANDOM por refresh
+
+**Feedback Mau:** bajar tamaño, subir opacidad, colores varían en cada refresh, más versiones para otras páginas.
+
+**Cambios:**
+- **Colores RANDOM por refresh** — cada blob genera color aleatorio (40% cálidos / 30% cian-azul / 30% violetas). El primer blob siempre brillante (foco vivo). Saturación 85-100%, luminosidad 58-80%.
+- **Tamaños reducidos** (blog: 400-460px, antes 560-640px)
+- **Opacidad subida** (0.8), blur 12px, stops del gradiente más intensos (alpha 1 → 0.8 → 0.4)
+- **8 VARIANTES disponibles:**
+  - `blog` — esquinas
+  - `home` — repartido
+  - `contacto` / `servicios` / `proyectos` — posiciones propias
+  - `left` — blobs salen por la izquierda (rx grande hacia centro)
+  - `right` — blobs salen por la derecha
+  - `center` — blobs se concentran y funden en el centro
+  - `bicolor` — cada blob mezcla 2 colores complementarios
+- Uso: `<BlobField variant="left" opacity={0.8} />`
+- Verificado: movimiento real (translación elíptica JS), build OK
+
+## Ago 9 (parte 7) — BlobField v2: 4 blobs GRANDES que DERIVAN (translación real) ★
+
+**Feedback Mau:** blobs más grandes, más unidos, que se muevan de verdad (no girar en sitio), 4 blobs, a veces se funden en uno solo. El mesh single-div se veía como "gradiente gigante plano" → revertido.
+
+**Nueva implementación:**
+- 4 blobs SVG individuales GRANDES (560-640px) en las ESQUINAS (x:-8/68/100/12, y:12/-6/52/88) — asoman por los bordes, centro limpio
+- **Movimiento REAL:** cada blob deriva en trayectoria elíptica via JS (`translate3d` con senos) — el centro viaja, no rota en sitio. Verificado: posiciones cambian en el tiempo (translación ✓)
+- Radios de translación grandes (26-32%) → los blobs se acercan al centro y **se funden entre sí en ciertos momentos** (screen blending), luego se separan — como lava viva
+- blur 18px, opacity 0.55 (grandes pero ambientales, no compiten con el texto)
+- **Verificado (gemini vision):** "blobs grandes y protagonistas, mejor integrados como telón ambiental, título se lee drásticamente mejor, ya no hay foco de color saturado atravesando las letras"
+
+**Lección:** para blobs que se muevan de verdad → JS con translación elíptica (senos), NO rotación CSS en sitio. Y para que sean grandes sin tapar texto → esquinas + opacity moderada + blur.
+
+## Ago 9 (parte 6) — BlobField: MASA LÍQUIDA CONTINUA (mesh gradient) ★ 9/10
+
+**Cambio definitivo — de amebas separadas a masa líquida:**
+- Los blobs SVG separados (cada uno con núcleo propio) NUNCA se fundían → se veían como jellybeans sueltos
+- **Nueva técnica:** UN solo contenedor con múltiples `radial-gradient` superpuestos (mesh gradient) — los colores comparten el canvas y fluyen entre sí (como el canvas `#Gradients` del home original)
+- `inset: -25%` + `blur: 30px` + gradientes que terminan en 72% → desvanecimiento gradual al negro SIN viñeta dura
+- `mix-blend-mode: screen`, animación `bf-breathe` (respiración lenta del conjunto, sin alternate brusco)
+- Variantes por página siguen: cada `variant` define sus colores + posiciones de orbes
+- Uso: `<BlobField variant="blog" opacity={0.65} speed={20} />`
+- **Verificado (gemini vision): "transición suave, natural, homogénea, no manchas separadas; se funde bien sin bordes duros; 9/10"**
+
+**Lección clave:** para que los blobs se fundan → NO usar elementos separados con blur (quedan como manchas independientes); usar UN contenedor con múltiples radial-gradients superpuestos (mesh) que comparten el mismo background.
+
+## Ago 9 (parte 5) — BlobField: volumen jelly 3D (blur + punto de luz)
+
+**Fix "se veían planos":**
+- blur 2px → **5px** (suave sin ser niebla)
+- Gradiente interno con **punto de luz blanco** (stop 0% white opacity 0.9, luego color vivo → halo transparente) — da profundidad 3D tipo jelly/gominola
+- Verificado (gemini vision): "**volumen y profundidad 3D, suaves con brillos tipo jelly, orgánicos tipo lava, 8/10**"
+- Título se lee limpio, blobs en esquinas (sin tapar el centro)
+
+**Páginas que usan blobs (fuera del blog):** mantenimiento.astro usa `Blob` del DS (blur 48, opacity 0.2), 404 es HTML estático (public/404.html) — no migradas aún, OK por ahora.
+
+## Ago 9 (parte 4) — BlobField con VARIANTES por página + fix movimiento
+
+**`BlobField.astro` ahora tiene `variant` prop** — cada página usa figuras, posiciones y colores DISTINTOS (no repite el mismo patrón):
+- `blog`: 5 blobs, 8 puntos, paleta coral/magenta/violeta/cian/verde
+- `home`: 4 blobs, 10 puntos (redondeados), paleta coral/naranja/amarillo/rosa
+- `contacto`: 3 blobs, 6 puntos (alargados), paleta cian/verde/coral
+- `servicios`: 4 blobs, 12 puntos (complejos), paleta violeta/cian/verde
+- `proyectos`: 3 blobs, 9 puntos, paleta naranja/verde/rosa
+Uso: `<BlobField variant="blog" count={5} opacity={0.85} speed={20} />`
+
+**Fix del blob que avanza-retrocede:**
+- Causa: `animation-direction: alternate` en el CSS drift → el blob iba y volvía bruscamente
+- Fix: keyframes `bf-drift` de 5 pasos (0→25→50→75→100%) sin alternate, vaivén suave coherente
+- El morph de forma lo hace el JS (requestAnimationFrame + Math.sin por punto) → "vida" real continua
+
+**Posiciones esparcidas en esquinas** (evita blobs detrás del título — el magenta estaba tapando "diseño"):
+- Verificado (gemini vision): "5 formas, título se lee muy limpio, ningún blob encima"
+
+## Ago 9 (parte 3) — Blobs tipo LAVA VIVA (amebas SVG morphing)
+
+**Reescrito `src/components/ui/BlobField.astro`** con la técnica real de la web original (SVG ameba que morpha):
+- 7 formas SVG orgánicas (8 puntos de control) que oscilan con `requestAnimationFrame` + `Math.sin` por punto → morph continuo tipo ameba/lava
+- Gradiente radial por forma (núcleo vivo + halo), `mix-blend-mode: screen`, blur 2px (mínimo)
+- Colores vivos: `#ff6b4a` coral, `#ff4d9d` magenta, `#8f6bff` violeta, `#2dd4ff` cian, `#3dffa0` verde, `#ffa52f` naranja
+- Posiciones esparcidas (evita tapar el título), flotación CSS `bf-float` alternante
+- Uso en `blog/index.astro`: `<BlobField count={7} blur={34} opacity={0.5} speed={24} />` → reemplazado por `<BlobField count={7} opacity={0.85} speed={22} />`
+- `.hero-blobs` con `overflow: visible` (formas pueden asomar, como la original)
+- **Verificado (modelo vision gemini flash lite):** "7 formas orgánicas tipo amebas/piedras pulidas, lava viva, colores vivos, contraste excelente con el título" — nota 8-9/10. Build OK, sin errores JS.
+- Recordatorio: el efecto original del home usa `<canvas id="Gradients">` + script remoto de Framer (no local). Este componente lo replica sin dependencias.
+
+## Ago 9 (parte 2) — Blobs del blog → componente DS + tipografía
+
+- **Blog hero blobs:** reemplazado el sistema inline (SVG con rotación + blur 60px) por el componente **`src/components/ui/Blob.astro`** del DS. 3 blobs: variant 3 (520px/op0.5), variant 1 (420px/op0.4), variant 2 (460px/op0.45), todos blur=48, posicionados en hero. Eliminado JS generateBlobSVG + CSS .hero-blob* + @keyframes blob-spin.
+- **Tipografía blog/page/[page].astro:** Inter → DM Sans (font del DS). Google Fonts link actualizado (DM Sans en vez de Inter). Cero Inter restante en ese archivo.
+- **Verificado:** build OK (17 páginas), `npx impeccable detect src/pages/blog/index.astro` = 0 anti-patterns (exit 0). Screenshot visual (gemini flash lite): blobs "sutiles, blur sutil, premium dark mode" ✓.
+- **Modelo vision:** `google/gemini-3.5-flash-lite` (tokenrouter) verificado leyendo screenshots. Usar con Tab//model cuando haya imágenes.
+
+## Ago 9 — Audit de seguridad + anti-slop (Cleo)
+
+**Audit completo (seguridad + frontend + anti-slop):**
+- **Seguridad PRODUCCIÓN OK:** `.secrets` en .gitignore y NO commiteado ✓; historial git (103 commits) sin secrets ✓; scripts usan process.env ✓; headers seguros en producción (X-Frame-Options DENY, X-Content-Type-Options, Referrer-Policy, Permissions-Policy) ✓; directorios sensibles (/.git, /.env, /src, /node_modules) devuelven 404 ✓; 404 page en español ✓; HTTP/2 + Cloudflare ✓
+- **⚠️ .secrets LOCAL DESACTUALIZADO:** tiene `NOTION_DB_ID=3b3d5386e9c580cbad98dc94c7cc7547` (DB VIEJA) y `NOTION_TOKEN` viejo free. La DB correcta es `3b64d62f-1484-81fc-a1b8-d3ba5d87bc0b` (UserDesigners) y el token bueno es `NOTION_API_KEY` (bot Blogs-seo, Pro). Actualizar `.secrets` o borrarlo.
+- **⚠️ Headers faltantes en `public/_headers`:** NO hay `Content-Security-Policy` (riesgo medio) ni `Strict-Transport-Security`/HSTS. Los `_headers` de Cloudflare NO se aplican a HTMLs servidos vía `return new Response()` (Astro los emite con sus propios headers). Verificar cobertura real.
+- **Anti-slop (`npm run slop`):** 269 cramped-padding + 151 clipped-overflow (mayoría de HTMLs Framer heredados, no bloqueantes), 39 overused-font (Inter como fallback en tokens.css = falso positivo; pero `[page].astro` usa Inter como principal y framer.css carga Inter completo), 12 skipped-heading, 3 bounce-easing, 1 gradient-text, 1 nested-cards, 1 em-dash-overuse.
+- **Fix prioridad:** `src/pages/blog/page/[page].astro` línea 79-85 usa `font-family:Inter` como principal → cambiar a `var(--font-body)`. Blobs de colores aleatorios en blog/index.astro volvieron (eran "sin blobs" en Ago 7) — evaluar.
+- Screenshots: `/tmp/ud_home.png` y `/tmp/ud_blog.png` (modelo no puede ver imágenes, revisar manualmente).
+- Build OK: 17 páginas, 2.56s.
+
+## Ago 8 — Audit exhaustivo + fixes (rama refactor/test-fase1)
+
+**Ramas:** main = producción, refactor/test-fase1 = testing. Trabajar SIEMPRE en test-fase1.
+
+**Estructura nueva (cambiada Ago 8):**
+- HTMLs Framer movidos de `public/` a `src/html/` (fuente privada, no se sirven crudos)
+- `src/pages/{index,contacto,nosotros,servicios,proyectos}/index.astro` leen de `src/html/` y sirven con `return new Response()`
+- `src/pages/proyectos/[...slug].astro` lee de `src/html/proyectos/*.html` — ya NO genera duplicados `.html` en dist
+- Eliminado `src/layouts/BaseLayout.astro`, `src/styles/global.css` (tailwind fantasma), `src/styles/framer-global.css`, mixpanel
+- 135 archivos sin uso eliminados de `public/assets/local/` (21MB → 1.8MB)
+
+**Fixes SEO/GEO/AEO:**
+- og:title "My Framer Site" corregido en 4 case studies
+- slug `verificacion-biometrica` (antes `verificaci-n-biom-trica`) + redirects 301 en `public/_redirects`
+- schema: eliminados duplicados Organization/LocalBusiness + SearchAction falso en proyectos
+- meta description duplicada en proyectos eliminada
+- og:image absoluto en BlogPost + seo-doctores (antes relativo/favicon)
+- 404.html reescrito en español (antes inglés, HTML inválido)
+- pipeline Notion: MAX_POSTS 10 (era 2), sort por fecha descendente, description auto-generada si vacía
+
+**Fixes bugs:**
+- filtros de blog ahora funcionan (wiring JS, aria-pressed, focus visible)
+- footer `f-col-brand` selector corregido + año dinámico
+- seo-doctores: Navbar/Footer componentes (antes inline), rediseño premium
+- Giscus verificado OK (repo mattewrobles/userdesigners-web tiene Discussions)
+
+**Pendientes:**
+- Migración total a Astro: template base de proyectos desde CSS Framer (los 4 case studies comparten 100% CSS/components — 94KB idéntico md5)
+- Lazy loading en imágenes de HTMLs Framer (todas `alt=""` + 247 imgs)
+
 ## Ago 4 — Refactor: HTMLs completos vía Response
 
 **Problema resuelto:**

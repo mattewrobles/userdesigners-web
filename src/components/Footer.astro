@@ -35,7 +35,7 @@
               <a href="mailto:latam@userdesigners.com" class="f-contact">latam@userdesigners.com</a>
               <a href="https://wa.me/593961026799" target="_blank" rel="noopener" class="f-contact">(+593)0961026799</a>
             </div>
-            <div class="f-copy">&copy; 2026 Userdesigners.<br />All rights reserved.</div>
+            <div class="f-copy">&copy; {new Date().getFullYear()} Userdesigners.<br />All rights reserved.</div>
           </div>
         </div>
 
@@ -52,6 +52,7 @@
               <li><a href="/proyectos">Proyectos</a></li>
               <li><a href="/servicios">Nuestros servicios</a></li>
               <li><a href="/nosotros">Conoce al team</a></li>
+              <li><a href="/blog">Blog</a></li>
               <li><a href="/contacto">Cont&aacute;ctanos</a></li>
             </ul>
           </div>
@@ -206,8 +207,6 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
     padding: 0 20px;
   }
 
@@ -259,7 +258,7 @@
     justify-content: flex-start;
     align-items: flex-start;
   }
-  f-col-brand {
+  .f-col-brand {
     width: 24%;
     flex: none;
     height: 183px;

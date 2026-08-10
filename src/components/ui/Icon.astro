@@ -1,0 +1,35 @@
+---
+import { getIcon } from "../../lib/icons";
+
+interface Props {
+  name: string;
+  size?: "xs" | "sm" | "md" | "lg" | "xl";
+  strokeWidth?: number;
+}
+
+const { name, size = "md", strokeWidth = 2 } = Astro.props;
+const path = getIcon(name);
+---
+
+{path && (
+  <svg
+    class={`icon icon--${size}`}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width={strokeWidth}
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+    set:html={path}
+  />
+)}
+
+<style>
+  .icon { flex-shrink: 0; display: inline-block; }
+  .icon--xs { width: 14px; height: 14px; }
+  .icon--sm { width: 16px; height: 16px; }
+  .icon--md { width: 20px; height: 20px; }
+  .icon--lg { width: 24px; height: 24px; }
+  .icon--xl { width: 32px; height: 32px; }
+</style>

@@ -1,0 +1,30 @@
+---
+interface Props {
+  hover?: boolean;
+  as?: "div" | "article" | "li";
+}
+
+const { hover = true, as = "div" } = Astro.props;
+const Tag = as;
+---
+
+<Tag class={"card" + (hover ? " card--hover" : "")}>
+  <slot />
+</Tag>
+
+<style>
+  .card {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 28px;
+  }
+  .card--hover {
+    transition: background var(--duration-base) ease, border-color var(--duration-base) ease, transform var(--duration-base) var(--ease-out);
+  }
+  .card--hover:hover {
+    background: var(--color-bg-card-hover);
+    border-color: var(--color-border-strong);
+    transform: translateY(-3px);
+  }
+</style>

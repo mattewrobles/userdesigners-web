@@ -1,0 +1,173 @@
+---
+interface Props {
+  variant?: "1" | "2" | "3" | "hero";
+  // preset = geometría real de cada página (del audit Framer)
+  preset?: "home" | "contacto" | "servicios" | "proyectos" | "none";
+  // placement = esquina donde va el blob (porcentajes del contenedor)
+  placement?: "top-left" | "top-right" | "top-center" | "bottom-left" | "bottom-right" | "center" | "none";
+  size?: number;
+  blur?: number;
+  opacity?: number;
+  rotate?: boolean;
+  float?: boolean;
+  speed?: number;
+  top?: string;
+  right?: string;
+  bottom?: string;
+  left?: string;
+  style?: string;
+}
+
+const {
+  variant = "3",
+  preset = "none",
+  placement = "none",
+  size = 470,
+  blur = 48,
+  opacity = 0.45,
+  rotate = true,
+  float = true,
+  speed = 30,
+  top, right, bottom, left,
+  style: extraStyle,
+} = Astro.props;
+
+// geometrías reales de Framer por página (width%, height%, top, left)
+const presets: Record<string, string> = {
+  home: "width:59%;height:60%;top:20%;left:0%",
+  contacto: "width:108%;height:47%;top:34%;left:0%",
+  servicios: "width:52%;height:31%;top:36%;left:5%",
+  proyectos: "width:56%;height:10%;top:29%;left:0%",
+};
+const placements: Record<string, string> = {
+  "top-left": "top:8%;left:4%",
+  "top-right": "top:8%;right:4%",
+  "top-center": "top:6%;left:50%;transform:translateX(-50%)",
+  "bottom-left": "bottom:8%;left:4%",
+  "bottom-right": "bottom:8%;right:4%",
+  center: "top:50%;left:50%;transform:translate(-50%,-50%)",
+};
+
+const position = [
+  preset !== "none" ? presets[preset] : "",
+  placement !== "none" ? placements[placement] : "",
+  top && `top:${top}`,
+  right && `right:${right}`,
+  bottom && `bottom:${bottom}`,
+  left && `left:${left}`,
+].filter(Boolean).join(";");
+---
+
+<div
+  class="blob"
+  data-rotate={rotate}
+  data-float={float}
+  data-speed={speed}
+  style={`--blob-size:${size}px;--blob-blur:${blur}px;--blob-opacity:${opacity};${position}${extraStyle ? ";" + extraStyle : ""}`}
+  aria-hidden="true"
+>
+  <span class="blob-shape"></span>
+</div>
+
+<script>
+  import { animate } from "motion";
+
+  // colores dinámicos por carga (patrón del blog + coral del home)
+  function randomHue() {
+    // 40% rojos/corales (0-30), 30% azul-verdes (170-360), 30% cálidos (31-100)
+    const roll = Math.random();
+    if (roll < 0.4) return Math.floor(Math.random() * 31);      // rojos y corales
+    if (roll < 0.7) return 170 + Math.floor(Math.random() * 191); // azul/verde
+    return 31 + Math.floor(Math.random() * 70);                  // naranja/amarillo
+  }
+  function randomBetween(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+  // forma orgánica aleatoria: border-radius asimétrico (30-70% por esquina)
+  function randomBlobRadius() {
+    const r1 = randomBetween(35, 65), r2 = randomBetween(35, 65);
+    const r3 = randomBetween(35, 65), r4 = randomBetween(35, 65);
+    const r5 = randomBetween(35, 65), r6 = randomBetween(35, 65);
+    const r7 = randomBetween(35, 65), r8 = randomBetween(35, 65);
+    return `${r1}% ${r2}% ${r3}% ${r4}% / ${r5}% ${r6}% ${r7}% ${r8}%`;
+  }
+
+  document.querySelectorAll(".blob").forEach((el, i) => {
+    const speed = Number(el.dataset.speed || 30);
+    const reverse = i % 2 === 1;
+    const shape = el.querySelector(".blob-shape");
+
+    // gradiente aleatorio por carga: base + alt (misma técnica que el blog)
+    const hue = randomHue();
+    const sat = 80 + Math.floor(Math.random() * 20);
+    const light = 50 + Math.floor(Math.random() * 20);
+    const base = `hsl(${hue}, ${sat}%, ${light}%)`;
+    const alt = `hsl(${(hue + randomBetween(30, 120)) % 360}, ${sat}%, ${light}%)`;
+    const c3 = `hsl(${(hue + randomBetween(140, 200)) % 360}, ${sat}%, ${Math.min(70, light + 10)}%)`;
+    if (shape) {
+      // si el hue es rojizo (0-30), usar el patrón coral del home real (Gears Content)
+      if (hue <= 30) {
+        const coral = "rgb(227, 103, 83)";
+        shape.style.background = `linear-gradient(140deg, ${base} 0%, ${coral} 35%, rgb(153,141,208) 75%, rgb(132,217,250) 100%)`;
+      } else {
+        shape.style.background = `linear-gradient(140deg, ${base} 0%, ${alt} 45%, ${c3} 75%, ${base} 100%)`;
+      }
+      // forma orgánica inicial aleatoria (distinta en cada carga)
+      shape.style.borderRadius = randomBlobRadius();
+    }
+
+    // deformación elástica: el border-radius morphea con rebote (overshoot)
+    if (el.dataset.float === "true" && shape) {
+      animate(
+        shape,
+        {
+          borderRadius: [randomBlobRadius(), randomBlobRadius(), randomBlobRadius(), randomBlobRadius(), randomBlobRadius()],
+          scale: [1, 1.12, 0.95, 1.07, 1],
+        },
+        { duration: speed * 2.2, repeat: Infinity, ease: [0.34, 1.56, 0.64, 1] }
+      );
+    }
+
+    // flotación elástica: sube y baja con rebote suave (como el canvas del home)
+    if (el.dataset.float === "true") {
+      animate(
+        el,
+        {
+          y: [0, -24, 0, 18, 0],
+          x: [0, 14, 0, -12, 0],
+        },
+        { duration: speed * 1.5, repeat: Infinity, ease: [0.34, 1.56, 0.64, 1] }
+      );
+    }
+    // rotación del óvalo (continua, linear)
+    if (el.dataset.rotate === "true" && shape) {
+      animate(
+        shape,
+        { transform: ["rotate(0deg)", `rotate(${reverse ? -360 : 360}deg)`] },
+        { duration: speed, repeat: Infinity, ease: "linear" }
+      );
+    }
+  });
+</script>
+
+<style>
+  .blob {
+    position: absolute;
+    pointer-events: none;
+    z-index: 0;
+    will-change: transform;
+    /* si no hay preset/placement, usa el tamaño por defecto */
+    width: var(--blob-size);
+    height: calc(var(--blob-size) * 1.27);
+  }
+  .blob[style*="width:"] { width: auto; height: auto; }
+  .blob[style*="height:"] { height: auto; }
+  /* el blob orgánico: border-radius aleatorio (lo genera el JS por carga) */
+  .blob-shape {
+    position: absolute;
+    inset: 0;
+    filter: blur(var(--blob-blur));
+    -webkit-filter: blur(var(--blob-blur));
+    opacity: var(--blob-opacity);
+    will-change: transform, border-radius, background, scale;
+  }
+</style>

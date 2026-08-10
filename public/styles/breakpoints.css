@@ -1,0 +1,10 @@
+/* Breakpoints del design system (reales Framer)
+   Uso: @import "/styles/breakpoints.css" y aplicar media queries.
+   Patrones disponibles:
+   --bp-desktop: 1440px | --bp-tablet: 810px | --bp-mobile: 480px
+*/
+
+/* Desktop: >= 1440px */
+/* Tablet: 810px - 1439px */
+/* Mobile: < 810px */
+/* Compact: < 480px */

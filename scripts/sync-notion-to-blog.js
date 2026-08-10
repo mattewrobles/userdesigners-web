@@ -84,10 +84,10 @@ async function queryAll(filter, sorts) {
 async function sync() {
   console.log("Fetching posts from Notion...");
 
-  const MAX_POSTS = 2;
+  const MAX_POSTS = 10;
   const filter = { property: "Status", select: { equals: "Ready" } };
 
-  const pages = await queryAll(filter, [{ property: "Title", direction: "ascending" }]);
+  const pages = await queryAll(filter, [{ property: "Date", direction: "descending" }]);
 
   const today = new Date().toISOString().slice(0, 10);
   let count = 0;
@@ -122,6 +122,12 @@ async function sync() {
       content = props.Content?.rich_text?.[0]?.plain_text || "";
     }
 
+    let description = desc;
+    if (!description.trim()) {
+      const clean = content.replace(/[#>*`-]/g, "").replace(/\s+/g, " ").trim();
+      description = clean.slice(0, 155) + (clean.length > 155 ? "…" : "");
+    }
+
     let imgExt = "jpg";
     let imgPath = heroImg && !heroImg.startsWith("http") ? heroImg : "";
     if (heroImg && heroImg.startsWith("http")) {
@@ -144,7 +150,7 @@ async function sync() {
 
     const md = `---
 title: "${title.replace(/"/g, '\\"')}"
-description: "${desc.replace(/"/g, '\\"')}"
+description: "${description.replace(/"/g, '\\"')}"
 category: "${cat}"
 author: "${author}"
 tags: [${tags.map(t => `"${t.replace(/"/g, '\\"')}"`).join(", ")}]
