@@ -13,6 +13,11 @@
   --ud-gray-500: rgb(101, 103, 113);
   --ud-blue: #0099ff;
   --ud-cyan: #00f0ff;
+  /* Marca — la U del logo (con blur en el original) */
+  --ud-brand-sky: #7AD7F4;    /* celeste */
+  --ud-brand-lilac: #8F82DC;  /* lila */
+  --ud-brand-gold: #DEC063;   /* dorado */
+  --ud-brand-coral: #E35D52;  /* coral */
   --ud-glass: rgba(255, 255, 255, 0.08);
   --ud-glass-hover: rgba(255, 255, 255, 0.13);
 
@@ -156,6 +161,11 @@
   --text-6xl: 42px;
   --text-7xl: 49px;
   --text-8xl: 64px;
+
+  /* ---------- Tipografía SEMÁNTICA (jerarquía de títulos) ---------- */
+  --text-display: clamp(38px, 5.5vw, 64px);   /* hero h1 */
+  --text-title: clamp(26px, 3.2vw, 38px);     /* h2 de sección */
+  --text-subtitle: clamp(19px, 2vw, 22px);    /* sub-títulos */
   --text-9xl: 74px;
 
   /* Roles semánticos */
@@ -208,8 +218,8 @@
   --space-14: 110px;
   --space-15: 120px;
   --space-16: 140px;
-  --space-section: var(--space-14);
-  --space-pad: clamp(20px, 5vw, 80px);
+  --space-section: 72px;
+  --space-pad: clamp(20px, 5vw, 96px);
 
   /* ---------- Radii (semánticos) ---------- */
   --radius-sm: var(--ud-radius-sm);
@@ -297,7 +307,7 @@
 /* Mobile: menos espacio de sección */
 @media (max-width: 809.98px) {
   :root {
-    --space-section: 80px;
+    --space-section: 56px;
   }
 }
 

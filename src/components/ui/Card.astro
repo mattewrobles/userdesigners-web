@@ -2,13 +2,15 @@
 interface Props {
   hover?: boolean;
   as?: "div" | "article" | "li";
+  "data-gsap"?: string;
 }
 
-const { hover = true, as = "div" } = Astro.props;
+const { hover = true, as = "div", "data-gsap": dataGsap } = Astro.props;
 const Tag = as;
+const attrs = dataGsap ? { "data-gsap": dataGsap } : {};
 ---
 
-<Tag class={"card" + (hover ? " card--hover" : "")}>
+<Tag class={"card" + (hover ? " card--hover" : "")} {...attrs}>
   <slot />
 </Tag>
 

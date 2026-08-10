@@ -23,12 +23,17 @@ Agencia de UX/UI para **fintechs, bancos y neobancos de Latinoamérica**. El ton
 | `--ud-brand-gold` | `#dec063` | Dorado de marca |
 | `--ud-brand-coral` | `#e35d52` | Coral de marca |
 | `--ud-glass` | `rgba(255,255,255,0.08)` | Superficies glass |
+| `--ud-brand-sky` | `#7AD7F4` | Celeste de marca (la U del logo) |
+| `--ud-brand-lilac` | `#8F82DC` | Lila de marca |
+| `--ud-brand-gold` | `#DEC063` | Dorado de marca |
+| `--ud-brand-coral` | `#E35D52` | Coral de marca |
 
 **Reglas:**
 - **Accent < 5% del layout.** Neutros con 3-5% de hue de la marca (no gris puro).
 - `::selection` y `:focus-visible` SIEMPRE con `--ud-blue`.
 - En dark mode, las superficies son `--ud-card` (10,10,10) y `--ud-card-hover`.
 - **NO usar gradientes azul→púrpura** (delata al AI). Blobs orgánicos sí (ver BlobField).
+- **Brand colors** (`sky/lilac/gold/coral`) = acentos de marca: usarlos en hover de cards, líneas de acento, highlights. Nunca como relleno completo.
 
 ## Tipografía
 

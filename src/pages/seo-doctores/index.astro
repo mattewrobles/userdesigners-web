@@ -4,6 +4,8 @@ import Footer from "../../components/Footer.astro";
 import Button from "../../components/ui/Button.astro";
 import Card from "../../components/ui/Card.astro";
 import SectionLabel from "../../components/ui/SectionLabel.astro";
+import BlobField from "../../components/ui/BlobField.astro";
+import Marquee from "../../components/ui/Marquee.astro";
 
 const site = "https://www.userdesigners.com"
 const canonical = `${site}/seo-doctores/`
@@ -82,6 +84,58 @@ const schema = {
 
     /* HERO */
     .hero { padding-top: 140px; padding-bottom: 90px; }
+    .hero { position: relative; }
+    .hero-blobs { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+    .hero-grid { position: relative; z-index: 1; display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 48px; align-items: center; }
+    /* Secciones divididas texto + imagen */
+    .section-split { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
+    .section-split--rev { grid-template-columns: 1fr 1fr; }
+    .split-cards { display: flex; flex-direction: column; gap: 16px; }
+    .section-split-visual { position: relative; border-radius: var(--radius-xl); overflow: hidden; aspect-ratio: 4/3; margin-top: 8px; }
+    .section-split-visual img { width: 100%; height: 100%; object-fit: cover; border-radius: var(--radius-xl); will-change: transform; }
+    .img-frame-glow { position: absolute; inset: 0; border-radius: var(--radius-xl); pointer-events: none;
+      box-shadow: inset 0 0 60px rgba(3, 3, 3, 0.35); border: 1px solid var(--border-strong); }
+    @media (max-width: 900px) {
+      .section-split, .section-split--rev { grid-template-columns: 1fr; gap: 32px; }
+      .section-split--rev .split-cards { order: 2; }
+      .section-split--rev .split-text { order: 1; }
+      .section-split-visual { aspect-ratio: 16/10; }
+    }
+    /* SECCIÓN HORIZONTAL — servicios */
+    .services-horizontal { max-width: none; width: 100vw; padding: 80px 0; overflow: hidden; }
+    /* MARQUEE de clientes */
+    .clients-marquee { margin: 40px 0; padding: 8px 0; border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle); }
+    .mq-item { display: inline-flex; align-items: center; gap: 12px; font-family: var(--font-display); font-size: clamp(20px, 2.2vw, 30px); font-weight: 500; letter-spacing: -0.02em; color: var(--text-secondary); white-space: nowrap; }
+    .mq-item::after { content: "✦"; font-size: 14px; color: var(--accent-default); opacity: 0.6; }
+    .sh-header { max-width: var(--container-max); margin: 0 auto; padding: 0 var(--space-pad) 48px; }
+    .sh-track { display: flex; gap: 0; width: max-content; padding: 0 4vw; will-change: transform; perspective: 1200px; }
+    .sh-panel { flex: 0 0 34vw; min-width: 380px; margin-right: 3vw; padding: 40px 44px; border-radius: var(--radius-xl);
+      border: 1px solid var(--border-strong); background: linear-gradient(180deg, var(--surface-2) 0%, var(--surface-3) 100%);
+      display: flex; flex-direction: column; gap: 18px; transform-style: preserve-3d; }
+    .sh-panel:hover { border-color: var(--accent-muted); }
+    .sh-num { font-family: var(--font-display); font-size: 48px; font-weight: 600; color: var(--text-tertiary); letter-spacing: -0.03em; }
+    .sh-panel h3 { font-family: var(--font-display); font-size: clamp(22px, 2.4vw, 32px); font-weight: 500; letter-spacing: -0.02em; color: var(--text-primary); margin: 0; }
+    .sh-panel p { font-size: 16px; color: var(--text-secondary); line-height: 1.7; margin: 0; max-width: 420px; }
+    .sh-img { border-radius: var(--radius-lg); overflow: hidden; aspect-ratio: 16/9; margin-top: auto; }
+    .sh-img img { width: 100%; height: 100%; object-fit: cover; }
+    @media (max-width: 900px) {
+      .sh-panel { flex: 0 0 82vw; min-width: 0; }
+    }
+    .hero-content h1 { margin-bottom: 20px; }
+    .hero-content p { margin-bottom: 32px; }
+    .hero-visual { position: relative; border-radius: var(--radius-xl); overflow: hidden; aspect-ratio: 4/3; }
+    .hero-visual img { width: 100%; height: 100%; object-fit: cover; border-radius: var(--radius-xl); }
+    .hero-visual-glow { position: absolute; inset: 0; border-radius: var(--radius-xl); pointer-events: none;
+      box-shadow: inset 0 0 80px rgba(3, 3, 3, 0.4); border: 1px solid var(--border-strong); }
+    .hero-visual-badge { position: absolute; left: 18px; bottom: 18px; display: inline-flex; align-items: center; gap: 10px;
+      background: rgba(3, 3, 3, 0.75); backdrop-filter: blur(10px); border: 1px solid var(--border-strong);
+      border-radius: 999px; padding: 10px 18px; font-size: 13px; font-weight: 500; font-family: var(--font-body); color: var(--text-primary);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.35); }
+    .hvb-dot { width: 9px; height: 9px; border-radius: 50%; background: #4ade80; flex-shrink: 0; }
+    @media (max-width: 900px) {
+      .hero-grid { grid-template-columns: 1fr; gap: 28px; }
+      .hero-visual { aspect-ratio: 16/10; }
+    }
     .hero h1 {
       font-family: var(--font-display);
       font-size: var(--text-display);
@@ -114,6 +168,15 @@ const schema = {
     .card h3 { font-size: var(--text-base); font-weight: 600; margin-bottom: 8px; }
     .card p { font-size: var(--text-sm); color: var(--color-muted); line-height: 1.65; }
     .card-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-muted); margin-bottom: 10px; }
+    /* Cards con acento de color (marca UserDesigners) */
+    .card { background: var(--surface-2); border-color: var(--border-strong); position: relative; }
+    .card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--ud-brand-sky), var(--ud-blue)); border-radius: var(--radius-lg) var(--radius-lg) 0 0; opacity: 0.85; }
+    .card:nth-child(2n)::before { background: linear-gradient(90deg, var(--ud-brand-lilac), var(--ud-cyan)); }
+    .card:nth-child(3n)::before { background: linear-gradient(90deg, var(--ud-brand-coral), var(--ud-brand-gold)); }
+    .card:hover { border-color: color-mix(in srgb, var(--ud-brand-sky) 45%, transparent); box-shadow: 0 8px 32px -12px color-mix(in srgb, var(--ud-brand-sky) 30%, transparent); }
+    .card h3 { color: var(--text-primary); font-size: 16px; }
+    .card p { color: var(--text-secondary); }
 
     .client-list { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 36px; }
     .pill {
@@ -172,39 +235,102 @@ const schema = {
 <main>
 
   <section class="hero">
-    <SectionLabel>SEO Médico y Posicionamiento Local</SectionLabel>
-    <h1>SEO para doctores que convierte búsquedas en pacientes</h1>
-    <p>Ayudamos a clínicas, consultorios y especialistas a aparecer cuando un paciente busca atención médica cerca de él: Google, mapas, contenidos confiables y una estrategia pensada para generar citas.</p>
-    <div class="actions">
-      <Button href="https://wa.me/593961026799" target="_blank" size="lg" variant="stroke">Solicitar diagnóstico</Button>
-      <Button href="#enfoque" variant="ghost" size="lg">Ver enfoque</Button>
+    <div class="hero-blobs">
+      <BlobField variant="seo" opacity={0.55} blur={14} />
+    </div>
+    <div class="hero-grid">
+      <div class="hero-content">
+        <SectionLabel data-gsap="hero-label">SEO Médico y Posicionamiento Local</SectionLabel>
+        <h1 data-gsap="hero-title">SEO para doctores que convierte búsquedas en pacientes</h1>
+        <p data-gsap="hero-sub">Ayudamos a clínicas, consultorios y especialistas a aparecer cuando un paciente busca atención médica cerca de él: Google, mapas, contenidos confiables y una estrategia pensada para generar citas.</p>
+        <div class="actions" data-gsap="hero-actions">
+          <Button href="https://wa.me/593961026799" target="_blank" size="lg" variant="stroke">Solicitar diagnóstico</Button>
+          <Button href="#enfoque" variant="ghost" size="lg">Ver enfoque</Button>
+        </div>
+      </div>
+      <div class="hero-visual" data-gsap="hero-visual">
+        <img src="https://images.unsplash.com/photo-1584438784894-089d6a62b8fa?w=800&q=70" alt="Consultorio médico moderno — SEO para doctores" loading="eager" />
+        <div class="hero-visual-glow" aria-hidden="true"></div>
+        <div class="hero-visual-badge" data-gsap="hero-badge">
+          <span class="hvb-dot"></span> Posicionamiento local en Google
+        </div>
+      </div>
     </div>
   </section>
 
   <hr />
 
   <section id="enfoque">
-    <SectionLabel>Posicionamiento para pacientes con intención</SectionLabel>
-    <h2 class="section-title">No se trata de tener más visitas. Se trata de aparecer cuando alguien necesita atenderse.</h2>
-    <p class="section-desc">Para un doctor, una búsqueda como "dermatólogo cerca de mí" o "odontólogo en Cuenca" no es tráfico genérico: es una oportunidad de cita. Construimos la estrategia alrededor de esas búsquedas de alta intención.</p>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px">
-      <Card><h3>Búsquedas con urgencia</h3><p>Capturamos pacientes que ya están comparando especialistas, ubicación, horarios y reseñas.</p></Card>
-      <Card><h3>Presencia en mapas</h3><p>Optimizamos el perfil, categorías, servicios, fotos, publicaciones y señales locales.</p></Card>
-      <Card><h3>Confianza antes de la cita</h3><p>Ordenamos contenido, autoridad y reputación para que la decisión se sienta segura.</p></Card>
+    <div class="section-split">
+      <div class="split-text">
+        <SectionLabel data-gsap="hero-label">Posicionamiento para pacientes con intención</SectionLabel>
+        <h2 class="section-title">No se trata de tener más visitas. Se trata de aparecer cuando alguien necesita atenderse.</h2>
+        <p class="section-desc" data-gsap="reveal">Para un doctor, una búsqueda como "dermatólogo cerca de mí" o "odontólogo en Cuenca" no es tráfico genérico: es una oportunidad de cita. Construimos la estrategia alrededor de esas búsquedas de alta intención.</p>
+        <div class="section-split-visual" data-gsap="parallax-wrap">
+          <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&q=70" alt="Doctor revisando historial de paciente" loading="lazy" data-gsap="parallax-img" />
+          <div class="img-frame-glow" aria-hidden="true"></div>
+        </div>
+      </div>
+      <div class="split-cards">
+        <Card data-gsap="reveal"><h3>Búsquedas con urgencia</h3><p>Capturamos pacientes que ya están comparando especialistas, ubicación, horarios y reseñas.</p></Card>
+        <Card data-gsap="reveal"><h3>Presencia en mapas</h3><p>Optimizamos el perfil, categorías, servicios, fotos, publicaciones y señales locales.</p></Card>
+        <Card data-gsap="reveal"><h3>Confianza antes de la cita</h3><p>Ordenamos contenido, autoridad y reputación para que la decisión se sienta segura.</p></Card>
+      </div>
     </div>
   </section>
 
   <hr />
 
   <section>
-    <SectionLabel>Lo que trabajamos para posicionar tu consulta</SectionLabel>
-    <h2 class="section-title">Una estrategia completa conecta tu especialidad, tu ciudad y la confianza que un paciente necesita.</h2>
-    <p class="section-desc">Cuatro áreas de trabajo coordinadas para que el SEO se conecte con agenda, llamadas y formularios.</p>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px">
-      <Card><h3>SEO local y Google Business</h3><p>Especialidad, ubicación, servicios, horarios, reseñas y señales locales para aparecer donde el paciente decide.</p></Card>
-      <Card><h3>Contenido por especialidad</h3><p>Páginas de tratamientos, síntomas, preguntas frecuentes y guías que responden con claridad sin sonar genéricas.</p></Card>
-      <Card><h3>Base técnica y conversión</h3><p>Velocidad, estructura, indexación, arquitectura y llamadas a contacto pensadas para pasar de búsqueda a cita.</p></Card>
-      <Card><h3>Autoridad y reputación</h3><p>Mejoramos señales de confianza: perfiles, reseñas, menciones, enlaces locales y consistencia de marca médica.</p></Card>
+    <div class="section-split section-split--rev">
+      <div class="split-cards">
+        <Card data-gsap="reveal"><h3>SEO local y Google Business</h3><p>Especialidad, ubicación, servicios, horarios, reseñas y señales locales para aparecer donde el paciente decide.</p></Card>
+        <Card data-gsap="reveal"><h3>Contenido por especialidad</h3><p>Páginas de tratamientos, síntomas, preguntas frecuentes y guías que responden con claridad sin sonar genéricas.</p></Card>
+        <Card data-gsap="reveal"><h3>Base técnica y conversión</h3><p>Velocidad, estructura, indexación, arquitectura y llamadas a contacto pensadas para pasar de búsqueda a cita.</p></Card>
+        <Card data-gsap="reveal"><h3>Autoridad y reputación</h3><p>Mejoramos señales de confianza: perfiles, reseñas, menciones, enlaces locales y consistencia de marca médica.</p></Card>
+      </div>
+      <div class="split-text">
+        <SectionLabel>Lo que trabajamos para posicionar tu consulta</SectionLabel>
+        <h2 class="section-title">Una estrategia completa conecta tu especialidad, tu ciudad y la confianza que un paciente necesita.</h2>
+        <p class="section-desc" data-gsap="reveal">Cuatro áreas de trabajo coordinadas para que el SEO se conecte con agenda, llamadas y formularios.</p>
+        <div class="section-split-visual" data-gsap="parallax-wrap">
+          <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=800&q=70" alt="Médico con tablet revisando agenda digital" loading="lazy" data-gsap="parallax-img" />
+          <div class="img-frame-glow" aria-hidden="true"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="services-horizontal">
+    <div class="sh-header">
+      <SectionLabel>Nuestros servicios en detalle</SectionLabel>
+      <h2 class="section-title">Desplázate — cuatro servicios que conectan búsqueda con pacientes</h2>
+    </div>
+    <div class="sh-track" data-gsap="sh-track">
+      <div class="sh-panel sh-panel--1">
+        <div class="sh-num">01</div>
+        <h3>SEO local y Google Business</h3>
+        <p>Especialidad, ubicación, servicios, horarios, reseñas y señales locales para aparecer donde el paciente decide.</p>
+        <div class="sh-img"><img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=900&q=70" alt="SEO local" loading="lazy" /></div>
+      </div>
+      <div class="sh-panel sh-panel--2">
+        <div class="sh-num">02</div>
+        <h3>Contenido por especialidad</h3>
+        <p>Páginas de tratamientos, síntomas, preguntas frecuentes y guías que responden con claridad sin sonar genéricas.</p>
+        <div class="sh-img"><img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=900&q=70" alt="Contenido médico" loading="lazy" /></div>
+      </div>
+      <div class="sh-panel sh-panel--3">
+        <div class="sh-num">03</div>
+        <h3>Base técnica y conversión</h3>
+        <p>Velocidad, estructura, indexación, arquitectura y llamadas a contacto pensadas para pasar de búsqueda a cita.</p>
+        <div class="sh-img"><img src="https://images.unsplash.com/photo-1584982751601-97dcc096659c?w=900&q=70" alt="Base técnica" loading="lazy" /></div>
+      </div>
+      <div class="sh-panel sh-panel--4">
+        <div class="sh-num">04</div>
+        <h3>Autoridad y reputación</h3>
+        <p>Mejoramos señales de confianza: perfiles, reseñas, menciones, enlaces locales y consistencia de marca médica.</p>
+        <div class="sh-img"><img src="https://images.unsplash.com/photo-1551601651-2a8555f1a136?w=900&q=70" alt="Reputación médica" loading="lazy" /></div>
+      </div>
     </div>
   </section>
 
@@ -214,21 +340,23 @@ const schema = {
     <SectionLabel>Doctores, clínicas y nuevas formas de búsqueda</SectionLabel>
     <h2 class="section-title">Clientes que ya entienden que el posicionamiento médico va más allá de Google</h2>
     <p class="section-desc">Trabajamos visibilidad para búsquedas locales, respuestas directas, resultados impulsados por IA y consultas donde el paciente espera una recomendación clara antes de agendar.</p>
-    <div class="client-list">
-      <span class="pill">Dr. Pablo Salamea</span>
-      <span class="pill">Dr. Diego Chango</span>
-      <span class="pill">Dra. Lorena Villa</span>
-      <span class="pill">Dr. Deniss Calderón</span>
-      <span class="pill">Dr. Juan Carlos Peralvo</span>
-      <span class="pill">Clínica Alelí</span>
-      <span class="pill">Hospital del Río</span>
-      <span class="pill">Dr. Luis Flores</span>
-      <span class="pill">Gabriela Machado</span>
-      <span class="pill">Y más…</span>
+    <div class="clients-marquee">
+      <Marquee speed={45}>
+        <span class="mq-item">Dr. Pablo Salamea</span>
+        <span class="mq-item">Dr. Diego Chango</span>
+        <span class="mq-item">Dra. Lorena Villa</span>
+        <span class="mq-item">Dr. Deniss Calderón</span>
+        <span class="mq-item">Dr. Juan Carlos Peralvo</span>
+        <span class="mq-item">Clínica Alelí</span>
+        <span class="mq-item">Hospital del Río</span>
+        <span class="mq-item">Dr. Luis Flores</span>
+        <span class="mq-item">Gabriela Machado</span>
+        <span class="mq-item">Y más…</span>
+      </Marquee>
     </div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:32px">
-      <Card><div class="card-label">GEO — Generative Engine Optimization</div><h3>También posicionamos en IA</h3><p>Optimización para que tu marca médica sea entendida, citada o recomendada por motores generativos e inteligencia artificial.</p></Card>
-      <Card><div class="card-label">AEO — Answer Engine Optimization</div><h3>Respuestas directas donde el paciente pregunta</h3><p>Fragmentos destacados, búsquedas por voz y consultas tipo "cuál doctor elegir" en Google y asistentes de IA.</p></Card>
+      <Card data-gsap="reveal"><div class="card-label">GEO — Generative Engine Optimization</div><h3>También posicionamos en IA</h3><p>Optimización para que tu marca médica sea entendida, citada o recomendada por motores generativos e inteligencia artificial.</p></Card>
+      <Card data-gsap="reveal"><div class="card-label">AEO — Answer Engine Optimization</div><h3>Respuestas directas donde el paciente pregunta</h3><p>Fragmentos destacados, búsquedas por voz y consultas tipo "cuál doctor elegir" en Google y asistentes de IA.</p></Card>
     </div>
   </section>
 
@@ -273,12 +401,128 @@ const schema = {
   <section class="cta-final">
     <h2>Veamos qué búsquedas deberían encontrarte primero</h2>
     <p>Solicita un diagnóstico y revisamos tu presencia actual, tus oportunidades por especialidad y las mejoras que pueden conectar tu posicionamiento con más citas.</p>
-    <Button href="https://wa.me/593961026799" target="_blank" size="lg" variant="stroke">Hablar sobre SEO médico</Button>
+    <Button href="https://wa.me/593961026799" target="_blank" size="lg" variant="primary">Hablar sobre SEO médico</Button>
   </section>
 
 </main>
 
 <Footer />
+
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import { SplitText } from "gsap/SplitText";
+
+  gsap.registerPlugin(ScrollTrigger, SplitText);
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) return;
+
+    // HERO TÍTULO — SplitText por caracteres (reveal premium)
+    const title = document.querySelector("[data-gsap='hero-title']");
+    if (title) {
+      const split = SplitText.create(title, { type: "chars,words", mask: "lines" });
+      gsap.from(split.chars, {
+        y: 40, autoAlpha: 0, rotationX: -90, duration: 0.7, ease: "back.out(1.7)",
+        stagger: 0.025,
+        scrollTrigger: { trigger: title, start: "top 80%" },
+        onComplete: () => split.revert()
+      });
+    }
+
+    // HERO LABEL + SUB + ACTIONS — entrada escalonada
+    gsap.from("[data-gsap='hero-label']", { opacity: 0, y: 15, duration: 0.5, delay: 0.1 });
+    gsap.from("[data-gsap='hero-sub']", { opacity: 0, y: 20, duration: 0.7, ease: "power2.out", delay: 0.5 });
+    gsap.from("[data-gsap='hero-actions']", { opacity: 0, y: 20, duration: 0.6, ease: "power2.out", delay: 0.7 });
+
+    // BADGE — pop-in con bounce
+    gsap.from("[data-gsap='hero-badge']", {
+      opacity: 0, scale: 0.8, duration: 0.6, delay: 1, ease: "back.out(2)"
+    });
+
+    // HERO VISUAL — parallax suave al scroll
+    gsap.to("[data-gsap='hero-visual'] img", {
+      y: -60, ease: "none",
+      scrollTrigger: { trigger: "[data-gsap='hero-visual']", start: "top bottom", end: "bottom top", scrub: 1 }
+    });
+
+    // IMÁGENES DE SECCIÓN — parallax
+    gsap.utils.toArray("[data-gsap='parallax-img']").forEach(img => {
+      gsap.fromTo(img, { y: -40 }, {
+        y: 40, ease: "none",
+        scrollTrigger: { trigger: img, start: "top bottom", end: "bottom top", scrub: 1.2 }
+      });
+    });
+
+    // SCROLL HORIZONTAL — servicios (pin + scrub)
+    const track = document.querySelector("[data-gsap='sh-track']");
+    if (track) {
+      // TÍTULO del horizontal — explosión de letras (scatter 3D) al entrar
+      const shTitle = document.querySelector(".sh-header .section-title");
+      if (shTitle) {
+        const split = SplitText.create(shTitle, { type: "chars", mask: "chars" });
+        gsap.from(split.chars, {
+          y: 60, rotationX: -90, autoAlpha: 0, scale: 0.6, duration: 0.9,
+          ease: "back.out(1.7)", stagger: 0.03,
+          scrollTrigger: { trigger: ".sh-header", start: "top 85%" },
+          onComplete: () => split.revert()
+        });
+      }
+
+      const getDistance = () => track.scrollWidth - window.innerWidth;
+      const tween = gsap.to(track, {
+        x: () => -getDistance(),
+        ease: "none",
+        scrollTrigger: {
+          trigger: ".services-horizontal",
+          start: "top top",
+          end: () => "+=" + getDistance(),
+          pin: true,
+          scrub: 1,
+          invalidateOnRefresh: true,
+          anticipatePin: 1
+        }
+      });
+      // PANELES — se despliegan apilados (rotación 3D + stagger) al iniciar
+      gsap.from(".sh-panel", {
+        rotationY: -18, opacity: 0, x: 60, duration: 0.8, ease: "power3.out",
+        stagger: 0.15,
+        scrollTrigger: { trigger: ".services-horizontal", start: "top 90%" }
+      });
+      // cleanup en resize
+      ScrollTrigger.addEventListener("refreshInit", () => tween.invalidate());
+    }
+
+    // SECTION TITLES — SplitText por palabras (reveal al scrollear), salvo el del horizontal
+    gsap.utils.toArray(".section-title").forEach(h => {
+      if (h.closest(".sh-header")) return; // el horizontal tiene su propia explosión de chars
+      const split = SplitText.create(h, { type: "words" });
+      gsap.from(split.words, {
+        y: 30, autoAlpha: 0, duration: 0.6, ease: "power3.out", stagger: 0.05,
+        scrollTrigger: { trigger: h, start: "top 82%" },
+        onComplete: () => split.revert()
+      });
+    });
+
+    // CARDS — reveal con stagger
+    gsap.utils.toArray("[data-gsap='reveal']").forEach(el => {
+      gsap.from(el, {
+        opacity: 0, y: 50, duration: 0.7, ease: "power3.out",
+        scrollTrigger: { trigger: el, start: "top 88%" }
+      });
+    });
+
+    // CTA FINAL — reveal
+    const cta = document.querySelector(".cta-final");
+    if (cta) {
+      gsap.from(cta, {
+        opacity: 0, y: 40, scale: 0.98, duration: 0.8, ease: "power3.out",
+        scrollTrigger: { trigger: cta, start: "top 80%" }
+      });
+    }
+  });
+</script>
 
 </body>
 </html>

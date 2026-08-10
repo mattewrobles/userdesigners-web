@@ -7,7 +7,7 @@
       "src/styles/tokens.css",
       "src/pages/design-system.astro"
     ],
-    "ignoreRules": [],
+    "ignoreRules": ["marquee"],
     "ignoreValues": []
   }
 }

@@ -1,13 +1,15 @@
 ---
 interface Props {
   as?: "span" | "p" | "div";
+  "data-gsap"?: string;
 }
 
-const { as = "span" } = Astro.props;
+const { as = "span", "data-gsap": dataGsap } = Astro.props;
 const Tag = as;
+const attrs = dataGsap ? { "data-gsap": dataGsap } : {};
 ---
 
-<Tag class="section-label"><slot /></Tag>
+<Tag class="section-label" {...attrs}><slot /></Tag>
 
 <style>
   .section-label {
