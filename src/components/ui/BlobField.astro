@@ -243,8 +243,8 @@ const isBicolor = variant === "bicolor";
     pointer-events: none;
     /* efecto GOOEY (metaball) como Framer: blur + contraste SVG fusionan los blobs
        en UNA sola masa líquida cuando se acercan (sin quemar a blanco) */
-    filter: url(#bf-gooey);
-    -webkit-filter: url(#bf-gooey);
+    filter: url(#bf-gooey) blur(var(--bf-blur, 14px));
+    -webkit-filter: url(#bf-gooey) blur(var(--bf-blur, 14px));
     opacity: var(--bf-opacity);
   }
   .bf-canvas {
