@@ -50,6 +50,29 @@ jobs:
             git push origin $TARGET_BRANCH
             echo "POST_COUNT=$POST_COUNT" >> $GITHUB_ENV
           fi
+      - name: Ping search engines (indexación automática)
+        if: env.POST_COUNT != '0' && env.TARGET_BRANCH == 'main'
+        env:
+          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+        run: |
+          echo "Notificando a los buscadores..."
+          # Google: ping al sitemap (cubre TODAS las URLs: blogs, páginas, proyectos)
+          curl -s -o /dev/null -w "Google ping: %{http_code}\n" \
+            "https://www.google.com/ping?sitemap=https://www.userdesigners.com/sitemap-index.xml"
+          # IndexNow: extraer TODAS las URLs del sitemap y notificarlas (Bing, Yandex, etc.)
+          if [ -n "$INDEXNOW_KEY" ]; then
+            # esperar a que el deploy sirva el sitemap actualizado
+            sleep 20
+            URLS=$(curl -s "https://www.userdesigners.com/sitemap-0.xml" \
+              | grep -oE '<loc>[^<]+' | sed 's/<loc>//' | head -100 | python3 -c "import sys,json; print(json.dumps([u.strip() for u in sys.stdin if u.strip()]))")
+            echo "URLs a notificar: $URLS"
+            curl -s -o /dev/null -w "IndexNow ping: %{http_code}\n" \
+              -X POST "https://api.indexnow.org/indexnow" \
+              -H "Content-Type: application/json" \
+              -d "{\"host\":\"www.userdesigners.com\",\"key\":\"$INDEXNOW_KEY\",\"keyLocation\":\"https://www.userdesigners.com/indexnow.txt\",\"urlList\":$URLS}"
+          else
+            echo "INDEXNOW_KEY no configurada, omitiendo IndexNow"
+          fi
       - name: Notify Slack
         run: |
           if [ "$TARGET_BRANCH" = "main" ]; then
