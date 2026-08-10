@@ -51,3 +51,8 @@ Consult these guides before working on related tasks:
 - [Adding or managing content](https://docs.astro.build/en/guides/content-collections/)
 - [Adding styles or using Tailwind](https://docs.astro.build/en/guides/styling/)
 - [Supporting multiple languages](https://docs.astro.build/en/guides/internationalization/)
+
+### DESIGN.md (OBLIGATORIO antes de diseñar UI)
+- **LEER `DESIGN.md` del proyecto antes de crear/modificar cualquier UI.** Contiene identidad, colores, tipografía, componentes y anti-slop del DS.
+- Tokens reales en `src/styles/tokens.css`. Nunca hardcodear colores/fuentes.
+- Después de diseñar: correr `npm run slop` (impeccable detect src --ci) + screenshot + critique antes de 'listo'.
