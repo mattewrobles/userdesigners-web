@@ -1,0 +1,13 @@
+{
+  "detector": {
+    "ignoreFiles": [
+      "src/html/**",
+      "src/html/*.html",
+      "src/styles/framer.css",
+      "src/styles/tokens.css",
+      "src/pages/design-system.astro"
+    ],
+    "ignoreRules": [],
+    "ignoreValues": []
+  }
+}
