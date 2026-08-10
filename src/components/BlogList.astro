@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from "astro:content";
+import Button from "./ui/Button.astro";
 
 interface Props {
   posts: CollectionEntry<"blog">[];
@@ -161,15 +162,6 @@ const projects = [
 
   <aside class="blog-sidebar">
     <div class="sidebar-section">
-      <h3 class="sidebar-title">Categorías</h3>
-      <div class="sidebar-categories">
-        {categories.map(cat => (
-          <span class="sidebar-cat">{cat}</span>
-        ))}
-      </div>
-    </div>
-
-    <div class="sidebar-section">
       <h3 class="sidebar-title">Proyectos destacados</h3>
       <div class="sidebar-projects">
         {projects.map(p => (
@@ -189,7 +181,7 @@ const projects = [
       <p style="color:var(--text-secondary);font-size:14px;line-height:1.6;margin:0 0 20px;font-family:var(--font-body)">
         Hablemos de cómo podemos ayudarte a diseñar productos digitales que funcionen.
       </p>
-      <a href="https://wa.me/593961026799?text=Hola%20UserDesigners%2C%20quiero%20agendar%20una%20sesi%C3%B3n" target="_blank" rel="noopener" class="sidebar-cta-btn">Charlemos</a>
+      <Button href="https://wa.me/593961026799?text=Hola%20UserDesigners%2C%20quiero%20agendar%20una%20sesi%C3%B3n" target="_blank" variant="stroke">Charlemos</Button>
     </div>
   </aside>
 </div>

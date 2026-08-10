@@ -280,3 +280,10 @@
     --heading-3: clamp(20px, 5.5vw, 28px);
   }
 }
+
+/* ============================================================
+   Design system: reset + componentes (cargados via tokens.css
+   en todas las páginas)
+   ============================================================ */
+@import url("./base.css");
+@import url("./components.css");

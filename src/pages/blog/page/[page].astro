@@ -9,7 +9,7 @@ export async function getStaticPaths() {
   const allPosts = (await getCollection("blog"))
     .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
 
-  const perPage = 10;
+  const perPage = 5;
   const totalPages = Math.ceil(allPosts.length / perPage);
 
   return Array.from({ length: totalPages - 1 }, (_, i) => {
@@ -58,6 +58,7 @@ const framerCSS = fs.readFileSync("src/styles/framer.css", "utf-8")
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles/tokens.css" />
   <style is:global set:html={framerCSS}></style>
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-PDZVJDG9Y5"></script>
@@ -102,14 +103,25 @@ const framerCSS = fs.readFileSync("src/styles/framer.css", "utf-8")
   </main>
 
   <Footer />
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll(".blog-card").forEach((el, i) => {
+        el.style.opacity = "0";
+        el.style.filter = "blur(10px)";
+        el.style.transform = "translateY(30px)";
+        el.style.animation = `fadeInUp 0.6s ease ${0.15 + i * 0.08}s forwards`;
+      });
+    });
+  </script>
 </body>
 </html>
 
 <style is:global>
   .blog-card {
-    opacity: 0;
-    filter: blur(10px);
-    transform: translateY(30px);
+    /* visibles por defecto (la animación fadeInUp la agrega JS en el index) */
+    opacity: 1;
+    filter: none;
+    transform: none;
   }
 
   @keyframes fadeInUp {

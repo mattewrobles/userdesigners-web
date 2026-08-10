@@ -9,7 +9,7 @@ import fs from "fs";
 const allPosts = (await getCollection("blog"))
   .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
 
-const perPage = 10;
+const perPage = 5;
 const currentPage = 1;
 const totalPages = Math.ceil(allPosts.length / perPage);
 const posts = allPosts.slice(0, perPage);
@@ -118,20 +118,12 @@ const framerCSS = fs.readFileSync("src/styles/framer.css", "utf-8")
     <section style="max-width:1100px;margin:0 auto;padding:0 24px 120px">
       {categories.length > 0 && (
         <div style="margin-bottom:48px;display:flex;justify-content:flex-end">
-          {categories.length <= 6 ? (
-            <div style="display:flex;gap:8px;flex-wrap:wrap" id="blog-filters">
-              {categories.map(cat => (
-                <button class="blog-filter" data-filter={cat} style="all:unset;cursor:pointer;padding:6px 16px;border-radius:40px;font-size:14px;font-family:var(--font-body);color:var(--text-secondary);background:var(--surface-2);border:1px solid var(--border-subtle);transition:all 0.2s">{cat}</button>
-              ))}
-            </div>
-          ) : (
-            <select id="blog-filters" style="padding:8px 16px;border-radius:12px;background:var(--surface-2);border:1px solid var(--border-subtle);color:var(--text-primary);font-size:14px;font-family:var(--font-body);outline:none;cursor:pointer">
-              <option value="all" style="background:#030303">Todas las categorías</option>
-              {categories.map(cat => (
-                <option value={cat} style="background:#030303">{cat}</option>
-              ))}
-            </select>
-          )}
+          <select id="blog-filters" aria-label="Filtrar por categoría" style="padding:8px 16px;border-radius:12px;background:var(--surface-2);border:1px solid var(--border-subtle);color:var(--text-primary);font-size:14px;font-family:var(--font-body);outline:none;cursor:pointer">
+            <option value="all" style="background:#030303">Todas las categorías</option>
+            {categories.map(cat => (
+              <option value={cat} style="background:#030303">{cat}</option>
+            ))}
+          </select>
         </div>
       )}
 
@@ -220,7 +212,7 @@ const framerCSS = fs.readFileSync("src/styles/framer.css", "utf-8")
     }
 
     const filterContainer = document.getElementById("blog-filters");
-    const filterSelect = document.querySelector("#blog-filters select");
+    const filterSelect = filterContainer;
     const allCards = document.querySelectorAll(".blog-card, .featured-entrance");
 
     function applyFilter(value) {
@@ -230,33 +222,6 @@ const framerCSS = fs.readFileSync("src/styles/framer.css", "utf-8")
         const shouldShow = !active || cat === active.toLowerCase();
         card.style.display = shouldShow ? "" : "none";
       });
-    }
-
-    if (filterContainer) {
-      filterContainer.querySelectorAll(".blog-filter").forEach(btn => {
-        btn.setAttribute("role", "button");
-        btn.setAttribute("aria-pressed", "false");
-        btn.style.cursor = "pointer";
-        btn.style.transition = "all 0.2s ease";
-        btn.addEventListener("click", () => {
-          const value = btn.dataset.filter || "all";
-          filterContainer.querySelectorAll(".blog-filter").forEach(b => {
-            const isActive = b === btn;
-            b.setAttribute("aria-pressed", String(isActive));
-            b.style.color = isActive ? "#030303" : "var(--text-secondary)";
-            b.style.background = isActive ? "#fff" : "var(--surface-2)";
-            b.style.borderColor = isActive ? "#fff" : "var(--border-subtle)";
-          });
-          applyFilter(value);
-        });
-      });
-      const firstBtn = filterContainer.querySelector(".blog-filter");
-      if (firstBtn) {
-        firstBtn.setAttribute("aria-pressed", "true");
-        firstBtn.style.color = "#030303";
-        firstBtn.style.background = "#fff";
-        firstBtn.style.borderColor = "#fff";
-      }
     }
 
     if (filterSelect) {
