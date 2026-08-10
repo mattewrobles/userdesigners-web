@@ -1,0 +1,20 @@
+/* ============================================
+   Components — estilos globales del DS
+   (solo lo que NO vive en un componente .astro)
+   ============================================
+   Los botones (.btn*) NO van aquí: viven en
+   `src/components/ui/Button.astro` (su <style>).
+   Este archivo es para componentes sin archivo
+   .astro propio o estilos compartidos.
+
+   Cargado via @import en tokens.css.
+   ============================================ */
+
+/* ---------- Card (sin componente .astro propio) ---------- */
+.card {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-1);
+  transition: border-color 0.3s var(--ease-out), transform 0.3s var(--ease-out), background 0.3s var(--ease-out);
+}
+.card:hover { border-color: var(--border-strong); transform: translateY(-2px); }

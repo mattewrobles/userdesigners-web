@@ -86,6 +86,43 @@
   --accent-default: var(--ud-blue);
   --accent-muted: rgba(0, 153, 255, 0.08);
 
+  /* ---------- ALIASES legado (--color-*) → tokens reales ----------
+     Algunas páginas (seo-doctores) usan la nomenclatura vieja --color-*.
+     Estos aliases las alinean al DS sin tocar su markup. */
+  --color-bg: var(--ud-black);
+  --color-bg-card: var(--ud-card);
+  --color-text: var(--ud-white);
+  --color-muted: var(--ud-gray-400);
+  --color-dim: var(--ud-gray-500);
+  --color-border: var(--border-subtle);
+  --color-border-strong: var(--border-strong);
+  --color-text-secondary: var(--ud-gray-400);
+
+  /* ---------- SEMÁNTICOS ESTÁNDAR (convención shadcn) ----------
+     Pares surface/foreground. El botón `-foreground` es el texto sobre esa superficie.
+     Paleta del DS: negros y grises (sin azul). El accent azul existe solo como
+     highlight opcional (focus rings), NO como color de relleno de botones. */
+  --background: var(--ud-black);
+  --foreground: var(--ud-white);
+  --card: var(--ud-card);
+  --card-foreground: var(--ud-white);
+  --primary: var(--ud-black);
+  --primary-foreground: var(--ud-white);
+  --secondary: var(--ud-card);
+  --secondary-foreground: var(--ud-white);
+  --muted: var(--ud-card);
+  --muted-foreground: var(--ud-gray-400);
+  --accent: var(--ud-card-hover);
+  --accent-foreground: var(--ud-white);
+  --destructive: rgb(227, 103, 83);
+  --destructive-foreground: var(--ud-white);
+  --border: var(--border-subtle);
+  --input: var(--border-subtle);
+  --ring: var(--accent-default);
+  /* estados */
+  --surface-hover: var(--ud-card-hover);
+  --surface-active: var(--ud-gray-500);
+
   /* ---------- Efecto "stroke" del botón hero ---------- */
   --stroke-glow: radial-gradient(20.7% 50% at 50% 100%, rgb(255, 255, 255) 0%, rgba(255, 255, 255, 0) 100%);
   --stroke-fill: linear-gradient(259deg, rgb(3, 3, 3) 0%, rgb(3, 3, 3) 100%);
@@ -274,3 +311,7 @@
     --heading-3: clamp(20px, 5.5vw, 28px);
   }
 }
+
+/* Design system: reset + componentes */
+@import url("./base.css");
+@import url("./components.css");

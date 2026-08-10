@@ -78,13 +78,13 @@ const classes = `btn btn--${variant} btn--${size}`;
   }
   .btn--primary:hover { background: var(--surface-glass-hover); }
 
-  /* Ghost — transparente con borde tenue */
+  /* Ghost — transparente con borde visible (buen contraste en dark) */
   .btn--ghost {
     background: transparent;
-    border-color: var(--border-subtle);
-    color: var(--text-secondary);
+    border-color: var(--border-strong);
+    color: var(--text-primary);
   }
-  .btn--ghost:hover { color: var(--text-primary); border-color: var(--border-strong); }
+  .btn--ghost:hover { color: var(--text-primary); border-color: var(--text-secondary); background: var(--surface-glass); }
 
   /* Link — azul con underline (único uso del accent en botones) */
   .btn--link {

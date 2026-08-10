@@ -30,11 +30,16 @@ Manage the background server with `astro dev stop`, `astro dev status`, and `ast
 - Esto sirve de memoria del proyecto: cualquiera (o un agente nuevo) lee el README y sabe exactamente en qué punto está la migración.
 - Si el merge no cambió nada de la migración (ej: solo README o config), igual verificar que el estado siga siendo correcto.
 
-### Design system
-- El DS vive en `src/styles/tokens.css` + `src/components/ui/`.
-- Componentes UI listos: Button, Card, Badge, Text, Icon, Input, Divider, Skeleton, SkeletonMatch, Container, SectionLabel, Blob, Marquee, LetterReveal, Reveal, Logo.
+### Design system (ARQUITECTURA DE ESTILOS — leer esto para no confundirse)
+- **`public/styles/` = el DS ÚNICO.** Contiene `tokens.css` (variables), `base.css` (reset), `components.css` (estilos sin componente propio). Se sirven por URL `/styles/*.css` con `<link>`.
+- **`src/styles/` SOLO contiene `framer.css`** (se lee con `readFileSync` e inyecta inline en páginas blog). NO duplicar tokens aquí.
+- **Los componentes `.astro` llevan su propio `<style>` scoped** (ej: `Button.astro` tiene los estilos del botón). `components.css` NO debe definir `.btn` (los botones viven en el componente).
+- **Convención de tokens:** primitivos `--ud-*` → semánticos (`--surface-*`, `--text-*`, `--border-*`, `--accent-*`, `--background/--foreground`, `--primary`, `--muted`, etc). Usar SIEMPRE semánticos, nunca hex suelto.
+- **Paleta:** negros y grises (dark fintech). El azul `--accent-default` es SOLO para focus rings/highlights, NUNCA como relleno de botones.
+- Componentes UI listos: Button, Card, Badge, Text, Icon, Input, Divider, Skeleton, SkeletonMatch, Container, SectionLabel, Blob, BlobField, Marquee, LetterReveal, Reveal, Logo.
 - Animación con motion.dev (importado de "motion"), no CSS keyframes manuales cuando hay un componente disponible.
 - En componentes .astro, las variables del frontmatter NO se inyectan en `<script>` de módulo → usar `data-*` attributes + `querySelectorAll`.
+- **Regla:** si necesitas un botón/estilo → revisa si el componente existe PRIMERO (Button.astro). No crear estilos nuevos duplicados.
 
 ### Logo
 - El logo es el PNG: `/assets/local/THPlYhmIylZZQK7C2oB2vUpYec.png`. No reconstruirlo como SVG (el gradiente de la U es complejo). Usar `<Logo />` si se necesita.
