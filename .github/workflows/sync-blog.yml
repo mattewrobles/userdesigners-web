@@ -48,18 +48,24 @@ jobs:
             POST_COUNT=$(git diff --staged --name-only | grep "src/content/blog/" | wc -l | tr -d ' ')
             git commit -m "Sync blog from Notion → $TARGET_BRANCH"
             git push origin $TARGET_BRANCH
-            echo "HAS_CHANGES=true" >> $GITHUB_ENV
             echo "POST_COUNT=$POST_COUNT" >> $GITHUB_ENV
           fi
       - name: Notify Slack
-        if: env.HAS_CHANGES == 'true'
         run: |
           if [ "$TARGET_BRANCH" = "main" ]; then
             URL="https://www.userdesigners.com/blog"
-            MSG="✅ *Blog UserDesigners:* ${{ env.POST_COUNT }} post(s) publicados en producción → $URL"
+            if [ "$POST_COUNT" = "0" ] || [ -z "$POST_COUNT" ]; then
+              MSG="📝 *Blog UserDesigners:* no hay posts en estado *Ready* para publicar."
+            else
+              MSG="✅ *Blog UserDesigners:* ${{ env.POST_COUNT }} post(s) publicados en producción → $URL"
+            fi
           else
             URL="https://preview.userdesigners-web.pages.dev/blog"
-            MSG="👀 *Blog Preview:* ${{ env.POST_COUNT }} post(s) en preview para revisión → $URL\nAproba con: merge \`preview\` → \`main\`"
+            if [ "$POST_COUNT" = "0" ] || [ -z "$POST_COUNT" ]; then
+              MSG="📝 *Blog Preview:* no hay posts en estado *Ready* para publicar."
+            else
+              MSG="👀 *Blog Preview:* ${{ env.POST_COUNT }} post(s) en preview para revisión → $URL\nAproba con: merge \`preview\` → \`main\`"
+            fi
           fi
           curl -s -X POST https://slack.com/api/chat.postMessage \
             -H "Authorization: Bearer ${{ secrets.SLACK_BOT_TOKEN }}" \
