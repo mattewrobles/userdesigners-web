@@ -106,6 +106,24 @@ src/
 
 ---
 
+## BlobField — blobs orgánicos animados (efecto gooey)
+
+`<BlobField />` (`src/components/ui/BlobField.astro`) genera figuras orgánicas que morphan y se funden en **una sola masa líquida** — el efecto "gooey/metaball" que usa Framer en el home.
+
+**Técnica:** filtro SVG `feGaussianBlur` + `feColorMatrix` de contraste aplicado al contenedor (`filter: url(#bf-gooey)`), con paths de 8 puntos que morphan vía `requestAnimationFrame`. Liviano, 0 dependencias.
+
+```astro
+<BlobField variant="blog" opacity={0.55} blur={22} />
+```
+
+**Variantes** (cada página tiene posiciones/paleta distintas): `blog`, `home`, `contacto`, `servicios`, `proyectos`, `left`, `right`, `center`, `bicolor`.
+
+**Props:** `variant`, `opacity`, `blur`, `style`. Colores análogos aleatorios por refresh (rojos/violetas/magentas — sin verde ni pastel).
+
+**Regla anti-slop:** NO usar CSS `filter: contrast()` para fusionar blobs (quema a blanco). Usar el filtro SVG gooey. Ver historial completo en `SESSION.md`.
+
+---
+
 ## Design System
 
 El DS vive en `src/components/ui/` con tokens en `src/styles/tokens.css`.

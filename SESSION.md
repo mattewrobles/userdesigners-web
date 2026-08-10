@@ -1,5 +1,22 @@
 # UserDesigners Web — Astro Migration
 
+## Ago 9-10 — BlobField: efecto GOOEY (metaball tipo Framer) ★ FINAL 9/10
+
+**El efecto que Mau quería:** blobs que se funden en UNA sola masa líquida orgánica (como el home de Framer), con morph continuo, sin verse planos ni como formas separadas.
+
+**Técnica definitiva (en `src/components/ui/BlobField.astro`):**
+- **Filtro SVG GOOEY** (el metaball real, de `luukdv/gooey-react`): `feGaussianBlur stdDeviation=14` + `feColorMatrix values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 84 -32"` aplicado al contenedor con `filter: url(#bf-gooey)`.
+- **NO usar:** CSS `filter: contrast()` (quema a blanco con colores claros), `mix-blend-mode` solo (deja cortes entre formas).
+- **Paths orgánicos** (8 puntos de control que morphan con senos via requestAnimationFrame) → la forma cambia continuamente, nunca plana.
+- **Blur extra** en el contenedor: `blur(22px)` para suavizar bordes.
+- **Paleta:** rojo/coral (0-40), violeta/morado (255-310), magenta/rosa (330-360). SIN verde, SIN ámbar sucio, SIN pastel (luminosidad 52-66%, saturación 90-100%). Colores random por refresh.
+- **Blog config:** `<BlobField variant="blog" opacity={0.55} blur={22} />`, esquema `[{x:60,y:560,s:1500},{x:320,y:520,s:1350}]` → masa a la IZQUIERDA, lado derecho limpio para el título.
+- **Verificado:** 9/10 (gemini vision) — masa líquida orgánica, blur suave, título legible, sin verde.
+
+**Referencia de la técnica:** [gooey-react](https://github.com/luukdv/gooey-react) (677★, "shape blobbing / metaballs"). El efecto no necesita GSAP/motion — el filtro SVG + rAF es liviano (0 dependencias).
+
+**Historial de intentos fallidos (para no repetir):** div con border-radius+blur = niebla; SVG paths separados con blur = jellybeans; mesh gradient 1 div = plano; CSS contrast() = quemado a blanco; elipses = planas. La solución final = paths morph + filtro SVG gooey + blur.
+
 ## Ago 9 (parte 16) — FINAL: estado cerrado del blog + componentes ✓
 
 **Estado final del blog hero (validado por Mau en browser):**
