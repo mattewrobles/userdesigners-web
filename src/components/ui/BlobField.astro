@@ -123,17 +123,17 @@ const isBicolor = variant === "bicolor";
   // Paleta premium: rojo/coral, violeta/morado, azul profundo, ámbar (SIN verde/cian pastel).
   function baseHue() {
     const roll = Math.random();
-    if (roll < 0.4) return Math.floor(Math.random() * 40);        // familia rojo/coral (0-40)
-    if (roll < 0.75) return 255 + Math.floor(Math.random() * 55); // familia violeta/morado (255-310)
-    return 38 + Math.floor(Math.random() * 25);                   // familia ámbar/amarillo (38-63)
+    if (roll < 0.5) return Math.floor(Math.random() * 40);        // familia rojo/coral (0-40)
+    if (roll < 0.8) return 255 + Math.floor(Math.random() * 55);  // familia violeta/morado (255-310)
+    return 330 + Math.floor(Math.random() * 30);                  // familia magenta/rosa intenso (330-360)
   }
   function analogColor(hBase, step, bright) {
     // hue dentro de ±45° del base + pequeña deriva por paso
     const h = (hBase + (step * 22) + Math.floor(Math.random() * 14) + 360) % 360;
     // saturación máxima fija → color vivo garantizado (nunca desaturado)
     const s = 90 + Math.floor(Math.random() * 10);
-    // luminosidad media-alta pero NO pastel: 48-62%
-    const l = bright ? 54 + Math.floor(Math.random() * 8) : 48 + Math.floor(Math.random() * 10);
+    // luminosidad media-alta pero NO pastel: 52-66%
+    const l = bright ? 58 + Math.floor(Math.random() * 8) : 52 + Math.floor(Math.random() * 10);
     return `hsl(${h}, ${s}%, ${l}%)`;
   }
   function randomColor2(h1) {
