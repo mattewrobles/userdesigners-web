@@ -3,6 +3,7 @@ import { getCollection } from "astro:content";
 import Navbar from "../../components/Navbar.astro";
 import Footer from "../../components/Footer.astro";
 import BlogList from "../../components/BlogList.astro";
+import BlobField from "../../components/ui/BlobField.astro";
 import fs from "fs";
 
 const allPosts = (await getCollection("blog"))
@@ -84,9 +85,7 @@ const framerCSS = fs.readFileSync("src/styles/framer.css", "utf-8")
   <main style="position:relative;z-index:1;padding:0">
     <section class="blog-hero" id="blogHero">
       <div class="hero-blobs" id="heroBlobs">
-        <div class="hero-blob hero-blob-3" id="blob3"></div>
-        <div class="hero-blob hero-blob-2" id="blob2"></div>
-        <div class="hero-blob hero-blob-1" id="blob1"></div>
+        <BlobField variant="blog" opacity={0.7} blur={14} />
       </div>
       <div class="hero-content">
         <div class="hero-badge">Blog</div>
@@ -157,53 +156,7 @@ const framerCSS = fs.readFileSync("src/styles/framer.css", "utf-8")
     const cards = document.querySelectorAll(".blog-card");
     const featured = document.querySelector("main section:nth-child(2) > a");
 
-    function randomHue() {
-      const ranges = [[0, 100], [170, 360]];
-      const r = ranges[Math.floor(Math.random() * ranges.length)];
-      return r[0] + Math.floor(Math.random() * (r[1] - r[0]));
-    }
-    function randomSaturation() { return 80 + Math.floor(Math.random() * 20); }
-    function randomLightness() { return 50 + Math.floor(Math.random() * 20); }
-    function randomAngle() { return Math.floor(Math.random() * 360); }
-    function randomBetween(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
-
-    function generateBlobSVG(index) {
-      const hue = randomHue();
-      const sat = randomSaturation();
-      const light = randomLightness();
-      const baseColor = `hsl(${hue}, ${sat}%, ${light}%)`;
-      const altHue = (hue + randomBetween(30, 120)) % 360;
-      const altColor = `hsl(${altHue}, ${sat}%, ${light}%)`;
-      const cx = 300, cy = 300;
-      const ellipses = [];
-      const grads = [];
-      const letters = ['a', 'b', 'c', 'd'];
-      const rx1 = randomBetween(80, 160);
-      const ry1 = randomBetween(200, 350);
-      const rot1 = randomAngle();
-      const t1 = `matrix(${Math.cos(rot1 * Math.PI / 180)}, ${Math.sin(rot1 * Math.PI / 180)}, ${-Math.sin(rot1 * Math.PI / 180)}, ${Math.cos(rot1 * Math.PI / 180)}, ${cx}, ${cy})`;
-      ellipses.push(`<ellipse cx="${rx1}" cy="${ry1}" fill="${baseColor}" rx="${rx1}" ry="${ry1}" transform="${t1}"></ellipse>`);
-      for (let i = 0; i < 4; i++) {
-        const rx = randomBetween(60, 150);
-        const ry = randomBetween(180, 350);
-        const rot = randomAngle();
-        const gradId = `blob-${index}-${letters[i]}`;
-        const color = i % 2 === 0 ? baseColor : altColor;
-        const t = `matrix(${Math.cos(rot * Math.PI / 180)}, ${Math.sin(rot * Math.PI / 180)}, ${-Math.sin(rot * Math.PI / 180)}, ${Math.cos(rot * Math.PI / 180)}, ${cx + randomBetween(-40, 40)}, ${cy + randomBetween(-40, 40)})`;
-        ellipses.push(`<ellipse cx="${rx}" cy="${ry}" fill="url(#${gradId})" rx="${rx}" ry="${ry}" transform="${t}"></ellipse>`);
-        grads.push(`<linearGradient gradientUnits="userSpaceOnUse" id="${gradId}" x1="${rx}" x2="${rx}" y1="0" y2="${ry * 2}"><stop stop-color="${color}"></stop><stop offset="1" stop-opacity="0"></stop></linearGradient>`);
-      }
-      return `<svg viewBox="0 0 600 600" fill="none" xmlns="http://www.w3.org/2000/svg"><g opacity="0.4" style="mix-blend-mode:hard-light">${ellipses.join('')}</g><defs>${grads.join('')}</defs></svg>`;
-    }
-
     if (hero) {
-      [document.getElementById("blob1"), document.getElementById("blob2"), document.getElementById("blob3")].forEach((blob, i) => {
-        if (blob) {
-          blob.innerHTML = generateBlobSVG(i);
-          blob.style.opacity = "1";
-        }
-      });
-
       const badge = hero.querySelector(".hero-badge");
       if (badge) {
         badge.classList.add("animate-in");
@@ -340,50 +293,7 @@ const framerCSS = fs.readFileSync("src/styles/framer.css", "utf-8")
     inset: 0;
     z-index: 0;
     pointer-events: none;
-    overflow: hidden;
-  }
-  .hero-blob {
-    position: absolute;
-    border-radius: 0;
-    will-change: transform, opacity;
     overflow: visible;
-  }
-  .hero-blob svg {
-    width: 100%;
-    height: 100%;
-    display: block;
-    animation: blob-spin linear infinite;
-  }
-  .hero-blob-1 svg { animation-duration: 25s; }
-  .hero-blob-2 svg { animation-duration: 30s; animation-direction: reverse; }
-  .hero-blob-3 svg { animation-duration: 35s; }
-  @keyframes blob-spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-  .hero-blob-1 {
-    width: 300px;
-    height: 300px;
-    top: 15%;
-    left: 50%;
-    filter: blur(60px);
-    mix-blend-mode: hard-light;
-  }
-  .hero-blob-2 {
-    width: 260px;
-    height: 260px;
-    top: 20%;
-    left: 45%;
-    filter: blur(60px);
-    mix-blend-mode: hard-light;
-  }
-  .hero-blob-3 {
-    width: 320px;
-    height: 320px;
-    top: 10%;
-    left: 55%;
-    filter: blur(60px);
-    mix-blend-mode: hard-light;
   }
   .hero-content {
     position: relative;
