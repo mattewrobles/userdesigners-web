@@ -108,8 +108,8 @@ const framerCSS = fs.readFileSync("src/styles/framer.css", "utf-8")
           </div>
           <div class="hero-stat-divider"></div>
           <div class="hero-stat">
-            <span class="hero-stat-num">{allPosts.length > 0 ? Math.ceil(allPosts.reduce((acc, p) => acc + parseInt(p.data.readTime || "3"), 0) / allPosts.length) : 0}</span>
-            <span class="hero-stat-label">min lectura promedio</span>
+            <span class="hero-stat-num">{allPosts.length > 0 ? Math.ceil(allPosts.reduce((acc, p) => acc + parseInt(p.data.readTime || "3"), 0) / allPosts.length) : 0} min</span>
+            <span class="hero-stat-label">lectura</span>
           </div>
         </div>
       </div>
@@ -157,33 +157,9 @@ const framerCSS = fs.readFileSync("src/styles/framer.css", "utf-8")
 
       const titleEl = document.getElementById("heroTitle");
       if (titleEl) {
-        const text = titleEl.innerHTML;
-        const parts = text.split(/(<br\s*\/?>)/);
-        let html = "";
-        parts.forEach(part => {
-          if (part.match(/<br\s*\/?>/)) {
-            html += part;
-          } else {
-            const words = part.split(/(\s+)/);
-            words.forEach(word => {
-              if (word.trim() === "") {
-                html += word;
-              } else {
-                html += '<span class="hero-word">';
-                for (const char of word) {
-                  html += `<span class="hero-letter">${char}</span>`;
-                }
-                html += '</span>';
-              }
-            });
-          }
-        });
-        titleEl.innerHTML = html;
-        const letters = titleEl.querySelectorAll(".hero-letter");
-        letters.forEach((el, i) => {
-          el.style.setProperty("--i", i);
-          el.classList.add("animate-letter");
-        });
+        // animación simple y fluida (rápida en mobile, sin lag por letra)
+        titleEl.classList.add("animate-in");
+        titleEl.style.setProperty("--delay", "0.05s");
       }
 
       const subEl = document.getElementById("heroSub");
@@ -370,9 +346,11 @@ const framerCSS = fs.readFileSync("src/styles/framer.css", "utf-8")
     .blog-hero { padding: 140px 20px 60px; }
     .hero-title { font-size: clamp(32px, 10vw, 48px); }
     .hero-sub { font-size: 16px; max-width: 100%; margin-bottom: 36px; }
-    .hero-stat { padding: 0 20px; }
-    .hero-stat-num { font-size: 24px; }
-    .hero-stats { flex-wrap: wrap; justify-content: center; gap: 0; }
+    .hero-stat { padding: 0 8px; flex-direction: column; gap: 2px; }
+    .hero-stat-num { font-size: 13px; }
+    .hero-stat-label { font-size: 10px; }
+    .hero-stats { flex-wrap: nowrap; justify-content: center; gap: 0; width: 100%; }
+    .hero-stat-divider { height: 16px; }
     .hero-stat-divider:nth-child(4) { display: none; }
   }
 
