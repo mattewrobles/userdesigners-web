@@ -1,0 +1,12 @@
+name: DEBUG DB ID
+on: workflow_dispatch
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echo DB ID (redacted)
+        run: |
+          echo "DB_ID length: ${#NOTION_DB_ID}"
+          echo "DB_ID first 8: ${NOTION_DB_ID:0:8}"
+        env:
+          NOTION_DB_ID: ${{ secrets.NOTION_DB_ID }}
