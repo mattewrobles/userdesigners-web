@@ -60,6 +60,38 @@ const hasToc = headings && headings.length > 0;
       logo: { "@type": "ImageObject", url: "https://www.userdesigners.com/assets/local/o5LtTMyVT0hoY6m1F1q3smw3kq4.png" }
     }
   })} />
+  {/* BreadcrumbList — migas de pan para SEO (position zero / rich results) */}
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Inicio", item: "https://www.userdesigners.com/" },
+      { "@type": "ListItem", position: 2, name: "Blog", item: "https://www.userdesigners.com/blog/" },
+      { "@type": "ListItem", position: 3, name: title }
+    ]
+  })} />
+  {/* FAQPage — preguntas que el lector buscaría (AEO / position zero) */}
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: `¿Qué es "${title}"?`,
+        acceptedAnswer: { "@type": "Answer", text: post.data.description || title }
+      },
+      {
+        "@type": "Question",
+        name: `¿Cómo ${title.toLowerCase().replace(/[?¿]/g, "")}?`,
+        acceptedAnswer: { "@type": "Answer", text: "En este artículo de UserDesigners te explicamos el proceso completo, con ejemplos prácticos y recomendaciones para aplicar en tu producto digital." }
+      },
+      {
+        "@type": "Question",
+        name: `¿${title} es importante para tu producto digital?`,
+        acceptedAnswer: { "@type": "Answer", text: "Sí. En UserDesigners lo abordamos desde la práctica real: aplicado a fintechs y startups de Latinoamérica, con resultados medibles." }
+      }
+    ]
+  })} />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />

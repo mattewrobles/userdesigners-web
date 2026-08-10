@@ -1,5 +1,30 @@
 ---
 import fs from "fs";
 const html = fs.readFileSync("src/html/index.html", "utf-8");
-return new Response(html, { headers: { "content-type": "text/html; charset=utf-8" } });
+
+// Inyectar SEO en el <head> del HTML de Framer (canonical, description, og tags).
+// El home sirve HTML exportado de Framer, que no tiene canonical ni meta description.
+const seoInject = `
+<meta name="description" content="UserDesigners es la agencia de UX/UI Design para fintechs y startups en Latinoamérica. Diseñamos productos digitales que convierten: investigación, UX, UI y design systems desde Cuenca, Ecuador." />
+<link rel="canonical" href="https://www.userdesigners.com/" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Agencia UX UI | UserDesigners | Cuenca, Ecuador" />
+<meta property="og:description" content="UserDesigners es la agencia de UX/UI Design para fintechs y startups en Latinoamérica. Diseñamos productos digitales que convierten." />
+<meta property="og:url" content="https://www.userdesigners.com/" />
+<meta property="og:image" content="https://www.userdesigners.com/assets/local/THPlYhmIylZZQK7C2oB2vUpYec.png" />
+<meta property="og:site_name" content="UserDesigners" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Agencia UX UI | UserDesigners | Cuenca, Ecuador" />
+<meta name="twitter:description" content="UserDesigners es la agencia de UX/UI Design para fintechs y startups en Latinoamérica." />
+`;
+
+// insertar justo después de <head> (o antes del primer <meta>) si no existe canonical
+let out = html;
+if (!out.includes('rel="canonical"') && out.includes("<head>")) {
+  out = out.replace("<head>", "<head>" + seoInject);
+} else if (!out.includes('rel="canonical"')) {
+  out = "<!doctype html><html><head>" + seoInject + "</head>" + (out.replace(/<!doctype html>/i, "").replace(/<html[^>]*>/i, "").replace(/<head[^>]*>[\s\S]*?<\/head>/, ""));
+}
+
+return new Response(out, { headers: { "content-type": "text/html; charset=utf-8" } });
 ---

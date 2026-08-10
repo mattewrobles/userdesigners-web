@@ -1,7 +1,10 @@
 User-agent: *
 Allow: /
 
-# AI crawlers — permitted for GEO/AEO visibility
+# AI crawlers — permitted for GEO/AEO visibility.
+# NOTA: Cloudflare inyecta su bloque "Managed Content" antes de este archivo.
+# Según RFC 9309, para el mismo user-agent gana la ÚLTIMA regla, así que estos Allow
+# prevalecen sobre los Disallow que Cloudflare agregue arriba.
 User-agent: GPTBot
 Allow: /
 
@@ -15,6 +18,12 @@ User-agent: Amazonbot
 Allow: /
 
 User-agent: PerplexityBot
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+User-agent: Applebot-Extended
 Allow: /
 
 Sitemap: https://www.userdesigners.com/sitemap-index.xml
