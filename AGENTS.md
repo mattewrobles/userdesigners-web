@@ -24,6 +24,12 @@ Manage the background server with `astro dev stop`, `astro dev status`, and `ast
 - **SIEMPRE usar tokens del DS** (`src/styles/tokens.css`): colores, spacing, radius, tipografía. Nunca hex/rgba hardcodeados.
 - Verificar con el detector: `npm run slop` (impeccable detect src --ci). Buscar 0 anti-patterns en código nuevo.
 
+### Actualizar README en cada merge a main (OBLIGATORIO)
+- **SIEMPRE que se haga un merge a `main`**, actualizar el README.md (sección "Estado de la migración Framer → Astro") marcando/desmarcando los checkboxes según lo que cambió.
+- Mantener el progreso al día: páginas migradas a Astro, etapas completadas, componentes nuevos.
+- Esto sirve de memoria del proyecto: cualquiera (o un agente nuevo) lee el README y sabe exactamente en qué punto está la migración.
+- Si el merge no cambió nada de la migración (ej: solo README o config), igual verificar que el estado siga siendo correcto.
+
 ### Design system
 - El DS vive en `src/styles/tokens.css` + `src/components/ui/`.
 - Componentes UI listos: Button, Card, Badge, Text, Icon, Input, Divider, Skeleton, SkeletonMatch, Container, SectionLabel, Blob, Marquee, LetterReveal, Reveal, Logo.
