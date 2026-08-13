@@ -19,15 +19,13 @@ Elegir entre WordPress, Webflow y Framer define si tu equipo puede lanzar campa�
 
 | Criterio | WordPress | Webflow | Framer |
 
-| :--- | :--- | :--- | :--- |
+**Caso de uso ideal** Blogs masivos / Membresías | Sitios B2B y Scale-ups | Landing pages y MVPs |
 
-| **Caso de uso ideal** | Blogs masivos / Membresías | Sitios B2B y Scale-ups | Landing pages y MVPs |
+**Velocidad de lanzamiento** Media (requiere configuración) | Alta | Extrema (días u horas) |
 
-| **Velocidad de lanzamiento** | Media (requiere configuración) | Alta | Extrema (días u horas) |
+**Mantenimiento técnico**  Alto (actualizaciones y plugins) | Bajo (SaaS gestionado) | Mínimo (SaaS puro) |
 
-| **Mantenimiento técnico** | Alto (actualizaciones y plugins) | Bajo (SaaS gestionado) | Mínimo (SaaS puro) |
-
-| **Curva de aprendizaje** | Media | Alta | Baja (estilo Figma) |
+**Curva de aprendizaje**  Media | Alta | Baja (estilo Figma) |
 
 ## 1. WordPress: Control total con costos ocultos de mantenimiento
 
