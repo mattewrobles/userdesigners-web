@@ -70,7 +70,7 @@ Sitio web de [UserDesigners](https://www.userdesigners.com), agencia de diseño 
 - [ ] **Etapa 5 — Eliminar dependencia de Framer** (quitar 17 scripts `.mjs` remotos por página + ~463KB JS no usado)
 - [ ] **Etapa 6 — SEO + Performance final**
 
-**Progreso estimado:** ~40% del sitio en Astro nativo (blog sin framer.css, contacto, DS, utilidades) · ~60% aún sirve HTML de Framer (marketing).
+**Progreso estimado:** ~60% del sitio en Astro nativo. 11 de 16 rutas (blog, contacto, seo-doctores, mantenimiento, design-system, 404) · las 5 rutas de marketing (home, servicios, nosotros, proyectos) siguen sirviendo HTML Framer con ~463KB de JS muerto.
 
 ---
 
