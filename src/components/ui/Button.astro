@@ -1,53 +1,58 @@
 ---
 interface Props {
   href?: string;
+  type?: "button" | "submit" | "reset";
   variant?: "primary" | "ghost" | "link" | "stroke" | "danger";
   size?: "sm" | "md" | "lg";
   target?: "_blank" | "_self";
   rel?: string;
   strokeFill?: boolean;
+  /** tone="dark": para usar sobre fondos CLAROS (texto/borde en tinta oscura) */
+  tone?: "light" | "dark";
 }
 
 const {
   href = "#",
+  type = "button",
   variant = "primary",
   size = "md",
   target = "_self",
   rel,
   strokeFill = true,
+  tone = "light",
+  ...rest
 } = Astro.props;
-const classes = `btn btn--${variant} btn--${size}`;
+const classes = `btn btn--${variant} btn--${size}${tone === "dark" ? " btn--on-light" : ""}`;
+const isSubmit = type === "submit" || type === "reset";
 ---
 
-{
-  href ? (
-    <a href={href} class={classes} target={target} rel={rel || (target === "_blank" ? "noopener" : undefined)}>
-      {variant === "stroke" && (
-        <>
-          <span class="btn-stroke" aria-hidden="true">
-            <span class="btn-stroke-glow"></span>
-            <span class="btn-stroke-glow btn-stroke-glow--2"></span>
-          </span>
-          <span class="btn-fill" aria-hidden="true"></span>
-        </>
-      )}
-      <span class="btn-label"><slot /></span>
-    </a>
-  ) : (
-    <button class={classes}>
-      {variant === "stroke" && (
-        <>
-          <span class="btn-stroke" aria-hidden="true">
-            <span class="btn-stroke-glow"></span>
-            <span class="btn-stroke-glow btn-stroke-glow--2"></span>
-          </span>
-          <span class="btn-fill" aria-hidden="true"></span>
-        </>
-      )}
-      <span class="btn-label"><slot /></span>
-    </button>
-  )
-}
+{isSubmit ? (
+  <button type={type} class={classes} {...rest}>
+    {variant === "stroke" && (
+      <>
+        <span class="btn-stroke" aria-hidden="true">
+          <span class="btn-stroke-glow"></span>
+          <span class="btn-stroke-glow btn-stroke-glow--2"></span>
+        </span>
+        <span class="btn-fill" aria-hidden="true"></span>
+      </>
+    )}
+    <span class="btn-label"><slot /></span>
+  </button>
+) : (
+  <a href={href} class={classes} target={target} rel={rel || (target === "_blank" ? "noopener" : undefined)} {...rest}>
+    {variant === "stroke" && (
+      <>
+        <span class="btn-stroke" aria-hidden="true">
+          <span class="btn-stroke-glow"></span>
+          <span class="btn-stroke-glow btn-stroke-glow--2"></span>
+        </span>
+        <span class="btn-fill" aria-hidden="true"></span>
+      </>
+    )}
+    <span class="btn-label"><slot /></span>
+  </a>
+)}
 
 <style>
   .btn {
@@ -174,6 +179,29 @@ const classes = `btn btn--${variant} btn--${size}`;
     color: rgb(227, 103, 83);
   }
   .btn--danger:hover { background: rgba(227, 103, 83, 0.1); }
+
+  /* ===== btn--on-light: variante para usar sobre fondos CLAROS (crema/blanco) =====
+     Convierte texto y bordes a tinta oscura para contraste sobre claro. */
+  .btn--on-light {
+    --on-light-ink: #16130e;
+  }
+  .btn--on-light.btn--ghost {
+    color: var(--on-light-ink);
+    border-color: rgba(22, 19, 14, 0.28);
+    background: rgba(255, 255, 255, 0.2);
+  }
+  .btn--on-light.btn--ghost:hover {
+    color: var(--on-light-ink);
+    border-color: rgba(22, 19, 14, 0.55);
+    background: rgba(255, 255, 255, 0.35);
+  }
+  .btn--on-light.btn--primary {
+    color: var(--on-light-ink);
+    background: rgba(22, 19, 14, 0.08);
+    border-color: rgba(22, 19, 14, 0.25);
+  }
+  .btn--on-light.btn--primary:hover { background: rgba(22, 19, 14, 0.14); }
+  .btn--on-light .btn-label { color: var(--on-light-ink); }
 
   .btn:focus-visible {
     outline: 2px solid var(--accent-default);

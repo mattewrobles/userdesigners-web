@@ -3,7 +3,6 @@ import { getCollection } from "astro:content";
 import Navbar from "../../../components/Navbar.astro";
 import Footer from "../../../components/Footer.astro";
 import BlogList from "../../../components/BlogList.astro";
-import fs from "fs";
 
 export async function getStaticPaths() {
   const allPosts = (await getCollection("blog"))
@@ -30,9 +29,6 @@ export async function getStaticPaths() {
 }
 
 const { posts, currentPage, totalPages, totalPosts, categories } = Astro.props;
-
-const framerCSS = fs.readFileSync("src/styles/framer.css", "utf-8")
-  .replace(/<\/?style[^>]*>/g, "");
 ---
 
 <!doctype html>
@@ -59,7 +55,6 @@ const framerCSS = fs.readFileSync("src/styles/framer.css", "utf-8")
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/styles/tokens.css" />
-  <style is:global set:html={framerCSS}></style>
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-PDZVJDG9Y5"></script>
   <script>

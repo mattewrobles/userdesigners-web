@@ -1,0 +1,101 @@
+---
+interface Props {
+  testimonio: { quote: string; name: string; role: string };
+  index: number;
+}
+
+const { testimonio, index } = Astro.props;
+const photos = ["juan", "sandra", "diego", "rosalia", "grecia", "janne"];
+const photoIdx = index % photos.length;
+const photoExt = photos[photoIdx] === "grecia" ? "jpeg" : "png";
+---
+
+<div class="t-item">
+  <article class="t-card">
+    <p class="t-quote">{testimonio.quote}</p>
+    <div class="t-person">
+      <span class="t-avatar">
+        <img src={`/assets/local/testimonio-${photos[photoIdx]}.${photoExt}`} alt={`Foto de ${testimonio.name}`} loading="lazy" width="42" height="42" />
+      </span>
+      <div class="t-info">
+        <div class="t-name">{testimonio.name}</div>
+        <div class="t-role">{testimonio.role}</div>
+      </div>
+    </div>
+  </article>
+</div>
+
+<style>
+  .t-item {
+    width: 400px;
+    height: 260px;
+    flex-shrink: 0;
+  }
+  .t-card {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    background: var(--surface-card);
+    border: 1px solid rgba(62, 62, 65, 0.9);
+    border-radius: 16px;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+  }
+  .t-quote {
+    font-size: 18px;
+    line-height: 1.4;
+    color: var(--text-tertiary);
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .t-quote::before {
+    content: "“";
+    color: var(--ud-brand-coral);
+    font-family: var(--font-display);
+    font-size: 26px;
+    line-height: 0;
+  }
+  .t-person {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding-top: 24px;
+  }
+  .t-avatar {
+    flex: none;
+    width: 42px;
+    height: 42px;
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+  }
+  .t-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    border-radius: inherit;
+  }
+  .t-name {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text-primary);
+  }
+  .t-role {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+
+  @media (max-width: 720px) {
+    .t-item { width: 320px; height: 280px; }
+    .t-quote { font-size: 16px; }
+  }
+</style>

@@ -79,10 +79,10 @@ const currentPath = Astro.url.pathname;
     // Hover effects with spring - solo color
     const links = document.querySelectorAll(".nav-link-text");
     const cta = document.querySelector(".nav-cta");
+    const defaultColor = "rgba(255,255,255,0.5)";
+    const hoverColor = "#fff";
 
     links.forEach(link => {
-      const defaultColor = "rgba(255,255,255,0.5)";
-      const hoverColor = "#fff";
       link.addEventListener("mouseenter", () => {
         try { animate(link, { color: [defaultColor, hoverColor] }, { type: spring, stiffness: 300, damping: 25 });
         } catch (e) { link.style.color = hoverColor; }
@@ -175,23 +175,27 @@ const currentPath = Astro.url.pathname;
     display: flex;
     align-items: center;
     width: 790px;
-    padding: 12px 0;
+    padding: 12px 0; /* base: contenido expandido (como en blog) */
     border-radius: 0;
     background: transparent;
     border: 1px solid transparent;
+    position: relative;
     transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
     pointer-events: auto;
     overflow: hidden;
   }
 
+  /* AL SCROLL: el menú se comprime (padding lateral) y aparece la pill con vidrio
+     esmerilado fuerte (fondo más opaco + blur alto, como el navbar del home). */
   .nav-inner.scrolled {
     width: 790px;
-    padding: 12px 24px;
+    padding: 8px 20px; /* contenido se comprime un poco */
     border-radius: 60px;
-    background: rgba(0, 0, 0, 0.65);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-    border-color: rgba(130, 130, 130, 0.12);
+    background: rgba(10, 10, 12, 0.78);
+    backdrop-filter: blur(90px) saturate(2);
+    -webkit-backdrop-filter: blur(90px) saturate(2);
+    border-color: rgba(130, 130, 130, 0.14);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   }
 
   .nav-wrapper {
@@ -398,4 +402,5 @@ const currentPath = Astro.url.pathname;
     margin-top: 16px;
     opacity: 0;
   }
+
 </style>

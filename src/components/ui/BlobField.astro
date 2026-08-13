@@ -4,11 +4,12 @@
 // internamente sin "efecto capa" de elementos HTML superpuestos.
 // Cada blob deriva en trayectoria elíptica (translación real) y morphea su forma.
 interface Props {
-  variant?: "blog" | "home" | "contacto" | "servicios" | "proyectos" | "left" | "right" | "center" | "bicolor";
+  variant?: "blog" | "home" | "contacto" | "servicios" | "proyectos" | "left" | "right" | "center" | "bicolor" | "seo";
   colors?: string[];
   opacity?: number;
   blur?: number;
   style?: string;
+  static?: boolean;
 }
 
 const {
@@ -17,6 +18,7 @@ const {
   opacity = 0.85,
   blur = 14,
   style: extraStyle,
+  static: isStatic = false,
 } = Astro.props;
 
 const variants = {
@@ -24,6 +26,11 @@ const variants = {
     blobs: [
       { x: 18,  y: 38, s: 580, rx: 16, ry: 12, spd: 32, ph: 0.3 },
       { x: 50,  y: 44, s: 520, rx: 14, ry: 14, spd: 38, ph: 2.6 },
+    ],
+  },
+  seo: {
+    blobs: [
+      { x: 50, y: 58, s: 900, rx: 30, ry: 20, spd: 30, ph: 0.4 },
     ],
   },
   home: {
@@ -36,10 +43,8 @@ const variants = {
   },
   contacto: {
     blobs: [
-      { x: 68, y: 22, s: 460, rx: 20, ry: 16, spd: 32, ph: 0.8 },
-      { x: 20, y: 58, s: 440, rx: 24, ry: 14, spd: 28, ph: 2.6 },
-      { x: 78, y: 72, s: 420, rx: 18, ry: 18, spd: 36, ph: 4.4 },
-      { x: 38, y: 10, s: 400, rx: 20, ry: 12, spd: 30, ph: 5.9 },
+      { x: 32, y: 42, s: 900, rx: 28, ry: 18, spd: 26, ph: 0.4 },
+      { x: 68, y: 40, s: 820, rx: 26, ry: 20, spd: 30, ph: 2.4 },
     ],
   },
   servicios: {
@@ -97,7 +102,7 @@ const blobs = cfg.blobs;
 const isBicolor = variant === "bicolor";
 ---
 
-<div class="blobfield" data-variant={variant} data-bicolor={isBicolor} data-nblobs={blobs.length} style={`--bf-opacity:${opacity};--bf-blur:${blur}px;${extraStyle ? extraStyle : ""}`} aria-hidden="true">
+<div class="blobfield" data-variant={variant} data-bicolor={isBicolor} data-nblobs={blobs.length} data-static={isStatic} style={`--bf-opacity:${opacity};--bf-blur:${blur}px;${extraStyle ? extraStyle : ""}`} aria-hidden="true">
   <svg width="0" height="0" style="position:absolute">
     <defs>
       <filter id="bf-gooey" colorInterpolationFilters="sRGB">
@@ -143,6 +148,7 @@ const isBicolor = variant === "bicolor";
 
   document.querySelectorAll(".blobfield").forEach((field) => {
     const isBicolor = field.dataset.bicolor === "true";
+    const isStatic = field.dataset.static === "true";
     const nblobs = Number(field.dataset.nblobs || 2);
     const svg = field.querySelector(".bf-canvas");
     const ns = "http://www.w3.org/2000/svg";
@@ -154,12 +160,12 @@ const isBicolor = variant === "bicolor";
     const schemes = {
       blog:   [{x:60,y:560,s:1500},{x:320,y:520,s:1350}],
       home:   [{x:140,y:380,s:500},{x:720,y:200,s:460},{x:580,y:700,s:440},{x:300,y:80,s:420}],
-      contacto:[{x:680,y:220,s:460},{x:200,y:580,s:440},{x:780,y:720,s:420},{x:380,y:100,s:400}],
+      contacto:[{x:500,y:300,s:1000},{x:500,y:560,s:900}],
       servicios:[{x:220,y:240,s:480},{x:760,y:280,s:440},{x:400,y:680,s:460},{x:820,y:640,s:420}],
       proyectos:[{x:740,y:220,s:460},{x:220,y:500,s:440},{x:540,y:740,s:420},{x:840,y:560,s:400}],
       left:   [{x:220,y:300,s:540},{x:340,y:520,s:500},{x:420,y:760,s:460},{x:260,y:80,s:440}],
       right:  [{x:780,y:300,s:540},{x:660,y:520,s:500},{x:580,y:760,s:460},{x:740,y:80,s:440}],
-      seo:    [{x:700,y:420,s:1500},{x:880,y:560,s:1350}],
+      seo:    [{x:500,y:560,s:1600}],
       center: [{x:400,y:320,s:500},{x:580,y:380,s:520},{x:480,y:580,s:480},{x:620,y:620,s:440}],
       bicolor:[{x:240,y:320,s:520},{x:500,y:400,s:500},{x:420,y:600,s:480},{x:600,y:620,s:440}],
     };
@@ -223,12 +229,25 @@ const isBicolor = variant === "bicolor";
 
       let t = i * 2;
       const cx0 = base.x, cy0 = base.y;
+      // frame inicial — dibuja la forma (siempre)
+      const t0 = t;
+      const nx0 = cx0 + rx * Math.sin(t0 * 0.6 / (spd / 26) + ph);
+      const ny0 = cy0 + ry * Math.cos(t0 * 0.5 / (spd / 26) + ph);
+      path.setAttribute("d", shape(nx0, ny0, t0));
+      // modo estático: dibuja un frame y NO lanza el loop rAF (0 costo de CPU)
+      if (isStatic) return;
+      // throttle: dibuja el morph cada 2 frames (30fps visual, mitad del costo)
+      // el morph a 60fps compite con otros rAF (scroll scrub, SplitText) y baja el FPS
+      let skip = 0;
       function frame() {
-        t += 0.02;
-        // deriva elíptica del centro (se acerca/aleja de otros → se funden)
-        const nx = cx0 + rx * Math.sin(t * 0.6 / (spd / 26) + ph);
-        const ny = cy0 + ry * Math.cos(t * 0.5 / (spd / 26) + ph);
-        path.setAttribute("d", shape(nx, ny, t));
+        skip = (skip + 1) % 2;
+        if (skip === 0) {
+          t += 0.02;
+          // deriva elíptica del centro (se acerca/aleja de otros → se funden)
+          const nx = cx0 + rx * Math.sin(t * 0.6 / (spd / 26) + ph);
+          const ny = cy0 + ry * Math.cos(t * 0.5 / (spd / 26) + ph);
+          path.setAttribute("d", shape(nx, ny, t));
+        }
         requestAnimationFrame(frame);
       }
       requestAnimationFrame(frame);

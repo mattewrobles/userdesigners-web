@@ -9,13 +9,12 @@ const { speed = 20, reverse = false, gap = 48 } = Astro.props;
 const trackId = `marquee-${Math.random().toString(36).slice(2, 8)}`;
 ---
 
-<div class="marquee" id={trackId} data-speed={speed} data-reverse={reverse} data-gap={gap}>
+<div class="marquee" id={trackId} data-speed={speed} data-reverse={reverse} data-gap={gap} style={`--marquee-gap:${gap}px`}>
   <div class="marquee-track">
     <div class="marquee-group"><slot /></div>
     <div class="marquee-group" aria-hidden="true"><slot /></div>
   </div>
 </div>
-
 <script>
   import { animate } from "motion";
 
@@ -28,14 +27,16 @@ const trackId = `marquee-${Math.random().toString(36).slice(2, 8)}`;
 
     if (track && groups.length >= 2) {
       const distance = groups[0].scrollWidth + gap;
+      // reverse invierte la dirección real: empieza desplazado y vuelve a 0 (derecha)
+      const from = reverse ? `-${distance}px` : "0px";
+      const to = reverse ? "0px" : `-${distance}px`;
       animate(
         track,
-        { x: [0, `-${distance}px`] },
+        { x: [from, to] },
         {
           duration: speed,
           repeat: Infinity,
           ease: "linear",
-          direction: reverse ? "reverse" : "normal",
         }
       );
     }
@@ -56,8 +57,11 @@ const trackId = `marquee-${Math.random().toString(36).slice(2, 8)}`;
   .marquee-group {
     display: flex;
     align-items: center;
-    gap: var(--space-9);
-    padding-right: var(--space-9);
+    gap: var(--marquee-gap, var(--space-9));
+    padding-right: var(--marquee-gap, var(--space-9));
     flex-shrink: 0;
+  }
+  .marquee-group > * {
+    margin-right: 0;
   }
 </style>

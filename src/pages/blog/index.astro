@@ -4,7 +4,6 @@ import Navbar from "../../components/Navbar.astro";
 import Footer from "../../components/Footer.astro";
 import BlogList from "../../components/BlogList.astro";
 import BlobField from "../../components/ui/BlobField.astro";
-import fs from "fs";
 
 const allPosts = (await getCollection("blog"))
   .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
@@ -14,9 +13,6 @@ const currentPage = 1;
 const totalPages = Math.ceil(allPosts.length / perPage);
 const posts = allPosts.slice(0, perPage);
 const categories = [...new Set(allPosts.map(p => p.data.category).filter(Boolean))];
-
-const framerCSS = fs.readFileSync("src/styles/framer.css", "utf-8")
-  .replace(/<\/?style[^>]*>/g, "");
 ---
 
 <!doctype html>
@@ -61,7 +57,6 @@ const framerCSS = fs.readFileSync("src/styles/framer.css", "utf-8")
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/styles/tokens.css" />
-  <style is:global set:html={framerCSS}></style>
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-PDZVJDG9Y5"></script>
   <script>
@@ -208,15 +203,6 @@ const framerCSS = fs.readFileSync("src/styles/framer.css", "utf-8")
 </script>
 
 <style is:global>
-  .framer-bjhdpb { align-items: flex-start !important; }
-  .framer-WOlJs .framer-bjhdpb { overflow: visible !important; }
-  .framer-WOlJs.framer-v-1lvxs1p .framer-84xib0 { height: auto !important; }
-  .framer-WOlJs.framer-v-1lvxs1p .framer-1m25ze8-container { width: auto !important; }
-  .framer-WOlJs .framer-1d3wp7v { width: auto !important; }
-  #navbar [data-framer-appear-id] { opacity: 1 !important; transform: none !important; }
-  .framer-wse24v { margin-left: auto !important; margin-right: auto !important; }
-  .framer-WOlJs { background-color: #030303 !important; padding-top: 0 !important; margin-left: auto !important; margin-right: auto !important; }
-  .framer-WOlJs.framer-v-ib24dp { padding-top: 0 !important; }
   .blog-card:hover { border-color: var(--border-strong) !important; background: var(--surface-2) !important; }
   .blog-card:hover img { transform: scale(1.05); }
   main section:nth-child(2) > a:hover { border-color: var(--border-strong) !important; }

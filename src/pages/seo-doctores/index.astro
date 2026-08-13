@@ -3,8 +3,6 @@ import Navbar from "../../components/Navbar.astro";
 import Footer from "../../components/Footer.astro";
 import Button from "../../components/ui/Button.astro";
 import Card from "../../components/ui/Card.astro";
-import SectionLabel from "../../components/ui/SectionLabel.astro";
-import BlobField from "../../components/ui/BlobField.astro";
 import Marquee from "../../components/ui/Marquee.astro";
 
 const site = "https://www.userdesigners.com"
@@ -82,11 +80,110 @@ const schema = {
     section { padding: var(--space-section) var(--space-pad); max-width: var(--container-max); margin: 0 auto; }
     hr { border: none; border-top: 1px solid var(--color-border); }
 
-    /* HERO */
-    .hero { padding-top: 140px; padding-bottom: 90px; }
-    .hero { position: relative; }
-    .hero-blobs { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
-    .hero-grid { position: relative; z-index: 1; display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 48px; align-items: center; }
+    /* HERO CREMA — fondo claro que se desvanece a negro hacia la siguiente sección */
+    .hero {
+      max-width: none;
+      width: 100vw;
+      margin: 0;
+      padding: 0;
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      background: #f5f2ec; /* crema de marca */
+    }
+    .hero-atmosphere { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+    /* fondo del hero: negro (dark DS). Blob + glow de marca como capa atmosférica. */
+    .hero {
+      max-width: none;
+      width: 100vw;
+      margin: 0;
+      padding: 0;
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      background: var(--ud-black);
+    }
+    /* Glow centrado detrás de la tipografía — más arriba y más vivo */
+    .hero-glow {
+      position: absolute; border-radius: 50%;
+      width: 34vw; height: 26vw; min-width: 360px; min-height: 280px;
+      left: 50%; top: 30%;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(ellipse at 50% 50%, color-mix(in srgb, var(--ud-brand-coral) 72%, transparent) 0%, transparent 70%);
+      filter: blur(60px);
+    }
+    /* grano sutil para quitar el "flat digital" */
+    .hero-noise {
+      position: absolute; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+      opacity: 0.5;
+    }
+    .hero-inner { position: relative; z-index: 1; width: 100%; max-width: 1000px; margin: 0 auto; padding: 140px var(--space-pad) 110px; }
+    .hero-center { text-align: center; display: flex; flex-direction: column; align-items: center; }
+    .hero-center h1 {
+      font-family: var(--font-display);
+      font-size: var(--display-1);
+      font-weight: 500;
+      line-height: 1.06;
+      letter-spacing: -0.03em;
+      max-width: 100%;
+      margin: 0 auto 28px;
+      color: var(--text-primary);
+      overflow: visible;
+      position: relative;
+    }
+    /* cada línea es un bloque fijo → SplitText nunca parte palabras */
+    .h1-line { display: block; white-space: nowrap; }
+    .hero-center p {
+      font-size: clamp(16px, 2vw, 19px);
+      color: var(--color-muted);
+      max-width: 60ch;
+      line-height: 1.75;
+      margin: 0 auto 40px;
+    }
+    .hero-center .actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+    /* Stats — bajo los CTAs, con separador sutil */
+    .hero-stats {
+      display: flex; gap: 48px; flex-wrap: wrap; justify-content: center;
+      margin-top: 48px; padding-top: 28px;
+      border-top: 1px solid var(--border-subtle);
+    }
+    .hero-stat { display: flex; flex-direction: column; gap: 4px; align-items: center; }
+    .hs-num {
+      font-family: var(--font-display); font-size: clamp(26px, 3vw, 36px); font-weight: 600;
+      letter-spacing: -0.02em;
+      background: linear-gradient(180deg, #ffffff 0%, var(--ud-gray-400) 140%);
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .hs-label { font-size: 13px; color: var(--text-secondary); font-family: var(--font-ui); }
+    /* Scroll indicator — sutil */
+    .hero-scroll {
+      position: absolute; left: 50%; bottom: 32px; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+      color: var(--text-tertiary);
+    }
+    .hero-scroll-label { font-size: 11px; font-family: var(--font-ui); letter-spacing: 0.14em; text-transform: uppercase; }
+    .hero-scroll-line { width: 1px; height: 44px; background: linear-gradient(180deg, var(--border-strong), transparent); position: relative; overflow: hidden; }
+    .hero-scroll-line::after {
+      content: ""; position: absolute; top: -20px; left: 0; width: 1px; height: 20px;
+      background: var(--text-secondary);
+      animation: hero-scroll-drift 1.8s ease-in-out infinite;
+    }
+    @keyframes hero-scroll-drift {
+      0% { transform: translateY(0); opacity: 0; }
+      40% { opacity: 1; }
+      100% { transform: translateY(56px); opacity: 0; }
+    }
+    @media (max-width: 809.98px) {
+      .hero-inner { padding: 110px var(--space-pad) 90px; }
+      .hero-glow { width: 80vw; height: 46vw; }
+      .hero-stats { gap: 32px; }
+      .hero-scroll { display: none; }
+    }
     /* Secciones divididas texto + imagen */
     .section-split { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
     .section-split--rev { grid-template-columns: 1fr 1fr; }
@@ -95,6 +192,60 @@ const schema = {
     .section-split-visual img { width: 100%; height: 100%; object-fit: cover; border-radius: var(--radius-xl); will-change: transform; }
     .img-frame-glow { position: absolute; inset: 0; border-radius: var(--radius-xl); pointer-events: none;
       box-shadow: inset 0 0 60px rgba(3, 3, 3, 0.35); border: 1px solid var(--border-strong); }
+    /* Kicker editorial — texto en gris (sin saturar de color) */
+    .kicker {
+      display: inline-flex; align-items: center;
+      font-family: var(--font-ui); font-size: 13px; font-weight: 500;
+      color: var(--text-secondary); margin: 0 0 26px;
+    }
+    /* Cards diferenciadas — línea de acento (no icon-cards idénticas) */
+    .card-line { width: 34px; height: 3px; border-radius: 3px; margin-bottom: 4px; }
+    .card-line[data-accent="coral"] { background: var(--ud-brand-coral); }
+    .card-line[data-accent="lilac"] { background: var(--ud-brand-lilac); }
+    .card-line[data-accent="sky"] { background: var(--ud-brand-sky); }
+    .card-num { font-family: var(--font-display); font-size: 15px; font-weight: 600; letter-spacing: 0.04em; margin-bottom: 2px; }
+    .card-num[data-accent="coral"] { color: var(--ud-brand-coral); }
+    .card-num[data-accent="lilac"] { color: var(--ud-brand-lilac); }
+    .card-num[data-accent="sky"] { color: var(--ud-brand-sky); }
+    .card-num[data-accent="gold"] { color: var(--ud-brand-gold); }
+    /* GEO/AEO — bento animada con color de marca (no grid genérico) */
+    .geo-bento { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 40px; }
+    .geo-card {
+      position: relative; padding: 34px 36px; border-radius: var(--radius-xl);
+      border: 1px solid var(--border-strong);
+      background: linear-gradient(180deg, var(--surface-2) 0%, var(--surface-3) 100%);
+      display: flex; flex-direction: column; gap: 14px; overflow: hidden;
+      transition: transform var(--duration-base) var(--ease-out), border-color var(--duration-base) ease;
+    }
+    /* glow de color por card (gradiente top de marca, hover) */
+    .geo-card::before { content: ""; position: absolute; inset: 0; opacity: 0.16; pointer-events: none;
+      background: radial-gradient(90% 70% at 100% 0%, currentColor 0%, transparent 70%); }
+    .geo-card--sky { color: var(--ud-brand-sky); }
+    .geo-card--lilac { color: var(--ud-brand-lilac); }
+    .geo-card--gold { color: var(--ud-brand-gold); }
+    .geo-card--coral { color: var(--ud-brand-coral); }
+    .geo-card:hover { border-color: currentColor; transform: translateY(-4px); }
+    .geo-card--lg { grid-row: span 1; }
+    .geo-card--sm { justify-content: center; }
+    .geo-tag {
+      display: inline-flex; align-items: center; align-self: flex-start;
+      font-family: var(--font-mono); font-size: 12px; font-weight: 600; letter-spacing: 0.08em;
+      color: var(--ud-black); background: currentColor; border-radius: var(--radius-sm);
+      padding: 4px 10px;
+    }
+    .geo-chip {
+      display: inline-flex; align-items: center; align-self: flex-start; gap: 8px;
+      font-family: var(--font-ui); font-size: 13px; font-weight: 600; letter-spacing: 0.01em;
+      color: currentColor; margin-bottom: 2px;
+    }
+    .geo-chip::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; box-shadow: 0 0 10px currentColor; }
+    .geo-card h3 { font-family: var(--font-display); font-size: clamp(21px, 2vw, 27px); font-weight: 500; letter-spacing: -0.02em; color: var(--text-primary); margin: 4px 0 0; }
+    .geo-card p { font-size: 15px; color: var(--text-secondary); line-height: 1.7; margin: 0; }
+    .geo-foot { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--border-subtle); }
+    .geo-label { font-size: 12px; font-family: var(--font-mono); letter-spacing: 0.05em; color: var(--text-tertiary); }
+    @media (max-width: 900px) {
+      .geo-bento { grid-template-columns: 1fr; }
+    }
     @media (max-width: 900px) {
       .section-split, .section-split--rev { grid-template-columns: 1fr; gap: 32px; }
       .section-split--rev .split-cards { order: 2; }
@@ -106,14 +257,13 @@ const schema = {
     /* MARQUEE de clientes */
     .clients-marquee { margin: 40px 0; padding: 8px 0; border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle); }
     .mq-item { display: inline-flex; align-items: center; gap: 12px; font-family: var(--font-display); font-size: clamp(20px, 2.2vw, 30px); font-weight: 500; letter-spacing: -0.02em; color: var(--text-secondary); white-space: nowrap; }
-    .mq-item::after { content: "✦"; font-size: 14px; color: var(--accent-default); opacity: 0.6; }
     .sh-header { max-width: var(--container-max); margin: 0 auto; padding: 0 var(--space-pad) 48px; }
     .sh-track { display: flex; gap: 0; width: max-content; padding: 0 4vw; will-change: transform; perspective: 1200px; }
     .sh-panel { flex: 0 0 34vw; min-width: 380px; margin-right: 3vw; padding: 40px 44px; border-radius: var(--radius-xl);
       border: 1px solid var(--border-strong); background: linear-gradient(180deg, var(--surface-2) 0%, var(--surface-3) 100%);
       display: flex; flex-direction: column; gap: 18px; transform-style: preserve-3d; }
     .sh-panel:hover { border-color: var(--accent-muted); }
-    .sh-num { font-family: var(--font-display); font-size: 48px; font-weight: 600; color: var(--text-tertiary); letter-spacing: -0.03em; }
+    .sh-num { font-family: var(--font-display); font-size: 48px; font-weight: 600; letter-spacing: -0.03em; color: var(--text-tertiary); }
     .sh-panel h3 { font-family: var(--font-display); font-size: clamp(22px, 2.4vw, 32px); font-weight: 500; letter-spacing: -0.02em; color: var(--text-primary); margin: 0; }
     .sh-panel p { font-size: 16px; color: var(--text-secondary); line-height: 1.7; margin: 0; max-width: 420px; }
     .sh-img { border-radius: var(--radius-lg); overflow: hidden; aspect-ratio: 16/9; margin-top: auto; }
@@ -121,38 +271,6 @@ const schema = {
     @media (max-width: 900px) {
       .sh-panel { flex: 0 0 82vw; min-width: 0; }
     }
-    .hero-content h1 { margin-bottom: 20px; }
-    .hero-content p { margin-bottom: 32px; }
-    .hero-visual { position: relative; border-radius: var(--radius-xl); overflow: hidden; aspect-ratio: 4/3; }
-    .hero-visual img { width: 100%; height: 100%; object-fit: cover; border-radius: var(--radius-xl); }
-    .hero-visual-glow { position: absolute; inset: 0; border-radius: var(--radius-xl); pointer-events: none;
-      box-shadow: inset 0 0 80px rgba(3, 3, 3, 0.4); border: 1px solid var(--border-strong); }
-    .hero-visual-badge { position: absolute; left: 18px; bottom: 18px; display: inline-flex; align-items: center; gap: 10px;
-      background: rgba(3, 3, 3, 0.75); backdrop-filter: blur(10px); border: 1px solid var(--border-strong);
-      border-radius: 999px; padding: 10px 18px; font-size: 13px; font-weight: 500; font-family: var(--font-body); color: var(--text-primary);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.35); }
-    .hvb-dot { width: 9px; height: 9px; border-radius: 50%; background: #4ade80; flex-shrink: 0; }
-    @media (max-width: 900px) {
-      .hero-grid { grid-template-columns: 1fr; gap: 28px; }
-      .hero-visual { aspect-ratio: 16/10; }
-    }
-    .hero h1 {
-      font-family: var(--font-display);
-      font-size: var(--text-display);
-      font-weight: 500;
-      line-height: 1.05;
-      letter-spacing: -0.03em;
-      max-width: 900px;
-      margin-bottom: 28px;
-    }
-    .hero p {
-      font-size: clamp(16px, 2vw, 19px);
-      color: var(--color-muted);
-      max-width: 580px;
-      line-height: 1.75;
-      margin-bottom: 40px;
-    }
-    .hero .actions { display: flex; gap: 12px; flex-wrap: wrap; }
 
     h2.section-title {
       font-family: var(--font-display);
@@ -163,7 +281,7 @@ const schema = {
       max-width: 720px;
       margin-bottom: 20px;
     }
-    .section-desc { font-size: var(--text-base); color: var(--color-muted); max-width: 560px; line-height: 1.75; margin-bottom: 52px; }
+    .section-desc { font-size: var(--text-base); color: var(--color-muted); max-width: 560px; line-height: 1.75; margin-bottom: 40px; }
 
     .card h3 { font-size: var(--text-base); font-weight: 600; margin-bottom: 8px; }
     .card p { font-size: var(--text-sm); color: var(--color-muted); line-height: 1.65; }
@@ -189,24 +307,31 @@ const schema = {
     }
     .pill:hover { color: var(--color-text); border-color: var(--color-border-strong); }
 
-    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 56px; }
-    .step {
-      background: var(--color-bg-card);
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-lg);
-      padding: 28px;
+    /* Bento de 4 fases — cards animadas con color de marca */
+    /* 4 fases — bento grid con parallax en capas (sin height fijo, sin espacio negro).
+       Cada card se mueve a velocidad distinta al scroll → profundidad 3D. */
+    .steps-stack { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; margin: 0 0 56px; perspective: 1000px; }
+    .phase-card {
+      position: relative; padding: 30px 30px 34px; border-radius: var(--radius-xl);
+      border: 1px solid var(--border-subtle);
+      background: linear-gradient(180deg, var(--surface-2) 0%, var(--surface-3) 100%);
+      display: flex; flex-direction: column; gap: 18px;
+      will-change: transform;
       transition: border-color var(--duration-base) ease;
     }
-    .step:hover { border-color: var(--color-border-strong); }
-    .step-num {
-      font-family: var(--font-display);
-      font-size: 34px;
-      font-weight: 600;
-      color: var(--color-dim);
-      margin-bottom: 16px;
+    .phase-card:hover { border-color: var(--border-strong); }
+    /* número neutro con gradiente sutil (blanco→gris, mismo lenguaje que los stats) */
+    .phase-num {
+      font-family: var(--font-display); font-size: 40px; font-weight: 600; letter-spacing: -0.03em; line-height: 1;
+      background: linear-gradient(180deg, #ffffff 0%, var(--ud-gray-500) 160%);
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .phase-card p { font-size: 15px; color: var(--text-secondary); line-height: 1.7; margin: 0; max-width: 480px; }
+    @media (max-width: 720px) {
+      .steps-stack { grid-template-columns: 1fr; }
     }
 
-    .stats { display: flex; gap: 56px; flex-wrap: wrap; }
+    .stats { display: flex; gap: 56px; flex-wrap: wrap; justify-content: center; text-align: center; }
     .stat .num {
       font-family: var(--font-display);
       font-size: 40px;
@@ -215,7 +340,21 @@ const schema = {
     }
     .stat .desc { font-size: var(--text-sm); color: var(--color-muted); margin-top: 6px; }
 
-    .cta-final { text-align: center; padding-top: 90px; padding-bottom: 130px; }
+    .cta-final {
+      text-align: center; padding-top: 100px; padding-bottom: 140px;
+      position: relative;
+    }
+    /* glow de marca sutil detrás de la CTA */
+    .cta-final::before {
+      content: ""; position: absolute; left: 50%; top: 50%;
+      width: 60vw; height: 40vw; min-width: 560px; min-height: 380px;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(ellipse at 50% 50%,
+        color-mix(in srgb, var(--ud-brand-coral) 16%, transparent) 0%,
+        transparent 70%);
+      filter: blur(90px); pointer-events: none;
+    }
+    .cta-final > * { position: relative; }
     .cta-final h2 {
       font-family: var(--font-display);
       font-size: clamp(30px, 4.5vw, 56px);
@@ -224,8 +363,17 @@ const schema = {
       max-width: 720px;
       margin: 0 auto 28px;
       line-height: 1.12;
+      text-wrap: balance;
     }
     .cta-final p { font-size: 17px; color: var(--color-muted); max-width: 500px; margin: 0 auto 44px; line-height: 1.75; }
+    .cta-final .cta-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 48px; }
+    /* panel "qué obtienes" — 3 puntos con dot de marca */
+    .cta-perks {
+      display: flex; gap: 32px; justify-content: center; flex-wrap: wrap;
+      padding-top: 36px; border-top: 1px solid var(--border-subtle);
+      max-width: 720px; margin: 0 auto;
+    }
+    .cta-perk { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--text-secondary); font-family: var(--font-ui); }
   </style>
 </head>
 <body>
@@ -235,25 +383,40 @@ const schema = {
 <main>
 
   <section class="hero">
-    <div class="hero-blobs">
-      <BlobField variant="seo" opacity={0.55} blur={14} />
+    <div class="hero-atmosphere" aria-hidden="true">
+      <div class="hero-glow"></div>
+      <div class="hero-noise"></div>
     </div>
-    <div class="hero-grid">
-      <div class="hero-content">
-        <SectionLabel data-gsap="hero-label">SEO Médico y Posicionamiento Local</SectionLabel>
-        <h1 data-gsap="hero-title">SEO para doctores que convierte búsquedas en pacientes</h1>
-        <p data-gsap="hero-sub">Ayudamos a clínicas, consultorios y especialistas a aparecer cuando un paciente busca atención médica cerca de él: Google, mapas, contenidos confiables y una estrategia pensada para generar citas.</p>
+    <div class="hero-inner">
+      <div class="hero-center" data-hero-parallax>
+        <h1 data-gsap="hero-title">
+          <span class="h1-line">SEO para doctores que</span>
+          <span class="h1-line">convierte búsquedas</span>
+          <span class="h1-line">en pacientes</span>
+        </h1>
+        <p data-gsap="hero-sub">Aparece cuando un paciente te busca: Google, mapas, contenidos confiables y una estrategia pensada para generar citas, no solo visitas.</p>
         <div class="actions" data-gsap="hero-actions">
-          <Button href="https://wa.me/593961026799" target="_blank" size="lg" variant="stroke">Solicitar diagnóstico</Button>
+          <Button href="https://wa.me/593961026799" target="_blank" size="lg" variant="stroke">Agendar diagnóstico</Button>
           <Button href="#enfoque" variant="ghost" size="lg">Ver enfoque</Button>
         </div>
-      </div>
-      <div class="hero-visual" data-gsap="hero-visual">
-        <img src="https://images.unsplash.com/photo-1584438784894-089d6a62b8fa?w=800&q=70" alt="Consultorio médico moderno — SEO para doctores" loading="eager" />
-        <div class="hero-visual-glow" aria-hidden="true"></div>
-        <div class="hero-visual-badge" data-gsap="hero-badge">
-          <span class="hvb-dot"></span> Posicionamiento local en Google
+        <div class="hero-stats" data-gsap="hero-stats">
+          <div class="hero-stat">
+            <span class="hs-num">8+</span>
+            <span class="hs-label">doctores posicionados</span>
+          </div>
+          <div class="hero-stat">
+            <span class="hs-num">3</span>
+            <span class="hs-label">países con clientes</span>
+          </div>
+          <div class="hero-stat">
+            <span class="hs-num">4–8</span>
+            <span class="hs-label">semanas a primeros resultados</span>
+          </div>
         </div>
+      </div>
+      <div class="hero-scroll" data-gsap="hero-scroll" aria-hidden="true">
+        <span class="hero-scroll-label">Scroll</span>
+        <span class="hero-scroll-line"></span>
       </div>
     </div>
   </section>
@@ -263,7 +426,7 @@ const schema = {
   <section id="enfoque">
     <div class="section-split">
       <div class="split-text">
-        <SectionLabel data-gsap="hero-label">Posicionamiento para pacientes con intención</SectionLabel>
+        <div class="kicker kicker--coral" data-gsap="hero-label">Pacientes con intención de agendar</div>
         <h2 class="section-title">No se trata de tener más visitas. Se trata de aparecer cuando alguien necesita atenderse.</h2>
         <p class="section-desc" data-gsap="reveal">Para un doctor, una búsqueda como "dermatólogo cerca de mí" o "odontólogo en Cuenca" no es tráfico genérico: es una oportunidad de cita. Construimos la estrategia alrededor de esas búsquedas de alta intención.</p>
         <div class="section-split-visual" data-gsap="parallax-wrap">
@@ -272,9 +435,9 @@ const schema = {
         </div>
       </div>
       <div class="split-cards">
-        <Card data-gsap="reveal"><h3>Búsquedas con urgencia</h3><p>Capturamos pacientes que ya están comparando especialistas, ubicación, horarios y reseñas.</p></Card>
-        <Card data-gsap="reveal"><h3>Presencia en mapas</h3><p>Optimizamos el perfil, categorías, servicios, fotos, publicaciones y señales locales.</p></Card>
-        <Card data-gsap="reveal"><h3>Confianza antes de la cita</h3><p>Ordenamos contenido, autoridad y reputación para que la decisión se sienta segura.</p></Card>
+        <Card data-gsap="reveal"><div class="card-line" data-accent="coral"></div><h3>Búsquedas con urgencia</h3><p>Capturamos pacientes que ya están comparando especialistas, ubicación, horarios y reseñas.</p></Card>
+        <Card data-gsap="reveal"><div class="card-line" data-accent="lilac"></div><h3>Presencia en mapas</h3><p>Optimizamos el perfil, categorías, servicios, fotos, publicaciones y señales locales.</p></Card>
+        <Card data-gsap="reveal"><div class="card-line" data-accent="sky"></div><h3>Confianza antes de la cita</h3><p>Ordenamos contenido, autoridad y reputación para que la decisión se sienta segura.</p></Card>
       </div>
     </div>
   </section>
@@ -284,13 +447,13 @@ const schema = {
   <section>
     <div class="section-split section-split--rev">
       <div class="split-cards">
-        <Card data-gsap="reveal"><h3>SEO local y Google Business</h3><p>Especialidad, ubicación, servicios, horarios, reseñas y señales locales para aparecer donde el paciente decide.</p></Card>
-        <Card data-gsap="reveal"><h3>Contenido por especialidad</h3><p>Páginas de tratamientos, síntomas, preguntas frecuentes y guías que responden con claridad sin sonar genéricas.</p></Card>
-        <Card data-gsap="reveal"><h3>Base técnica y conversión</h3><p>Velocidad, estructura, indexación, arquitectura y llamadas a contacto pensadas para pasar de búsqueda a cita.</p></Card>
-        <Card data-gsap="reveal"><h3>Autoridad y reputación</h3><p>Mejoramos señales de confianza: perfiles, reseñas, menciones, enlaces locales y consistencia de marca médica.</p></Card>
+        <Card data-gsap="reveal"><div class="card-num" data-accent="coral">01</div><h3>SEO local y Google Business</h3><p>Especialidad, ubicación, servicios, horarios, reseñas y señales locales para aparecer donde el paciente decide.</p></Card>
+        <Card data-gsap="reveal"><div class="card-num" data-accent="lilac">02</div><h3>Contenido por especialidad</h3><p>Páginas de tratamientos, síntomas, preguntas frecuentes y guías que responden con claridad sin sonar genéricas.</p></Card>
+        <Card data-gsap="reveal"><div class="card-num" data-accent="sky">03</div><h3>Base técnica y conversión</h3><p>Velocidad, estructura, indexación, arquitectura y llamadas a contacto pensadas para pasar de búsqueda a cita.</p></Card>
+        <Card data-gsap="reveal"><div class="card-num" data-accent="gold">04</div><h3>Autoridad y reputación</h3><p>Mejoramos señales de confianza: perfiles, reseñas, menciones, enlaces locales y consistencia de marca médica.</p></Card>
       </div>
       <div class="split-text">
-        <SectionLabel>Lo que trabajamos para posicionar tu consulta</SectionLabel>
+        <div class="kicker kicker--lilac">Cuatro frentes, una sola estrategia</div>
         <h2 class="section-title">Una estrategia completa conecta tu especialidad, tu ciudad y la confianza que un paciente necesita.</h2>
         <p class="section-desc" data-gsap="reveal">Cuatro áreas de trabajo coordinadas para que el SEO se conecte con agenda, llamadas y formularios.</p>
         <div class="section-split-visual" data-gsap="parallax-wrap">
@@ -303,7 +466,7 @@ const schema = {
 
   <section class="services-horizontal">
     <div class="sh-header">
-      <SectionLabel>Nuestros servicios en detalle</SectionLabel>
+      <div class="kicker kicker--gold">Nuestros servicios en detalle</div>
       <h2 class="section-title">Desplázate — cuatro servicios que conectan búsqueda con pacientes</h2>
     </div>
     <div class="sh-track" data-gsap="sh-track">
@@ -337,7 +500,7 @@ const schema = {
   <hr />
 
   <section>
-    <SectionLabel>Doctores, clínicas y nuevas formas de búsqueda</SectionLabel>
+    <div class="kicker kicker--sky">Doctores, clínicas y nuevas formas de búsqueda</div>
     <h2 class="section-title">Clientes que ya entienden que el posicionamiento médico va más allá de Google</h2>
     <p class="section-desc">Trabajamos visibilidad para búsquedas locales, respuestas directas, resultados impulsados por IA y consultas donde el paciente espera una recomendación clara antes de agendar.</p>
     <div class="clients-marquee">
@@ -354,33 +517,51 @@ const schema = {
         <span class="mq-item">Y más…</span>
       </Marquee>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:32px">
-      <Card data-gsap="reveal"><div class="card-label">GEO — Generative Engine Optimization</div><h3>También posicionamos en IA</h3><p>Optimización para que tu marca médica sea entendida, citada o recomendada por motores generativos e inteligencia artificial.</p></Card>
-      <Card data-gsap="reveal"><div class="card-label">AEO — Answer Engine Optimization</div><h3>Respuestas directas donde el paciente pregunta</h3><p>Fragmentos destacados, búsquedas por voz y consultas tipo "cuál doctor elegir" en Google y asistentes de IA.</p></Card>
+    <div class="geo-bento" data-bento>
+      <div class="geo-card geo-card--sky geo-card--lg">
+        <div class="geo-tag">GEO</div>
+        <h3>También posicionamos en IA</h3>
+        <p>Optimización para que tu marca médica sea entendida, citada o recomendada por motores generativos e inteligencia artificial.</p>
+        <div class="geo-foot"><span class="geo-label">Generative Engine Optimization</span></div>
+      </div>
+      <div class="geo-card geo-card--lilac geo-card--lg">
+        <div class="geo-tag">AEO</div>
+        <h3>Respuestas directas donde el paciente pregunta</h3>
+        <p>Fragmentos destacados, búsquedas por voz y consultas tipo "cuál doctor elegir" en Google y asistentes de IA.</p>
+        <div class="geo-foot"><span class="geo-label">Answer Engine Optimization</span></div>
+      </div>
+      <div class="geo-card geo-card--gold geo-card--sm">
+        <div class="geo-chip">Citado en respuestas de IA</div>
+        <p>Tu especialidad aparece como recomendación confiable cuando el paciente consulta a un asistente.</p>
+      </div>
+      <div class="geo-card geo-card--coral geo-card--sm">
+        <div class="geo-chip">Consultas por voz y mapas</div>
+        <p>Apareces cuando el paciente pregunta "dónde hay un [especialista] cerca de mí" en voz o en mapas.</p>
+      </div>
     </div>
   </section>
 
   <hr />
 
   <section>
-    <SectionLabel>Un método claro para escalar la visibilidad médica</SectionLabel>
+    <div class="kicker kicker--coral">Un método claro para escalar la visibilidad médica</div>
     <h2 class="section-title">Cuatro fases, resultados medibles</h2>
     <p class="section-desc">No perseguimos volumen vacío. Priorizamos términos con intención clínica, presencia local y rutas claras de contacto.</p>
-    <div class="steps">
-      <div class="step">
-        <div class="step-num">01</div>
+    <div class="steps-stack" data-steps>
+      <div class="phase-card phase-card--coral">
+        <div class="phase-num">01</div>
         <p>Diagnóstico de búsquedas, competencia, perfil de Google y oportunidades por especialidad.</p>
       </div>
-      <div class="step">
-        <div class="step-num">02</div>
+      <div class="phase-card phase-card--lilac">
+        <div class="phase-num">02</div>
         <p>Arquitectura de páginas, prioridades locales y plan de contenido para atraer pacientes adecuados.</p>
       </div>
-      <div class="step">
-        <div class="step-num">03</div>
+      <div class="phase-card phase-card--sky">
+        <div class="phase-num">03</div>
         <p>Optimización técnica, contenidos, mapas, fichas de servicio y elementos de contacto medibles.</p>
       </div>
-      <div class="step">
-        <div class="step-num">04</div>
+      <div class="phase-card phase-card--gold">
+        <div class="phase-num">04</div>
         <p>Seguimiento de rankings, tráfico cualificado, llamadas, formularios y crecimiento por ciudad o tratamiento.</p>
       </div>
     </div>
@@ -401,7 +582,15 @@ const schema = {
   <section class="cta-final">
     <h2>Veamos qué búsquedas deberían encontrarte primero</h2>
     <p>Solicita un diagnóstico y revisamos tu presencia actual, tus oportunidades por especialidad y las mejoras que pueden conectar tu posicionamiento con más citas.</p>
-    <Button href="https://wa.me/593961026799" target="_blank" size="lg" variant="primary">Hablar sobre SEO médico</Button>
+    <div class="cta-actions">
+      <Button href="https://wa.me/593961026799" target="_blank" size="lg" variant="primary">Hablar sobre SEO médico</Button>
+      <Button href="#enfoque" variant="ghost" size="lg">Ver cómo trabajamos</Button>
+    </div>
+    <div class="cta-perks">
+      <span class="cta-perk">Diagnóstico de tu presencia actual</span>
+      <span class="cta-perk">Oportunidades por especialidad</span>
+      <span class="cta-perk">Primeros pasos claros</span>
+    </div>
   </section>
 
 </main>
@@ -419,33 +608,71 @@ const schema = {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduce) return;
 
-    // HERO TÍTULO — SplitText por caracteres (reveal premium)
+    // ============ HERO — timeline con scrub bidireccional ============
+    // Al bajar: el H1 explota letra por letra hacia arriba y el resto se desvanece.
+    // Al subir: retrocede exactamente (línea de tiempo que avanza y revierte).
     const title = document.querySelector("[data-gsap='hero-title']");
+    const heroSub = document.querySelector("[data-gsap='hero-sub']");
+    const heroActions = document.querySelector("[data-gsap='hero-actions']");
+    const heroStats = document.querySelector("[data-gsap='hero-stats']");
+
     if (title) {
-      const split = SplitText.create(title, { type: "chars,words", mask: "lines" });
-      gsap.from(split.chars, {
-        y: 40, autoAlpha: 0, rotationX: -90, duration: 0.7, ease: "back.out(1.7)",
-        stagger: 0.025,
-        scrollTrigger: { trigger: title, start: "top 80%" },
-        onComplete: () => split.revert()
+      // SplitText por LETRAS dentro de líneas block (.h1-line):
+      // las líneas ya son bloques fijos → SplitText solo divide letras, nunca palabras
+      const split = SplitText.create(title, { type: "chars" });
+      const chars = split.chars;
+
+      // 1) ENTRADA al cargar: solo desplazamiento + rotación (NUNCA toca opacity final,
+      //    y sin filter blur — el blur en 47 chars cuesta FPS; y+rotation basta para el reveal)
+      gsap.from(chars, {
+        y: 36, rotationX: -24,
+        duration: 1, ease: "power4.out", stagger: 0.02,
+        onComplete: () => gsap.set(chars, { clearProps: "rotationX" })
       });
+
+      // 2) TIMELINE DE SCROLL — fromTo con estado 0 = visible (retorna al subir)
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: ".hero",
+          start: "top top",
+          end: "+=170%",
+          scrub: 1,
+          pin: true,
+          anticipatePin: 1
+        }
+      });
+
+      // letras explotan hacia arriba (gravedad invertida), staggered desde el centro
+      tl.fromTo(chars,
+        { opacity: 1, y: 0, rotation: 0 },
+        {
+          opacity: 0,
+          y: () => gsap.utils.random(-260, -160),
+          x: () => gsap.utils.random(-40, 40),
+          rotation: () => gsap.utils.random(-14, 14),
+          ease: "power2.in",
+          stagger: { each: 0.03, from: "center" }
+        }, 0)
+        // sub + CTAs + stats se desvanecen y bajan
+        .fromTo([heroSub, heroActions, heroStats],
+          { opacity: 1, y: 0 },
+          { opacity: 0, y: -30, ease: "power2.in" }, 0)
+        // el glow baja con RETRASO y más LENTO, sincronizado con la explosión de las
+        // letras: empieza a bajar cuando las letras del centro ya se dispersaron (0.55)
+        // y termina de moverse justo cuando la ÚLTIMA letra sale de escena (1.0).
+        .fromTo(".hero-glow",
+          { yPercent: 0, xPercent: -50, y: "-50%", scale: 1 },
+          { yPercent: 58, xPercent: -50, y: "-50%", scale: 1.12, ease: "none", duration: 0.45 }, 0.55);
     }
 
-    // HERO LABEL + SUB + ACTIONS — entrada escalonada
-    gsap.from("[data-gsap='hero-label']", { opacity: 0, y: 15, duration: 0.5, delay: 0.1 });
-    gsap.from("[data-gsap='hero-sub']", { opacity: 0, y: 20, duration: 0.7, ease: "power2.out", delay: 0.5 });
-    gsap.from("[data-gsap='hero-actions']", { opacity: 0, y: 20, duration: 0.6, ease: "power2.out", delay: 0.7 });
-
-    // BADGE — pop-in con bounce
-    gsap.from("[data-gsap='hero-badge']", {
-      opacity: 0, scale: 0.8, duration: 0.6, delay: 1, ease: "back.out(2)"
-    });
-
-    // HERO VISUAL — parallax suave al scroll
-    gsap.to("[data-gsap='hero-visual'] img", {
-      y: -60, ease: "none",
-      scrollTrigger: { trigger: "[data-gsap='hero-visual']", start: "top bottom", end: "bottom top", scrub: 1 }
-    });
+    // HERO SCROLL INDICATOR — se desvanece apenas empieza el scroll
+    const heroScroll = document.querySelector("[data-gsap='hero-scroll']");
+    if (heroScroll) {
+      gsap.to(heroScroll, {
+        autoAlpha: 0, y: 12, ease: "none",
+        scrollTrigger: { trigger: ".hero", start: "top top", end: "8% top", scrub: 1 }
+      });
+    }
 
     // IMÁGENES DE SECCIÓN — parallax
     gsap.utils.toArray("[data-gsap='parallax-img']").forEach(img => {
@@ -454,6 +681,64 @@ const schema = {
         scrollTrigger: { trigger: img, start: "top bottom", end: "bottom top", scrub: 1.2 }
       });
     });
+
+    // BENTO GEO/AEO — entrada escalonada con lift (transform puro, nunca oculta)
+    const bentoCards = gsap.utils.toArray("[data-bento] .geo-card");
+    if (bentoCards.length) {
+      gsap.from(bentoCards, {
+        y: 30, duration: 0.7, ease: "power3.out", stagger: 0.09,
+        immediateRender: false,
+        scrollTrigger: { trigger: "[data-bento]", start: "top 88%", once: true }
+      });
+    }
+
+    // 4 FASES — entrada escalonada + parallax sutil + TILT 3D al cursor
+    const stackEl = document.querySelector("[data-steps]");
+    if (stackEl) {
+      const stackCards = gsap.utils.toArray(stackEl.querySelectorAll(".phase-card"));
+
+      // entrada: cada card sube desde abajo en cascada (transform puro, nunca oculta)
+      gsap.from(stackCards, {
+        y: 36, duration: 0.7, ease: "power3.out", stagger: 0.1,
+        immediateRender: false,
+        scrollTrigger: { trigger: stackEl, start: "top 85%", once: true }
+      });
+
+      // parallax sutil: desfase en capas al scrollear (±8px, no rompe alineación)
+      const speeds = [1, -0.5, 0.5, -1];
+      stackCards.forEach((card, i) => {
+        gsap.fromTo(card,
+          { y: -8 * speeds[i] },
+          {
+            y: 8 * speeds[i], ease: "none",
+            immediateRender: false,
+            scrollTrigger: {
+              trigger: stackEl,
+              start: "top bottom",
+              end: "bottom top",
+              scrub: 1.2
+            }
+          }
+        );
+      });
+
+      // TILT 3D: la card rota siguiendo el cursor (profundidad, solo en dispositivos con pointer fino)
+      if (stackCards.length && !window.matchMedia("(pointer: coarse)").matches) {
+        stackCards.forEach((card) => {
+          const rx = gsap.quickTo(card, "rotationX", { duration: 0.5, ease: "power3.out" });
+          const ry = gsap.quickTo(card, "rotationY", { duration: 0.5, ease: "power3.out" });
+          card.style.transformStyle = "preserve-3d";
+          card.addEventListener("pointermove", (e) => {
+            const r = card.getBoundingClientRect();
+            const nx = (e.clientY - r.top - r.height / 2) / (r.height / 2); // -1..1
+            const ny = (e.clientX - r.left - r.width / 2) / (r.width / 2);
+            rx(nx * -6); // pitch
+            ry(ny * 7);  // yaw
+          });
+          card.addEventListener("pointerleave", () => { rx(0); ry(0); });
+        });
+      }
+    }
 
     // SCROLL HORIZONTAL — servicios (pin + scrub)
     const track = document.querySelector("[data-gsap='sh-track']");
@@ -488,38 +773,50 @@ const schema = {
       gsap.from(".sh-panel", {
         rotationY: -18, opacity: 0, x: 60, duration: 0.8, ease: "power3.out",
         stagger: 0.15,
+        immediateRender: false,
         scrollTrigger: { trigger: ".services-horizontal", start: "top 90%" }
       });
       // cleanup en resize
       ScrollTrigger.addEventListener("refreshInit", () => tween.invalidate());
     }
 
-    // SECTION TITLES — SplitText por palabras (reveal al scrollear), salvo el del horizontal
+    // SECTION TITLES — motion sutil de transform (NUNCA ocultan: el texto ya está visible
+    // al cargar, no se re-anima "montado" con el scroll)
     gsap.utils.toArray(".section-title").forEach(h => {
       if (h.closest(".sh-header")) return; // el horizontal tiene su propia explosión de chars
-      const split = SplitText.create(h, { type: "words" });
-      gsap.from(split.words, {
-        y: 30, autoAlpha: 0, duration: 0.6, ease: "power3.out", stagger: 0.05,
-        scrollTrigger: { trigger: h, start: "top 82%" },
-        onComplete: () => split.revert()
-      });
+      gsap.fromTo(h,
+        { y: 18 },
+        {
+          y: 0, duration: 0.8, ease: "power3.out",
+          immediateRender: false,
+          scrollTrigger: { trigger: h, start: "top 85%", once: true }
+        }
+      );
     });
 
-    // CARDS — reveal con stagger
+    // CARDS — motion de transform puro (sin opacity 0 → no se ocultan nunca)
     gsap.utils.toArray("[data-gsap='reveal']").forEach(el => {
-      gsap.from(el, {
-        opacity: 0, y: 50, duration: 0.7, ease: "power3.out",
-        scrollTrigger: { trigger: el, start: "top 88%" }
-      });
+      gsap.fromTo(el,
+        { y: 26 },
+        {
+          y: 0, duration: 0.7, ease: "power3.out",
+          immediateRender: false,
+          scrollTrigger: { trigger: el, start: "top 90%", once: true }
+        }
+      );
     });
 
-    // CTA FINAL — reveal
+    // CTA FINAL — motion de transform puro
     const cta = document.querySelector(".cta-final");
     if (cta) {
-      gsap.from(cta, {
-        opacity: 0, y: 40, scale: 0.98, duration: 0.8, ease: "power3.out",
-        scrollTrigger: { trigger: cta, start: "top 80%" }
-      });
+      gsap.fromTo(cta,
+        { y: 24 },
+        {
+          y: 0, duration: 0.8, ease: "power3.out",
+          immediateRender: false,
+          scrollTrigger: { trigger: cta, start: "top 85%", once: true }
+        }
+      );
     }
   });
 </script>

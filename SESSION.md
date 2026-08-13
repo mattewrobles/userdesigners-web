@@ -1,5 +1,39 @@
 # UserDesigners Web — Astro Migration
 
+## Ago 12 — Contacto nativo final + Framer eliminado del blog ★
+
+**Contacto `/contacto/` definido como página final** (100% Astro nativo):
+- Form por WhatsApp, BlobField 2 glows grandes, H1 centrado blanco, canales (WhatsApp/email/ubicación) con iconos blancos
+- **Testimonios en marquee infinito** (2 filas direcciones opuestas, componente `Marquee.astro` + `TestimonialCard.astro` nuevo): cards 400×260px, radius 16px, gap 24px, avatares circulares con fotos reales (descargadas de Framer a `public/assets/local/testimonio-{juan,sandra,diego,rosalia,grecia,janne}.{png,jpeg}`)
+- Fix box-sizing en card (desbordaba 260→326px y se cortaba), quote clamp 5 líneas
+- Fix Button.astro para `type="submit"` y Marquee.astro para `reverse` real (keyframes invertidos) + gap configurable
+- **Basura Framer eliminada:** `src/html/contacto.html` borrado
+
+**Blog liberado de Framer** (12 ago):
+- `src/styles/framer.css` (195KB) ELIMINADO — se inyectaba en `blog/index.astro`, `blog/page/[page].astro`, `layouts/BlogPost.astro` (3 páginas)
+- Overrides `.framer-*` obsoletos removidos de blog/index.astro
+- Blog verificado: lista + featured + posts + paginación OK, 0 errores, sin rastro framer.css
+
+**Pendientes:** home, servicios, nosotros, proyectos (siguen con `src/html/*.html` Framer). Resto de assets Framer en `/assets/local` sin organizar.
+
+## Ago 12 — Contacto migrado a Astro nativo ★ (ramas refactor/test-fase1)
+
+**Página `/contacto/` reconstruida en Astro nativo** (ya no sirve `src/html/contacto.html` — archivo ELIMINADO).
+
+- **Contenido real preservado:** hero "Hablemos de tu proyecto", canales (WhatsApp +593 0961026799, latam@userdesigners.com, Cuenca Ecuador), form (Nombre/Email/Concepto/Descripción) y los 6 testimonios originales Framer (Juan Méndez, Sandra García, Diego Morales, Rosalía Moscoso, Grecia Ochoa, Dra. Janne).
+- **Basura de template Framer eliminada:** bloques ocultos demo (Gujarat India, +91, Rehandon@gmail.com), páginas demo.
+- **Form → WhatsApp:** al enviar arma mensaje (nombre/email/concepto/descripción) y abre `wa.me/593961026799`. Sin backend externo.
+- **DS completo:** BlobField variant="contacto", Navbar/Footer, Button stroke, Reveal, SectionLabel, tokens semánticos.
+- **SEO:** title/desc/canonical/OG/Twitter + schema ContactPage+Organization+ContactPoint+WebSite, GA4 G-PDZVJDG9Y5.
+- **0 anti-patterns** en `npm run slop` (impeccable) para la página nueva.
+
+**Cambios a componentes del DS (reusables):**
+- `Button.astro`: soporta `type="submit"` (antes siempre renderizaba `<a href="#">`).
+- `Reveal.astro`: acepta `class` para fusionar con clases externas.
+- `Footer.astro`: `overflow: hidden` en `.f-footer` — arregla scroll horizontal en mobile (afectaba TODAS las páginas).
+
+**Nota:** el resto de páginas principales (home, servicios, nosotros, proyectos) siguen en Framer con `src/html/*.html`. Contacto ya no depende de Framer.
+
 ## Ago 9-10 — BlobField: efecto GOOEY (metaball tipo Framer) ★ FINAL 9/10
 
 **El efecto que Mau quería:** blobs que se funden en UNA sola masa líquida orgánica (como el home de Framer), con morph continuo, sin verse planos ni como formas separadas.

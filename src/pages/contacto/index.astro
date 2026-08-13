@@ -1,5 +1,520 @@
 ---
-import fs from "fs";
-const html = fs.readFileSync("src/html/contacto.html", "utf-8");
-return new Response(html, { headers: { "content-type": "text/html; charset=utf-8" } });
+import Navbar from "../../components/Navbar.astro";
+import Footer from "../../components/Footer.astro";
+import Button from "../../components/ui/Button.astro";
+import BlobField from "../../components/ui/BlobField.astro";
+import SectionLabel from "../../components/ui/SectionLabel.astro";
+import Marquee from "../../components/ui/Marquee.astro";
+import TestimonialCard from "../../components/TestimonialCard.astro";
+
+const site = "https://www.userdesigners.com";
+const canonical = `${site}/contacto/`;
+const whatsapp = "https://wa.me/593961026799";
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "ContactPage",
+      "name": "Contacto | UserDesigners",
+      "url": canonical,
+      "description": "Hablemos de tu proyecto. Contáctanos para diseñar productos digitales que tus usuarios entiendan y tu negocio necesite.",
+    },
+    {
+      "@type": "Organization",
+      "name": "UserDesigners",
+      "url": site,
+      "logo": "https://framerusercontent.com/images/o5LtTMyVT0hoY6m1F1q3smw3kq4.png",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+593961026799",
+        "contactType": "sales",
+        "areaServed": ["EC", "MX", "CO", "ES", "US"],
+        "availableLanguage": ["es", "en"],
+      },
+      "email": "latam@userdesigners.com",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Cuenca",
+        "addressCountry": "EC",
+      },
+    },
+    { "@type": "WebSite", "name": "UserDesigners", "url": site },
+  ],
+};
+
+const testimonios = [
+  {
+    quote: "Llegamos con una idea muy difusa y salimos con un producto claro, ordenado y listo para crecer. Su proceso de UX Research nos abrió los ojos.",
+    name: "Juan Méndez",
+    role: "Director General",
+  },
+  {
+    quote: "Nuestra landing estaba bonita, pero no convertía. Después del rediseño, nuestra tasa de conversión aumentó más del doble.",
+    name: "Sandra García",
+    role: "Directora en OM Dental y Destino Salud",
+  },
+  {
+    quote: "Diseñaron nuestra app con un nivel de detalle increíble. Todo fluye. Nuestro equipo de desarrollo dijo que es el prototipo más claro y usable que han recibido. Nos ahorraron meses de retrabajo.",
+    name: "Diego Morales",
+    role: "CTO de app",
+  },
+  {
+    quote: "Trabajar con este equipo fue un antes y después para nuestra marca. No solo entendieron lo que queríamos… entendieron lo que necesitábamos. Nuestro producto ahora se siente más claro.",
+    name: "Rosalía Moscoso",
+    role: "Fundadora de Destino Salud",
+  },
+  {
+    quote: "No solo diseñaron pantallas, diseñaron el producto completo. Desde el mapa de usuario hasta el sistema visual. Su trabajo elevó el proyecto y nos ayudó a conseguir inversión. Literalmente marcó la diferencia.",
+    name: "Grecia Ochoa",
+    role: "CEO de una startup en etapa seed",
+  },
+  {
+    quote: "Le dieron vida a la página con un diseño totalmente innovador, ahora los clientes pueden encontrarnos con facilidad gracias a su posicionamiento.",
+    name: "Dra. Janne",
+    role: "Manager en Destino Salud",
+  },
+];
 ---
+
+<!doctype html>
+<html lang="es-EC">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contacto | Agenda una Sesión | UserDesigners Cuenca</title>
+  <meta name="description" content="Hablemos de tu proyecto. Cuéntanos tu idea y tu próximo producto digital empieza hoy. Agencia de UX/UI en Cuenca, Ecuador, especialista en Fintechs y Banca digital en Latinoamérica." />
+  <link rel="canonical" href={canonical} />
+  <link rel="icon" href="/assets/local/o5LtTMyVT0hoY6m1F1q3smw3kq4.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Contacto | Agenda una Sesión | UserDesigners Cuenca" />
+  <meta property="og:description" content="Hablemos de tu proyecto. Cuéntanos tu idea y tu próximo producto digital empieza hoy." />
+  <meta property="og:url" content={canonical} />
+  <meta property="og:image" content={`${site}/assets/local/bUYh6jy5kjctf6KEV3vRnONhegI.png`} />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Contacto | Agenda una Sesión | UserDesigners Cuenca" />
+  <meta name="twitter:description" content="Hablemos de tu proyecto. Cuéntanos tu idea y tu próximo producto digital empieza hoy." />
+  <meta name="twitter:image" content={`${site}/assets/local/bUYh6jy5kjctf6KEV3vRnONhegI.png`} />
+  <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Familjen+Grotesk:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PDZVJDG9Y5"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){window.dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-PDZVJDG9Y5');
+  </script>
+  <link rel="stylesheet" href="/styles/tokens.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      background: var(--color-bg);
+      color: var(--color-text);
+      font-family: var(--font-body);
+    }
+    body { min-height: 100dvh; overflow-x: hidden; }
+
+    /* ==================== HERO ==================== */
+    .hero {
+      position: relative;
+      overflow: hidden;
+      background: var(--ud-black);
+      min-height: 88vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 150px var(--space-pad) 100px;
+    }
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 1000px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: var(--display-1);
+      font-weight: 500;
+      line-height: 1.06;
+      letter-spacing: -0.03em;
+      text-wrap: balance;
+      margin: 0 auto 28px;
+      color: var(--text-primary);
+    }
+    /* cada línea es un bloque fijo → el reveal nunca parte palabras */
+    .h1-line { display: block; white-space: nowrap; }
+    .hero-sub {
+      font-size: clamp(16px, 1.8vw, 19px);
+      color: var(--color-muted);
+      line-height: 1.75;
+      max-width: 58ch;
+      margin: 0 auto 44px;
+    }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+
+    /* canales de contacto debajo de los CTAs */
+    .hero-channels {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border-subtle);
+    }
+    .channel {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 22px;
+      background: var(--surface-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      text-decoration: none;
+      transition: background var(--duration-fast) ease, border-color var(--duration-fast) ease, transform var(--duration-fast) var(--ease-out);
+    }
+    .channel:hover { background: var(--surface-card-hover); border-color: var(--border-strong); transform: translateY(-2px); }
+    .channel-icon {
+      flex: none;
+      width: 40px; height: 40px;
+      display: grid; place-items: center;
+      border-radius: var(--radius-md);
+      background: var(--surface-glass);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+    }
+    .channel-icon svg { width: 19px; height: 19px; }
+    .channel-meta { display: flex; flex-direction: column; gap: 2px; min-width: 0; text-align: left; }
+    .channel-label { font-size: 12px; color: var(--text-secondary); letter-spacing: 0.06em; text-transform: uppercase; }
+    .channel-value { font-size: 14px; font-weight: 500; color: var(--text-primary); word-break: break-word; }
+
+    /* ==================== FORMULARIO ==================== */
+    .contact-section {
+      position: relative;
+      padding: 48px var(--space-pad) 120px;
+      background: var(--ud-black);
+      overflow: hidden;
+    }
+    .contact-inner {
+      position: relative;
+      z-index: 1;
+      max-width: var(--container-max);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 64px;
+      align-items: start;
+    }
+    .contact-intro h2 {
+      font-family: var(--font-display);
+      font-size: var(--heading-1);
+      font-weight: 500;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      text-wrap: balance;
+      margin-bottom: 20px;
+      color: var(--text-primary);
+    }
+    .contact-intro p {
+      color: var(--text-secondary);
+      line-height: 1.75;
+      max-width: 46ch;
+    }
+    .contact-note {
+      margin-top: 32px;
+      padding: 20px 24px;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      background: var(--surface-card);
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+    .contact-note svg { flex: none; width: 20px; height: 20px; color: var(--ud-brand-gold); margin-top: 2px; }
+    .contact-note p { color: var(--text-secondary); font-size: 14px; line-height: 1.65; }
+
+    .contact-form-card {
+      background: var(--surface-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: 40px;
+    }
+    .contact-form-card h3 {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+    .contact-form-card .form-intro { color: var(--text-secondary); font-size: 14px; margin-bottom: 32px; }
+    .field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+    .field-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+    .field-label .req { color: var(--ud-brand-coral); }
+    .field-input, .field-textarea {
+      width: 100%;
+      padding: 14px 16px;
+      background: var(--surface-2);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      font-size: 15px;
+      transition: border-color var(--duration-fast) ease, background var(--duration-fast) ease;
+    }
+    .field-input::placeholder, .field-textarea::placeholder { color: var(--text-disabled); }
+    .field-input:hover, .field-textarea:hover { border-color: var(--border-strong); }
+    .field-input:focus, .field-textarea:focus {
+      outline: none;
+      border-color: var(--accent-default);
+      background: var(--surface-3);
+      box-shadow: 0 0 0 3px var(--accent-muted);
+    }
+    .field-textarea { min-height: 120px; resize: vertical; }
+    .form-submit { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 8px; }
+    .form-status {
+      font-size: 13px;
+      color: var(--text-secondary);
+      opacity: 0;
+      transition: opacity var(--duration-base) ease;
+    }
+    .form-status.show { opacity: 1; color: var(--ud-brand-gold); }
+
+    /* ==================== TESTIMONIOS ==================== */
+    .testimonials {
+      position: relative;
+      padding: 12px var(--space-pad) 130px;
+      background: var(--ud-black);
+    }
+    .testimonials-inner { max-width: var(--container-max); margin: 0 auto; }
+    .testimonials-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 32px; flex-wrap: wrap; margin-bottom: 56px; }
+    .testimonials-head h2 {
+      font-family: var(--font-display);
+      font-size: var(--heading-1);
+      font-weight: 500;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      text-wrap: balance;
+      max-width: 22ch;
+      color: var(--text-primary);
+    }
+    .testimonials-head p { color: var(--text-secondary); max-width: 34ch; line-height: 1.7; }
+    .testimonials-marquee {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* Responsive */
+    @media (max-width: 980px) {
+      .hero { padding-top: 130px; min-height: auto; }
+      .contact-inner { grid-template-columns: 1fr; gap: 48px; }
+    }
+    @media (max-width: 720px) {
+      .contact-form-card { padding: 28px; }
+      .hero { min-height: auto; }
+      .hero-channels { gap: 10px; }
+    }
+  </style>
+</head>
+<body style="margin:0;overflow-x:hidden">
+
+<Navbar />
+
+<main>
+  <!-- ==================== HERO ==================== -->
+  <section class="hero">
+    <BlobField variant="contacto" opacity={0.5} blur={30} static={false} />
+    <div class="hero-inner">
+      <h1 data-gsap="hero-title">
+        <span class="h1-line">Hablemos de tu proyecto</span>
+      </h1>
+      <p class="hero-sub" data-gsap="hero-sub">Tu siguiente gran paso empieza aquí. Tu proyecto merece empezar hoy: cuéntanos tu idea y te respondemos en menos de 24 horas.</p>
+      <div class="hero-actions" data-gsap="hero-actions">
+        <Button href="#formulario" size="lg" variant="stroke">Cuéntanos tu proyecto</Button>
+        <Button href="https://wa.me/593961026799?text=Hola%20UserDesigners%2C%20quiero%20agendar%20una%20sesi%C3%B3n" target="_blank" size="lg" variant="ghost">Escribir por WhatsApp</Button>
+      </div>
+      <div class="hero-channels" data-gsap="hero-channels">
+        <a class="channel" href="https://wa.me/593961026799?text=Hola%20UserDesigners%2C%20quiero%20agendar%20una%20sesi%C3%B3n" target="_blank" rel="noopener">
+          <span class="channel-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 2.5A9.5 9.5 0 0 0 3.4 16.2L2.5 21l4.9-1A9.5 9.5 0 1 0 12 2.5Z"/><path d="M9 9c0 3 3 6 6 6l1.5-1.5-2-1.5-1.5.5A5.4 5.4 0 0 1 11 11l.5-1.5-1.5-2L9 9Z"/></svg>
+          </span>
+          <span class="channel-meta">
+            <span class="channel-label">WhatsApp</span>
+            <span class="channel-value">(+593) 0961026799</span>
+          </span>
+        </a>
+        <a class="channel" href="mailto:latam@userdesigners.com">
+          <span class="channel-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+          </span>
+          <span class="channel-meta">
+            <span class="channel-label">Email</span>
+            <span class="channel-value">latam@userdesigners.com</span>
+          </span>
+        </a>
+        <div class="channel">
+          <span class="channel-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+          </span>
+          <span class="channel-meta">
+            <span class="channel-label">Dónde estamos</span>
+            <span class="channel-value">Cuenca, Ecuador</span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== FORMULARIO ==================== -->
+  <section class="contact-section" id="formulario">
+    <div class="contact-inner">
+      <div class="contact-intro">
+        <SectionLabel>Queremos escuchar tu idea</SectionLabel>
+        <h2>Diseño pensado para servir, no para complicar.</h2>
+        <p>Cuéntanos tu proyecto: una app, un rediseño, un producto desde cero. Investigamos, diseñamos y validamos con datos antes de escribir una línea de código.</p>
+        <div class="contact-note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3 2 21h20L12 3Z"/><path d="M12 10v5"/><circle cx="12" cy="18" r="0.5" fill="currentColor"/></svg>
+          <p>Al enviar el formulario se abre WhatsApp con tu mensaje listo para enviarnos. Sin intermediarios: hablas directo con el equipo.</p>
+        </div>
+      </div>
+
+      <form class="contact-form-card" id="contactForm" novalidate>
+        <h3>Cuéntanos tu proyecto</h3>
+        <p class="form-intro">Los campos marcados con * son obligatorios.</p>
+
+        <div class="field">
+          <label class="field-label" for="f-nombre">Nombre <span class="req">*</span></label>
+          <input class="field-input" type="text" id="f-nombre" name="nombre" placeholder="Mi nombre" required autocomplete="name" />
+        </div>
+        <div class="field">
+          <label class="field-label" for="f-email">Email <span class="req">*</span></label>
+          <input class="field-input" type="email" id="f-email" name="email" placeholder="micorreo@email.com" required autocomplete="email" />
+        </div>
+        <div class="field">
+          <label class="field-label" for="f-concepto">Concepto <span class="req">*</span></label>
+          <input class="field-input" type="text" id="f-concepto" name="concepto" placeholder="Escribe un motivo" required />
+        </div>
+        <div class="field">
+          <label class="field-label" for="f-descripcion">Descripción <span class="req">*</span></label>
+          <textarea class="field-textarea" id="f-descripcion" name="descripcion" placeholder="Cuéntanos lo que necesitas y nos pondremos en contacto" required></textarea>
+        </div>
+
+        <div class="form-submit">
+          <Button type="submit" variant="stroke" size="lg">Enviar</Button>
+          <span class="form-status" id="formStatus" role="status" aria-live="polite"></span>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ==================== TESTIMONIOS ==================== -->
+  <section class="testimonials">
+    <div class="testimonials-inner">
+      <div class="testimonials-head">
+        <div>
+          <SectionLabel>Testimonios</SectionLabel>
+          <h2>Nuestros clientes satisfechos</h2>
+        </div>
+        <p>Lo que dicen quienes ya trabajaron con nosotros, de la investigación al lanzamiento.</p>
+      </div>
+      <div class="testimonials-marquee">
+        <Marquee speed={26} gap={24}>
+          {testimonios.map((t, i) => <TestimonialCard testimonio={t} index={i} />)}
+        </Marquee>
+        <Marquee speed={30} gap={24} reverse>
+          {testimonios.slice(3).map((t, i) => <TestimonialCard testimonio={t} index={i + 3} />)}
+          {testimonios.slice(0, 3).map((t, i) => <TestimonialCard testimonio={t} index={i} />)}
+        </Marquee>
+      </div>
+    </div>
+  </section>
+</main>
+
+<Footer />
+
+<script>
+  const form = document.getElementById("contactForm");
+  const status = document.getElementById("formStatus");
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const nombre = form.querySelector("#f-nombre").value.trim();
+    const email = form.querySelector("#f-email").value.trim();
+    const concepto = form.querySelector("#f-concepto").value.trim();
+    const descripcion = form.querySelector("#f-descripcion").value.trim();
+
+    if (!nombre || !email || !concepto || !descripcion) {
+      status.textContent = "Completa todos los campos para continuar.";
+      status.classList.add("show");
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      status.textContent = "Revisa el email: parece que no es válido.";
+      status.classList.add("show");
+      return;
+    }
+
+    const msg =
+      "Hola UserDesigners, quiero hablar de mi proyecto.%0A%0A" +
+      "*Nombre:* " + encodeURIComponent(nombre) + "%0A" +
+      "*Email:* " + encodeURIComponent(email) + "%0A" +
+      "*Concepto:* " + encodeURIComponent(concepto) + "%0A%0A" +
+      "*Descripción:* " + encodeURIComponent(descripcion);
+
+    status.textContent = "Abriendo WhatsApp…";
+    status.classList.add("show");
+    window.open("https://wa.me/593961026799?text=" + msg, "_blank", "noopener");
+  });
+</script>
+
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) return;
+
+    // ============ HERO — entrada en cascada, suave y compacta ============
+    const title = document.querySelector("[data-gsap='hero-title']");
+    const sub = document.querySelector("[data-gsap='hero-sub']");
+    const actions = document.querySelector("[data-gsap='hero-actions']");
+    const channels = document.querySelector("[data-gsap='hero-channels']");
+
+    // H1: fade + lift sutil (sin SplitText, sin letra por letra)
+    if (title) {
+      gsap.from(title, { y: 26, opacity: 0, duration: 0.7, ease: "power3.out", delay: 0 });
+    }
+    if (sub) {
+      gsap.from(sub, { y: 20, opacity: 0, duration: 0.7, ease: "power3.out", delay: 0.1 });
+    }
+    if (actions) {
+      // transform puro: los botones se deslizan desde abajo, NUNCA se ocultan
+      const btnEls = [...actions.children].filter(el => el.tagName === "A" || el.tagName === "BUTTON");
+      gsap.from(btnEls, {
+        y: 18, duration: 0.6, ease: "power3.out", stagger: 0.05, delay: 0.18
+      });
+    }
+    if (channels) {
+      // transform puro: los canales se deslizan, sin opacity
+      const chanEls = [...channels.children].filter(el => el.tagName === "A" || el.tagName === "BUTTON" || el.tagName === "DIV");
+      gsap.from(chanEls, {
+        y: 14, duration: 0.55, ease: "power3.out", stagger: 0.05, delay: 0.26
+      });
+    }
+  });
+</script>
+
+</body>
+</html>
