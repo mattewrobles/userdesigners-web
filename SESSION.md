@@ -689,3 +689,26 @@ Uso: `<BlobField variant="blog" count={5} opacity={0.85} speed={20} />`
 3. Mau valida `/hero-preview` y `/servicios-preview`, luego swap de index.astro a nativo.
 4. Limpiar páginas temporales (diag, diag-logos, diag-logos2) y framer-home.css.
 5. Verificación final: 0 código Framer en render + agente crítico >95% por sección.
+
+## Ago 16 (continuación) — Home fixes + 3 páginas migradas
+
+**Home corregido** (lo que Mau reportó):
+- **Duplicado "NUESTROS SERVICIOS"**: el `HomeHero.astro` tenía un bloque intro (hero-kicker "NUESTROS SERVICIOS" + h2 "Más de 12 años") que duplicaba la Product section nativa inyectada. **Fix**: se quitó el bloque hero-title del HomeHero.
+- **Textos cortados** ("uestros números..." con N cortada): los estados de entrada del player usaban `translateX(±Npx)` con `opacity:0` que quedaban congelados → desplazaban el texto fuera del contenedor overflow:hidden. **Fix**: regex en hero-preview que limpia `translateX(±Npx)` (NO los `-50%` de centrado). 17 desplazamientos limpiados, 0 problemas de desbordamiento tras el fix.
+
+**Páginas migradas (previews nuevos):**
+- `src/pages/servicios-preview.astro` — hero con mockup (fix scale/opacity), tarjetas de servicios reposicionadas en columna (left:100, gaps 249) con `position:absolute !important` sobre el contenedor sticky.
+- `src/pages/nosotros-preview.astro` — hero + NUESTRA EXPERIENCIA + CONOCE NUESTRO EQUIPO (7 miembros con fotos cargadas) + ÁREAS DE EXPERTIZ + CTA + footer. **Bug clave**: el CSS usa ancestros `ud-fzpBA`/`ud-V5DFL`/`ud-WOlJs`/`ud-87vH0` que NO están en el HTML (el player los añadía) → secciones colapsaban a 260px. **Fix**: agregar TODAS esas clases al wrapper del preview.
+- `src/pages/proyectos-preview.astro` — hero PORTAFOLIO con mockup + cards 2x2 (Utransfer, N***, K***, Papers) + TESTIMONIALES (6) + footer. **Bug del slice**: `indexOf('<section', ...)` encontraba el section SIGUIENTE y cortaba el Hero. **Fix**: `lastIndexOf('<section', ...)`. Además fix `scale(0.8)` de entrada.
+
+**Patrón reusable (confirmado en las 4 páginas):**
+1. wrapper root: `class="ud-tqfFO ud-72rtr7 ud-pRmuk [OTROS ancestros del CSS]"` + `style="min-height:100vh;width:1440px"`.
+2. Los ancestros que el CSS usa (`ud-pRmuk`, `ud-fzpBA`, `ud-V5DFL`, `ud-WOlJs`, etc.) hay que agregarlos TODOS al wrapper o las secciones colapsan. Detectarlos con: `grep -oE "\.ud-[a-zA-Z0-9]+" *.native.html | sort | uniq -c | sort -rn`.
+3. `<style is:inline>` y `<script is:inline>` (Astro pierde los inline normales con set:html masivo).
+4. `fixLayout` (is:inline): mide contenido real y setea min-height en SECTION/HEADER/`-container` colapsados.
+5. Regex visibilidad: `opacity:0→1`, `visibility:hidden→visible`, `transform:perspective...translateY→none`, `scale(0.8)→none`. NO tocar `translateX(-50%)` (centrado).
+6. Header del Hero sin cierre en export → separarlo y cerrar con `</header>`.
+7. CSS page: `<link home.css>` + `<style>` inline del HTML inyectado en head.
+8. Limpiar `data-fid`, `events.framer.com`, scripts player del native.html.
+
+**Pendiente:** Mau valida los 3 previews nuevos + home; luego swap de index.astro a nativo; limpiar páginas temporales (diag, diag-logos, diag-logos2); verificación 0 código Framer + agente crítico >95%.
