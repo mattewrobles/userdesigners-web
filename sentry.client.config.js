@@ -10,13 +10,16 @@ Sentry.init({
   },
   integrations: [
     Sentry.browserTracingIntegration(),
-    Sentry.replayIntegration(),
+    Sentry.replayIntegration({
+      maskAllText: false,
+      maskAllInputs: true,
+    }),
     Sentry.feedbackIntegration({
       colorScheme: "system",
       isNameRequired: true,
     }),
   ],
-  // Enable logs to be sent to Sentry
+  // Enable logs to be sent to Sentry (console + network capture)
   enableLogs: true,
   // Define how likely traces are sampled. Adjust this value in production,
   // or use tracesSampler for greater control.
