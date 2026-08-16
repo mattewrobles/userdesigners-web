@@ -38,13 +38,29 @@ const hasta = footerStart > 0 ? footerStart : body.length;
 const secciones = desde >= 0 ? body.slice(desde, hasta) : body;
 // CSS de la página (los <style> del head renombrados) — necesario para el layout
 const cssStyles = html.match(/<style[^>]*>[\s\S]*?<\/style>/gi) || [];
+// Schema.org (Organization, WebSite, LocalBusiness, FAQ, etc.) del HTML
+// original — se pierde al extraer solo el body. Se re-inyecta en el head.
+const schemas = html.match(/<script type="application\/ld\+json">[\s\S]*?<\/script>/gi) || [];
+
 ---
 
 <html lang="es-EC">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Nosotros | UserDesigners</title>
+        <title>Nosotros | Equipo de Diseño UX/UI | UserDesigners</title>
+  <meta name="description" content="Conoce el equipo de UserDesigners: diseñadores UX/UI con más de 12 años de experiencia en productos digitales para fintechs." />
+  <link rel="canonical" href="https://www.userdesigners.com/nosotros/" />
+  <link rel="icon" href="/assets/local/o5LtTMyVT0hoY6m1F1q3smw3kq4.png" />
+  <meta property="og:title" content="Nosotros | UserDesigners" />
+  <meta property="og:description" content="Conoce el equipo de UserDesigners: diseñadores UX/UI con más de 12 años de experiencia en productos digitales para fintechs." />
+  <meta property="og:url" content="https://www.userdesigners.com/nosotros/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://www.userdesigners.com/assets/local/bUYh6jy5kjctf6KEV3vRnONhegI.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Nosotros | UserDesigners" />
+  <meta name="twitter:description" content="Conoce el equipo de UserDesigners: diseñadores UX/UI con más de 12 años de experiencia en productos digitales para fintechs." />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -53,6 +69,11 @@ const cssStyles = html.match(/<style[^>]*>[\s\S]*?<\/style>/gi) || [];
     />
     <link rel="stylesheet" href="/styles/tokens.css" />
     <link rel="stylesheet" href="/home.css" />
+    {/* Schema.org del HTML original (Organization, LocalBusiness, FAQ...) */}
+    {schemas.map((s) => (
+      <Fragment set:html={s} />
+    ))}
+
     {cssStyles.map((s) => (
       <Fragment set:html={s} />
     ))}

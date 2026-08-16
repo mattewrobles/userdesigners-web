@@ -819,3 +819,22 @@ Mau: "borremos todo lo que sea framer ya no quiero nada de framer" — pero las 
 **Queda en Framer (intencional):** las 4 internas `/proyectos/:slug` (kaito, novo, utransfer, verificacion-biometrica) — aún no migradas. Sus `src/html/proyectos/*.html` y sus páginas `src/pages/proyectos/{kaito,novo,utransfer,verificacion-biometrica}.astro` intactas.
 
 **Menciones "framer" restantes en src:** solo comentarios de código (explican que los selectores ud- vienen de framer renombrados) y `design-system.astro` (documentación del DS). No son código ejecutable.
+
+## Ago 16 (tarde 2) — SEO audit + fixes + fixes Mau
+
+**Audit realizado (squirrel + Lighthouse + performance trace):**
+- squirrel local: 43/100 (F) — mejorable por: HTTPS en localhost (no aplica), internas de proyectos framer, TTFB dev server, meta tags faltantes en páginas migradas
+- squirrel producción: 48/100 (F), **Agents (GEO) 91%** — llms.txt + robots AI bots OK
+- Lighthouse local: SEO 92, Accessibility 87, Best Practices 96, Agentic Browsing 67
+- Performance trace home: LCP 1518ms (good), CLS 0, TTFB 1122ms (dev server; en prod será menor)
+
+**Fixes SEO aplicados a las 4 páginas migradas:**
+- Schema.org del HTML original se PERDÍA (estaba en head del native, previews solo extraen body). Fix: `schemas.map()` extrae los scripts ld+json del native y los re-inyecta en head. Home (Organization/WebSite/LocalBusiness), Servicios/Nosotros (LocalBusiness+FAQ), Proyectos (Organization/WebSite/CollectionPage)
+- Meta description, canonical, favicon, OG tags (title/description/url/image/type), Twitter card agregados a las 4 páginas
+- Titles mejorados (de "Home | UserDesigners" 20ch a "Agencia UX/UI para Fintechs y Bancos en Latinoamérica | UserDesigners" 62ch)
+
+**Fixes Mau:**
+- Servicios: fondo blanco gigante (mockup ud-xohiip-container con height:100% del header inflado por fixLayout → 4787px blancos tapando contenido). Fix: height 560px + header 2500px
+- Footer nosotros y servicios: verificados OK en local (están al final, bien formados). Producción desactualizada (falta deploy).
+
+**Pendiente:** deploy a producción (los fixes están en main local, producción aún muestra la versión vieja sin footer/meta/schema).
