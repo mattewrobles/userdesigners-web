@@ -712,3 +712,24 @@ Uso: `<BlobField variant="blog" count={5} opacity={0.85} speed={20} />`
 8. Limpiar `data-fid`, `events.framer.com`, scripts player del native.html.
 
 **Pendiente:** Mau valida los 3 previews nuevos + home; luego swap de index.astro a nativo; limpiar páginas temporales (diag, diag-logos, diag-logos2); verificación 0 código Framer + agente crítico >95%.
+
+## Ago 16 (tarde) — Revisión sección por sección (4 rondas) + fixes
+
+**Home** — OK (no enfocarse, Mau dijo casi listo).
+
+**Servicios** — fixes de revisión:
+- **Viñetas del hero** ("Diseños responsivos" era una píldora blanca con texto invisible): el texto de la píldora activa (`.ud-v-1iotz8h`, fondo blanco) debe ser oscuro (rgb(10,10,10)); las otras 3 viñetas blanco. El selector genérico `.ud-iBxeJ` lo rompía.
+- **Tarjetas Works** (Diseño de Apps/Web/Branding/Research): Branding colapsaba a 0 → `min-height:249px` fijo en las 4.
+- **Footer**: las tarjetas absolute flotaban sobre el footer → contenedor del carrusel (`.ud-1s8qqcg`/`.ud-s9y34t`) `min-height:996px` (4×249).
+- **Hero**: mide 2297px (carrusel de mockups del player estático). Funcional: título, teléfono, viñetas, marcas. No se replica el carrusel → aceptado.
+
+**Nosotros** — fixes de revisión:
+- **Hero**: "Diseñamos" + carrusel de palabras (Websites/Apps) desalineados (ssr-variant display:contents rompe align) → `top:30px` al carrusel.
+- **CTA final**: botón "Comenzar proyecto" cortado (131px < texto 149px) → `min-width:220px`.
+- Team carrusel: OK (Cristian grande + 6 mini en fila, overflow:hidden). Fotos cargan.
+
+**Proyectos** — fixes de revisión:
+- **Cards de proyectos**: quedaban con border azul (link default) porque el CSS del framework no aplica → `border:1px solid rgb(40,40,40)` + text-decoration:none + color blanco.
+- **Testimonios**: padding-top 12→120px (el título quedaba bajo el navbar fixed). Marquee anima OK.
+
+**Lección repetida**: los selectores CSS del framework de Framer usan ancestros (`ud-pRmuk`, `ud-fzpBA`, `ud-GISSF`...) que el player añadía en runtime. Sin ellos, borders/colores de cards no aplican → agregar overrides con `!important` en el `<style is:inline>`.
