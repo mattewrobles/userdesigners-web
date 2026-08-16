@@ -96,9 +96,9 @@ const cssStyles = html.match(/<style[^>]*>[\s\S]*?<\/style>/gi) || [];
       }
     </style>
   </head>
-  <body style="background:#030303;margin:0">
+  <body style="background:#030303;margin:0;overflow-x:hidden">
     <Navbar />
-    <div class="ud-tqfFO ud-72rtr7 ud-pRmuk ud-fzpBA ud-V5DFL ud-WOlJs ud-87vH0" data-ud-root="" style="min-height:100vh;width:1440px">
+    <div class="ud-tqfFO ud-72rtr7 ud-pRmuk ud-fzpBA ud-V5DFL ud-WOlJs ud-87vH0" data-ud-root="" style="min-height:100vh;width:100%;max-width:1440px">
       <Fragment set:html={heroSeccion} />
       <Fragment set:html={secciones} />
     </div>
