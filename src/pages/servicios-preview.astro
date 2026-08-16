@@ -65,6 +65,17 @@ const cssStyles = html.match(/<style[^>]*>[\s\S]*?<\/style>/gi) || [];
       .ud-tqfFO .ud-text[style*="--ud-text-color"] {
         --ud-text-color: #fff !important;
       }
+      /* La píldora activa de las viñetas del hero es blanca: su texto debe ser
+         oscuro para ser legible (el override global lo puso blanco → invisible).
+         Solo la activa (v-1iotz8h) tiene fondo blanco; las otras son oscuras. */
+      .ud-72rtr7 .ud-v-1iotz8h {
+        color: #0a0a0a !important;
+      }
+      .ud-72rtr7 .ud-v-1iotz8h .ud-text,
+      .ud-72rtr7 .ud-v-1iotz8h p,
+      .ud-72rtr7 .ud-v-1iotz8h span {
+        color: #0a0a0a !important;
+      }
       /* Sin el player, las slides del carrusel quedan superpuestas. En desktop
          se muestra la primera slide de cada grupo (los contenedores -container
          con la misma posición). Se ocultan las slides duplicadas del hero. */
@@ -84,12 +95,21 @@ const cssStyles = html.match(/<style[^>]*>[\s\S]*?<\/style>/gi) || [];
       }
       .ud-72rtr7 .ud-1tww95g-container {
         top: 249px !important;
+        min-height: 249px;
       }
       .ud-72rtr7 .ud-pclehy-container {
         top: 498px !important;
+        min-height: 249px;
       }
       .ud-72rtr7 .ud-3ayvaa-container {
         top: 747px !important;
+        min-height: 249px;
+      }
+      /* Las tarjetas están position:absolute sobre el contenedor del carrusel:
+         darle altura suficiente (4×249) para que no se salgan sobre el footer. */
+      .ud-72rtr7 .ud-1s8qqcg,
+      .ud-72rtr7 .ud-s9y34t {
+        min-height: 996px !important;
       }
     </style>
   </head>
@@ -110,8 +130,11 @@ const cssStyles = html.match(/<style[^>]*>[\s\S]*?<\/style>/gi) || [];
         const fix = (el) => {
           for (const child of Array.from(el.children)) {
             if (child.tagName === "STYLE") continue;
+            const cls = (child.className || "").toString();
+            // no tocar variantes de breakpoint (el CSS las gestiona)
+            if (cls.includes("hidden-") || cls.includes("ssr-variant")) continue;
             const isBlock = child.tagName === "SECTION" || child.tagName === "HEADER";
-            const isCard = (child.className || "").toString().includes("-container") && child.querySelector(":scope > *");
+            const isCard = cls.includes("-container") && child.querySelector(":scope > *");
             if (isBlock || isCard) {
               const childRect = child.getBoundingClientRect();
               const currentH = childRect.height;
