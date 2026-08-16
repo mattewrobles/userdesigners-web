@@ -138,6 +138,33 @@ const cssStyles = html.match(/<style[^>]*>[\s\S]*?<\/style>/gi) || [];
       };
       window.addEventListener("DOMContentLoaded", fixLayout);
       window.addEventListener("load", () => setTimeout(fixLayout, 150));
+
+      // Team carrusel: el player de Framer expandia la tarjeta al hacer hover
+      // y desplazaba el track para que la activa quede grande a la izquierda.
+      const initTeamHover = () => {
+        const slide = document.querySelector(".ud-3d2q6t");
+        if (!slide) return;
+        const cards = Array.from(slide.children);
+        const cardW = 124; // ancho mini
+        const gap = 6;
+        const set = (grande) => {
+          cards.forEach((c, i) => {
+            const target = i === grande ? "3 0 0px" : "1 0 0px";
+            c.style.flex = target;
+            c.style.transition = "flex 0.4s cubic-bezier(0.4, 0, 0.2, 1)";
+          });
+          // desplazar el track para que la activa quede en la posicion grande
+          // (cristian grande a la izquierda, las otras a la derecha)
+          const despl = grande === 0 ? 0 : -(grande * (cardW + gap));
+          slide.style.transition = "transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)";
+          slide.style.transform = `translateX(${despl}px)`;
+        };
+        cards.forEach((c, i) => {
+          c.addEventListener("mouseenter", () => set(i));
+          c.addEventListener("mouseleave", () => set(0));
+        });
+      };
+      window.addEventListener("DOMContentLoaded", initTeamHover);
     </script>
   </body>
 </html>
