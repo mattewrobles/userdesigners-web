@@ -33,16 +33,12 @@ const body = bodyMatch ? bodyMatch[1] : html;
 <style>
   /* overrides del HTML de Framer inyectado — :global obligatorio (el CSS
      scoped de Astro no aplica a elementos sin el data-astro-cid) */
-  :global(.framer-bd4ic1-container) {
-    height: 72% !important;
-    width: 120% !important;
-    top: 20px !important;
-    left: -167px !important;
-    bottom: auto !important;
+  :global(.ud-bd4ic1-container) {
+    left: 0 !important;
   }
-  :global(.framer-1lkyifs) {
-    mix-blend-mode: normal !important;
+  :global(.ud-1lkyifs) {
     filter: blur(50px) !important;
+    mix-blend-mode: screen !important;
   }
   :global(#Gradients) {
     position: absolute;
@@ -84,23 +80,24 @@ const body = bodyMatch ? bodyMatch[1] : html;
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   // ---- Canvas Gradients (blobs animados del glow) — reemplaza el script remoto.
-  const canvas = document.querySelector("#Gradients canvas");
-  if (canvas) {
+  const initCanvas = () => {
+    const canvas = document.querySelector("#Gradients canvas");
+    const glow = canvas ? canvas.closest(".ud-1lkyifs") : null;
+    if (!canvas || !glow) return;
     const ctx = canvas.getContext("2d");
     let raf = null;
-    const colors = ["rgb(132,217,250)", "rgb(153,141,208)", "rgb(227,103,83)", "rgb(246,198,95)"];
+    const colors = ["rgb(255,180,20)", "rgb(0,200,255)", "rgb(40,80,170)", "rgb(0,200,255)"];
     const blobs = [
-      { x: 0.05, y: 0.5, r: 0.5, vx: 0.0004, vy: 0.0003, ph: 0.0, c: colors[0] },
-      { x: 0.28, y: 0.35, r: 0.24, vx: -0.0005, vy: 0.0004, ph: 1.6, c: colors[1] },
-      { x: 0.58, y: 0.45, r: 0.34, vx: 0.0003, vy: -0.0004, ph: 3.2, c: colors[2] },
-      { x: 0.45, y: 0.68, r: 0.2, vx: -0.0003, vy: -0.0005, ph: 4.7, c: colors[3] },
+      { x: 0.14, y: 0.55, r: 0.2, ph: 0.0, c: colors[0] },
+      { x: 0.48, y: 0.5, r: 0.24, ph: 1.6, c: colors[1] },
+      { x: 0.78, y: 0.35, r: 0.2, ph: 3.2, c: colors[2] },
+      { x: 0.4, y: 0.75, r: 0.16, ph: 4.7, c: colors[3] },
     ];
 
     function resize() {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      const glow = canvas.closest(".framer-1lkyifs");
-      const w = glow ? glow.offsetWidth : canvas.offsetWidth;
-      const h = glow ? glow.offsetHeight : canvas.offsetHeight;
+      const w = glow.offsetWidth;
+      const h = glow.offsetHeight;
       canvas.width = w * dpr;
       canvas.height = h * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -109,32 +106,40 @@ const body = bodyMatch ? bodyMatch[1] : html;
     window.addEventListener("resize", resize);
 
     function frame(t) {
-      const glow = canvas.closest(".framer-1lkyifs");
-      const w = glow ? glow.offsetWidth : canvas.offsetWidth;
-      const h = glow ? glow.offsetHeight : canvas.offsetHeight;
+      const w = glow.offsetWidth;
+      const h = glow.offsetHeight;
       ctx.clearRect(0, 0, w, h);
+      ctx.globalCompositeOperation = "lighter";
       const time = t / 1000;
+      // Oscilación suave alrededor de la posición base: los blobs nunca
+      // salen del glow (sin drift lineal que se acumula).
       blobs.forEach((b) => {
-        const x = (b.x + Math.sin(time * 0.3 + b.ph) * 0.06 + b.vx * time * 100) * w;
-        const y = (b.y + Math.cos(time * 0.24 + b.ph) * 0.06 + b.vy * time * 100) * h;
-        const r = b.r * w * (1 + Math.sin(time * 0.4 + b.ph * 2) * 0.08);
+        const amp = 0.05;
+        const x = (b.x + Math.sin(time * 0.25 + b.ph) * amp) * w;
+        const y = (b.y + Math.cos(time * 0.2 + b.ph) * amp) * h;
+        const r = b.r * w; // radio fijo: nunca desaparece
         const g = ctx.createRadialGradient(x, y, 0, x, y, r);
         g.addColorStop(0, b.c);
-        g.addColorStop(0.6, b.c);
+        g.addColorStop(0.55, b.c);
         g.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.globalAlpha = 1;
         ctx.fillStyle = g;
         ctx.beginPath();
         ctx.arc(x, y, r, 0, Math.PI * 2);
         ctx.fill();
       });
+      ctx.globalCompositeOperation = "source-over";
       if (!reduceMotion) raf = requestAnimationFrame(frame);
     }
-    if (reduceMotion) frame(0);
-    else raf = requestAnimationFrame(frame);
-  }
+    // Primer frame síncrono: el canvas nunca queda vacío (evita parpadeo)
+    frame(0);
+    if (!reduceMotion) raf = requestAnimationFrame(frame);
+  };
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initCanvas);
+  else initCanvas();
 
   // ---- Reveals (reemplazan el player de Framer) ----
-  const appears = gsap.utils.toArray("[data-framer-appear-id]");
+  const appears = gsap.utils.toArray("[data-ud-appear-id]");
   if (reduceMotion || appears.length === 0) {
     gsap.set(appears, { autoAlpha: 1, clearProps: "all" });
   } else {
@@ -150,7 +155,7 @@ const body = bodyMatch ? bodyMatch[1] : html;
     });
   }
 
-  const h1 = document.querySelector(".framer-oclxee, h1.framer-text, .ud-oclxee, h1.ud-text");
+  const h1 = document.querySelector(".ud-oclxee, h1.ud-text");
   if (h1 && !reduceMotion) {
     const chars = h1.querySelectorAll("span > span");
     gsap.set(chars, { autoAlpha: 0, y: 14, filter: "blur(8px)" });
@@ -164,7 +169,7 @@ const body = bodyMatch ? bodyMatch[1] : html;
 
   // ---- Marquee de logos del hero (carrusel que el player animaba) ----
   if (!reduceMotion) {
-    const logoWrap = document.querySelector(".ud-12n3d87-container, .framer-12n3d87-container");
+    const logoWrap = document.querySelector(".ud-12n3d87-container");
     if (logoWrap) {
       const track = logoWrap.querySelector("section");
       if (track && track.scrollWidth > logoWrap.clientWidth * 1.3) {
