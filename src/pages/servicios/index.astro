@@ -35,13 +35,29 @@ const hasta = footerStart > 0 ? footerStart : body.length;
 const secciones = desde >= 0 ? body.slice(desde, hasta) : body;
 // CSS de la página (los <style> del head renombrados) — necesario para el layout
 const cssStyles = html.match(/<style[^>]*>[\s\S]*?<\/style>/gi) || [];
+// Schema.org (Organization, WebSite, LocalBusiness, FAQ, etc.) del HTML
+// original — se pierde al extraer solo el body. Se re-inyecta en el head.
+const schemas = html.match(/<script type="application\/ld\+json">[\s\S]*?<\/script>/gi) || [];
+
 ---
 
 <html lang="es-EC">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Servicios | UserDesigners</title>
+        <title>Servicios de UX/UI Design y Design Systems | UserDesigners</title>
+  <meta name="description" content="Investigación de usuarios, UX design, UI design y design systems para fintechs. Servicios de diseño de producto en Cuenca, Ecuador." />
+  <link rel="canonical" href="https://www.userdesigners.com/servicios/" />
+  <link rel="icon" href="/assets/local/o5LtTMyVT0hoY6m1F1q3smw3kq4.png" />
+  <meta property="og:title" content="Servicios | UserDesigners" />
+  <meta property="og:description" content="Investigación de usuarios, UX design, UI design y design systems para fintechs. Servicios de diseño de producto en Cuenca, Ecuador." />
+  <meta property="og:url" content="https://www.userdesigners.com/servicios/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://www.userdesigners.com/assets/local/bUYh6jy5kjctf6KEV3vRnONhegI.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Servicios | UserDesigners" />
+  <meta name="twitter:description" content="Investigación de usuarios, UX design, UI design y design systems para fintechs. Servicios de diseño de producto en Cuenca, Ecuador." />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -50,6 +66,11 @@ const cssStyles = html.match(/<style[^>]*>[\s\S]*?<\/style>/gi) || [];
     />
     <link rel="stylesheet" href="/styles/tokens.css" />
     <link rel="stylesheet" href="/home.css" />
+    {/* Schema.org del HTML original (Organization, LocalBusiness, FAQ...) */}
+    {schemas.map((s) => (
+      <Fragment set:html={s} />
+    ))}
+
     {cssStyles.map((s) => (
       <Fragment set:html={s} />
     ))}
@@ -61,8 +82,22 @@ const cssStyles = html.match(/<style[^>]*>[\s\S]*?<\/style>/gi) || [];
       .ud-tqfFO .ud-text {
         color: #fff !important;
       }
-      .ud-tqfFO .ud-text[style*="--ud-text-color"] {
-        --ud-text-color: #fff !important;
+      /* El mockup blanco del hero (ud-xohiip-container) tiene height:100% del
+         header inflado por fixLayout → fondo blanco de 4787px tapa el contenido.
+         Se limita a su altura real y se oculta el exceso. */
+      .ud-tqfFO .ud-xohiip-container {
+        height: 560px !important;
+        max-height: 560px !important;
+        overflow: hidden !important;
+      }
+      .ud-tqfFO .ud-xohiip-container > div {
+        height: 560px !important;
+      }
+      /* El header del hero no debe inflarse: se le da una altura razonable. */
+      .ud-tqfFO header.ud-1o54d2s {
+        height: 2500px !important;
+        min-height: 0 !important;
+        overflow: hidden !important;
       }
       /* La píldora activa de las viñetas del hero es blanca: su texto debe ser
          oscuro para ser legible (el override global lo puso blanco → invisible).
