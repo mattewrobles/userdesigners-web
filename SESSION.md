@@ -838,3 +838,22 @@ Mau: "borremos todo lo que sea framer ya no quiero nada de framer" — pero las 
 - Footer nosotros y servicios: verificados OK en local (están al final, bien formados). Producción desactualizada (falta deploy).
 
 **Pendiente:** deploy a producción (los fixes están en main local, producción aún muestra la versión vieja sin footer/meta/schema).
+
+## Ago 16 (tarde 3) — Deploy a producción + audit final + fixes perf/a11y
+
+**Deploy:** Cloudflare Pages con auto-deploy en cada push a main. Verificado: los fixes están LIVE en producción (footer, fondo, schemas, meta tags, imágenes).
+
+**Audit final producción (squirrel, 12 páginas):**
+- Core SEO: 57% (0 errores, subió de 42%)
+- Agents (GEO/AEO): 93% (llms.txt + robots AI bots + schema en 4 páginas)
+- Crawlability 100% | Links 87% | Mobile 84% | Analytics 100%
+- Health 49/100 (F) — lastrado por imágenes en cache edge + las 4 internas de proyectos en framer
+
+**Fixes perf/a11y aplicados:**
+- 3 imágenes comprimidas: 6dFt (1.2MB→170KB webp), 8gGua (→72KB), pkXs (→124KB)
+- 80 referencias de 6dFtNSZS.png → .webp en servicios-native
+- nosotros: 23 links de redes con aria-label (Linkedin/Instagram/Facebook/X), 8 focusables con aria-hidden eliminado
+
+**Errores restantes (10):** 3 imágenes (el .png huérfano sigue en cache edge de Cloudflare — expira con TTL; el HTML ya usa webp), 8 aria-hidden (ya arreglados en código, pendiente propagar), 1 label-mismatch en blog (select categorías).
+
+**Performance (Lighthouse local):** SEO 92, Best Practices 96, A11y 87, LCP 1518ms, CLS 0, TTFB 1122ms (dev server; menor en prod).
