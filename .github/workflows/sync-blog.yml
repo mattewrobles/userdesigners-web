@@ -32,13 +32,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - uses: DopplerHQ/doppler-action@v3
-        with:
-          doppler-token: ${{ secrets.DOPPLER_TOKEN_USER_DESIGNERS }}
-          project: user-designers
-          config: prd
+      - name: Install Doppler CLI
+        uses: dopplerhq/cli-action@v4
       - name: Sync blog posts (desde Doppler)
-        run: node scripts/sync-notion-to-blog.js
+        run: |
+          export NOTION_TOKEN=$(doppler secrets get NOTION_TOKEN --plain --project user-designers --config prd)
+          export NOTION_DB_ID=$(doppler secrets get NOTION_DB_ID --plain --project user-designers --config prd)
+          node scripts/sync-notion-to-blog.js
       - name: Optimize blog images (WebP/JPEG 75%, max 1280px)
         run: |
           npm install --no-save sharp >/dev/null 2>&1
