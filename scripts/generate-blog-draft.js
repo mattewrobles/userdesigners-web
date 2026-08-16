@@ -190,7 +190,30 @@ function notion(path, method = "GET", body = null) {
   });
 }
 
-// Convierte markdown simple a bloques de Notion
+// Convierte markdown inline (negrita, links) a rich_text de Notion con href real
+function mdRichText(text) {
+  const parts = [];
+  const re = /\[([^\]]+)\]\(([^)]+)\)/g;
+  let last = 0;
+  let m;
+  while ((m = re.exec(text)) !== null) {
+    if (m.index > last) {
+      parts.push({ type: "text", text: { content: text.slice(last, m.index) } });
+    }
+    let url = m[2];
+    // Notion requiere URLs absolutas
+    if (url.startsWith("/")) url = `https://www.userdesigners.com${url}`;
+    parts.push({ type: "text", text: { content: m[1], link: { url } } });
+    last = re.lastIndex;
+  }
+  if (last < text.length) {
+    parts.push({ type: "text", text: { content: text.slice(last) } });
+  }
+  if (parts.length === 0) parts.push({ type: "text", text: { content: text } });
+  return parts;
+}
+
+// Convierte markdown simple a bloques de Notion (con links reales en body)
 function markdownToNotionBlocks(md) {
   const lines = md.split("\n");
   const blocks = [];
@@ -202,9 +225,9 @@ function markdownToNotionBlocks(md) {
     } else if (trimmed.startsWith("### ")) {
       blocks.push({ object: "block", type: "heading_3", heading_3: { rich_text: [{ type: "text", text: { content: trimmed.slice(4) } }] } });
     } else if (trimmed.startsWith("- ")) {
-      blocks.push({ object: "block", type: "bulleted_list_item", bulleted_list_item: { rich_text: [{ type: "text", text: { content: trimmed.slice(2) } }] } });
+      blocks.push({ object: "block", type: "bulleted_list_item", bulleted_list_item: { rich_text: mdRichText(trimmed.slice(2)) } });
     } else {
-      blocks.push({ object: "block", type: "paragraph", paragraph: { rich_text: [{ type: "text", text: { content: trimmed } }] } });
+      blocks.push({ object: "block", type: "paragraph", paragraph: { rich_text: mdRichText(trimmed) } });
     }
   }
   return blocks;
