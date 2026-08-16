@@ -85,6 +85,14 @@ const cssStyles = html.match(/<style[^>]*>[\s\S]*?<\/style>/gi) || [];
         .ud-tqfFO header {
           overflow-x: hidden;
         }
+        /* CTA dashboard: centrar y ajustar al ancho en móvil (tenia
+           translateX inline que lo desplazaba -44px). */
+        .ud-tqfFO #final .ud-17wmq3n,
+        .ud-tqfFO #final .ud-1bsp8da {
+          margin-left: 0 !important;
+          transform: none !important;
+          width: 100% !important;
+        }
       }
       /* Hero: alinear "Diseñamos" y el carrusel de palabras (Websites/Apps/...)
          en la misma línea vertical (el display:contents del ssr-variant rompe
