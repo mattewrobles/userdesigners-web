@@ -84,13 +84,17 @@ async function queryAll(filter, sorts) {
 async function sync() {
   console.log("Fetching posts from Notion...");
 
-  const MAX_POSTS = 10;
+  // 1 post por run: el siguiente run procesa el siguiente "Ready" (control y revisión)
+  const MAX_POSTS = 1;
   const filter = { property: "Status", select: { equals: "Ready" } };
 
   const pages = await queryAll(filter, [{ timestamp: "created_time", direction: "descending" }]);
 
   const today = new Date().toISOString().slice(0, 10);
   let count = 0;
+
+  // Limpiar lista de posts nuevos del run anterior
+  try { fs.unlinkSync("/tmp/new-posts.txt"); } catch {}
 
   for (const page of pages) {
     if (count >= MAX_POSTS) {
@@ -161,10 +165,13 @@ readTime: "${readTime}"
 
 ${content}
 `;
-    fs.mkdirSync("src/content/blog", { recursive: true });
-    fs.mkdirSync("public/assets/blog", { recursive: true });
-    fs.writeFileSync(`src/content/blog/${slug}.md`, md);
-    count++;
+  fs.mkdirSync("src/content/blog", { recursive: true });
+  fs.mkdirSync("public/assets/blog", { recursive: true });
+  fs.writeFileSync(`src/content/blog/${slug}.md`, md);
+
+  // Registrar slugs nuevos para que la validación SEO corra solo sobre estos
+  fs.appendFileSync("/tmp/new-posts.txt", `${slug}\n`);
+  count++;
 
     // Mark as synced
     await notion(`/v1/pages/${page.id}`, "PATCH", {

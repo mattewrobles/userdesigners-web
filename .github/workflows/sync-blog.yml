@@ -23,6 +23,7 @@ jobs:
     env:
       TARGET_BRANCH: ${{ github.event.inputs.target_branch || 'main' }}
       SLACK_CHANNEL: ${{ github.event.inputs.slack_channel || 'C0BN01LMC3F' }}
+      DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN_USER_DESIGNERS }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -31,17 +32,25 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Sync blog posts
-        env:
-          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
-          NOTION_DB_ID: ${{ secrets.NOTION_DB_ID }}
-        run: node scripts/sync-notion-to-blog.js
+      - name: Install Doppler CLI
+        run: |
+          curl -sL --fail --retry 3 https://cli.doppler.com/install.sh | sh
+          doppler --version
+      - name: Sync blog posts (desde Doppler)
+        run: |
+          export NOTION_TOKEN=$(doppler secrets get NOTION_TOKEN --plain --project user-designers --config prd)
+          export NOTION_DB_ID=$(doppler secrets get NOTION_DB_ID --plain --project user-designers --config prd)
+          node scripts/sync-notion-to-blog.js
       - name: Optimize blog images (WebP/JPEG 75%, max 1280px)
         run: |
           npm install --no-save sharp >/dev/null 2>&1
           node scripts/optimize-blog-images.mjs
       - name: Add internal links (related posts)
         run: node scripts/add-internal-links.mjs
+      - name: Validate SEO (reglas críticas)
+        run: |
+          node scripts/validate-blog-seo.mjs
+        if: env.TARGET_BRANCH == 'main'
       - name: Commit and push
         run: |
           git config user.name "blog-bot"
