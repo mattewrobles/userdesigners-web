@@ -1,12 +1,21 @@
 # UserDesigners Web — Astro Migration
 
-## Ago 15 — Analytics: SA + Sentry SUMADOS, GA4 y Clarity se quedan
+## Ago 15 — Analytics completo: SA + Sentry full stack (deploy live)
 
-- **Se suman** SimpleAnalytics + Sentry browser loader en headStart/head de todas las páginas (30 en build)
-- **Se quedan**: GA4 (G-PDZVJDG9Y5), Microsoft Clarity (xytbbmamwh), Mixpanel
-- Nota: hubo un intento de retirar GA4/Clarity revertido desde HEAD — la config actual es ADD-only
-- Verificado: build OK 37 páginas, GA4+Clarity+SA+Sentry presentes
-- Pendiente: push + deploy Cloudflare Pages
+**Herramientas en producción (todas conviven):** GA4 (G-PDZVJDG9Y5) + Clarity (xytbbmamwh) + Mixpanel (nosotros/servicios) + SimpleAnalytics + Sentry.
+
+**Sentry (@sentry/astro v10.70):**
+- SDK oficial en páginas Astro nativas (blog, contacto, seo-doctores); browser loader en HTML de Framer (src/html/*)
+- Config: sentry.client.config.js + sentry.server.config.js + astro.config.mjs (org user-designers, proyecto users-website)
+- `SENTRY_AUTH_TOKEN` en ~/.apikeys.sh (personal, scope project:write) — source maps OK
+- **Métricas:** src/lib/analytics.ts — page_view, blog_post_click, blog_post_read (scroll 50%), blog_read_time_ms, contact_channel_click, contact_form_submit/error, seo_doctor_cta_click
+- **Feedback widget** flotante (colorScheme system, isNameRequired)
+- **Replays:** maskAllText:false + maskAllInputs:true (texto visible, form protegido); 10% sesiones / 100% en error
+- **Logs:** enableLogs:true (console + network automático)
+- **Profiling browser:** 50% sesiones, Document-Policy js-profiling en _headers
+- CLI Sentry instalado en ~/.local/bin/sentry (`sentry issue list user-designers/users-website`)
+
+**Pendiente:** cloudflare env var SENTRY_AUTH_TOKEN si se quieren source maps desde el build de Cloudflare.
 
 ## Ago 12 — Contacto nativo final + Framer eliminado del blog ★
 
