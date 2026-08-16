@@ -257,6 +257,54 @@ async function generate() {
   console.log(`  Title: ${draft.title}`);
   console.log(`  Slug: ${draft.slug}`);
 
+  // Verificar que no duplique un post ya publicado o un draft existente
+  const existingSlugs = new Set();
+  try {
+    const files = fs.readdirSync("src/content/blog").filter((f) => f.endsWith(".md"));
+    files.forEach((f) => existingSlugs.add(f.replace(/\.md$/, "")));
+  } catch {}
+
+  // Consultar Notion para slugs existentes (Published y Draft)
+  let notionSlugs = [];
+  try {
+    const res = await notion(`/v1/databases/${DB_ID}/query`, "POST", {});
+    notionSlugs = (res.results || []).map(
+      (p) => p.properties?.Slug?.rich_text?.[0]?.plain_text || ""
+    );
+    notionSlugs.forEach((s) => s && existingSlugs.add(s));
+  } catch (e) {
+    console.log(`  (aviso: no se pudo consultar Notion para duplicados: ${e.message.slice(0,60)})`);
+  }
+
+  const slug = draft.slug || "";
+  if (existingSlugs.has(slug)) {
+    console.error(`✗ DUPLICADO: el slug "${slug}" ya existe (publicado o en draft en Notion).`);
+    console.error(`  No se creó nada. Si quieres reescribirlo, borra el anterior o usa otro tema.`);
+    process.exit(1);
+  }
+
+  // Búsqueda por similitud del título contra existentes (fuzzy, evita duplicados temáticos)
+  function norm(s) {
+    return s.toLowerCase().replace(/-/g, " ").replace(/[^a-z0-9áéíóúüñ ]/g, "").trim();
+  }
+  const draftTitleN = norm(draft.title || "");
+  const draftSlugN = norm(slug);
+  let similar = null;
+  for (const s of existingSlugs) {
+    const tokens = norm(s.replace(/-/g, " "));
+    // Match si comparten al menos 2 tokens significativos del tema
+    const dt = draftSlugN.split(" ").filter((t) => t.length > 3);
+    const st = tokens.split(" ").filter((t) => t.length > 3);
+    const shared = dt.filter((t) => st.includes(t)).length;
+    if (shared >= 2) { similar = s; break; }
+  }
+  if (similar) {
+    console.error(`✗ POSIBLE DUPLICADO: el tema se parece a "${similar}" (ya existe).`);
+    console.error(`  Si es el mismo post, no lo dupliques. Si es distinto, usa un slug/tema diferente.`);
+    process.exit(1);
+  }
+  console.log(`  ✓ sin duplicados (${existingSlugs.size} existentes revisados)`);
+
   // Fetch hero image from Unsplash, saltando imágenes ya usadas (por id de Unsplash)
   const registry = loadImageRegistry();
   let heroImage = null;
