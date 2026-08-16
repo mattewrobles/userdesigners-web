@@ -28,6 +28,44 @@ html = html.replace(/transform:\s*translateX\(-?\d+px\)\s*rotate\([^)]*\)/gi, "t
 html = html.replace(/transform:\s*perspective\([^)]*\)\s*translateX\(-?\d+px\)\s*translateY\([^)]*\)\s*scale\([^)]*\)/gi, "transform:none");
 html = html.replace(/filter:\s*blur\(10px\)/gi, "filter:none");
 
+// Eliminar variantes de breakpoint no-desktop del HTML (duplican contenido en
+// el HTML crudo que leen los crawlers: "Más de 12 años ×3", etc.). En desktop
+// (72rtr7) la variante activa es la que NO tiene hidden-72rtr7.
+const eliminarVariantesNoDesktop = (doc) => {
+  const re = /<div class="ssr-variant[^"]*hidden-72rtr7[^"]*">/g;
+  let out = "";
+  let last = 0;
+  let m;
+  while ((m = re.exec(doc)) !== null) {
+    const start = m.index;
+    out += doc.slice(last, start);
+    // contar divs con indexOf (evita el bug de lastIndex compartido)
+    let i = doc.indexOf("<div", start);
+    let depth = 0;
+    let end = -1;
+    while (i !== -1) {
+      const close = doc.indexOf("</div>", i);
+      if (close === -1) break;
+      // contar <div entre i y close
+      let j = i;
+      while (j < close) {
+        const d = doc.indexOf("<div", j);
+        if (d === -1 || d >= close) break;
+        depth++;
+        j = d + 4;
+      }
+      depth--;
+      if (depth <= 0) { end = close + "</div>".length; break; }
+      i = close + 6;
+    }
+    last = end !== -1 ? end : m.index + m[0].length;
+    if (end === -1) { re.lastIndex = last; }
+  }
+  out += doc.slice(last);
+  return out;
+};
+html = eliminarVariantesNoDesktop(html);
+
 // Extraer las secciones del original (Product section → Bannner), excluyendo
 // TODO lo anterior (hero original + scripts de Framer) y el Blog estático.
 const body = html.replace(/<body[^>]*>|<\/body>/gi, "");

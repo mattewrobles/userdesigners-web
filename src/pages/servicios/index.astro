@@ -17,6 +17,45 @@ html = html.replace(/filter:\s*blur\(10px\)/gi, "filter:none");
 // visibility:hidden son estados de entrada que el player animaba
 html = html.replace(/visibility:\s*hidden/gi, "visibility:visible");
 
+// Eliminar variantes de breakpoint no-desktop del HTML (duplican contenido en
+// el HTML crudo que leen los crawlers). En desktop la activa es la que NO tiene
+// hidden-16th6ys (esa clase significa "oculto en desktop").
+const eliminarVariantesNoDesktop = (doc) => {
+  const marker = 'class="ssr-variant hidden-16th6ys';
+  const re = /<div class="ssr-variant[^"]*hidden-16th6ys[^"]*">/g;
+  let idx = 0;
+  let out = "";
+  let last = 0;
+  let m;
+  while ((m = re.exec(doc)) !== null) {
+    const start = m.index;
+    out += doc.slice(last, start);
+    // contar divs con indexOf (evita el bug de lastIndex compartido)
+    let i = doc.indexOf("<div", start);
+    let depth = 0;
+    let end = -1;
+    while (i !== -1) {
+      const close = doc.indexOf("</div>", i);
+      if (close === -1) break;
+      let j = i;
+      while (j < close) {
+        const d = doc.indexOf("<div", j);
+        if (d === -1 || d >= close) break;
+        depth++;
+        j = d + 4;
+      }
+      depth--;
+      if (depth <= 0) { end = close + "</div>".length; break; }
+      i = close + 6;
+    }
+    last = end !== -1 ? end : m.index + m[0].length;
+    if (end === -1) { re.lastIndex = last; }
+  }
+  out += doc.slice(last);
+  return out;
+};
+html = eliminarVariantesNoDesktop(html);
+
 // Extraer el contenido (nav se reemplaza por Navbar DS; footer por Footer DS)
 const bodyMatch = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
 const body = bodyMatch ? bodyMatch[1] : html;

@@ -14,6 +14,10 @@ const blog = defineCollection({
     date: z.string(),
     updatedDate: z.string().optional(),
     readTime: z.string().optional(),
+    // Campos para blogs de alto valor
+    takeaways: z.array(z.string()).optional().default([]),
+    faq: z.array(z.object({ q: z.string(), a: z.string() })).optional().default([]),
+    relatedPosts: z.array(z.string()).optional().default([]),
   }),
 });
 
