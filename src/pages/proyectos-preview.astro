@@ -102,6 +102,15 @@ const cssStyles = html.match(/<style[^>]*>[\s\S]*?<\/style>/gi) || [];
       .ud-tqfFO .ud-text[style*="--ud-text-color"] {
         --ud-text-color: #fff !important;
       }
+      /* El CSS del framework (border desde --border-* variables) no aplica sin el
+         player → las cards de proyectos quedan con border azul de link default. */
+      .ud-tqfFO [data-ud-name="Desktop"],
+      .ud-tqfFO [data-ud-name="Default"],
+      .ud-tqfFO .ud-GISSF {
+        border: 1px solid rgb(40, 40, 40) !important;
+        text-decoration: none !important;
+        color: #fff !important;
+      }
     </style>
   </head>
   <body style="background:#030303;margin:0">
@@ -134,7 +143,7 @@ const cssStyles = html.match(/<style[^>]*>[\s\S]*?<\/style>/gi) || [];
     <style is:inline>
       .testimonials {
         position: relative;
-        padding: 12px var(--space-pad) 130px;
+        padding: 120px var(--space-pad) 130px;
         background: var(--ud-black);
       }
       .testimonials-inner { max-width: var(--container-max); margin: 0 auto; }
