@@ -69,6 +69,31 @@ const cssStyles = html.match(/<style[^>]*>[\s\S]*?<\/style>/gi) || [];
       .ud-72rtr7 [class*="-container"] {
         display: block;
       }
+      /* Hero: alinear "Diseñamos" y el carrusel de palabras (Websites/Apps/...)
+         en la misma línea vertical (el display:contents del ssr-variant rompe
+         el align-items:center del contenedor). */
+      .ud-yw7vmx {
+        align-items: center !important;
+      }
+      .ud-yw7vmx .ud-1615yl6-container,
+      .ud-yw7vmx .ud-ay2mpr {
+        position: relative !important;
+        top: 30px !important;
+      }
+      /* CTA final: el botón "Comenzar proyecto" es más angosto que su texto.
+         Se amplía y se centra para que no se corte. */
+      .ud-72rtr7 .ud-hTQx5.ud-jXwnL,
+      .ud-72rtr7 button.ud-hTQx5 {
+        min-width: 220px !important;
+        width: max-content !important;
+        padding: 0 24px !important;
+        white-space: nowrap !important;
+      }
+      .ud-72rtr7 .ud-hTQx5 .ud-text,
+      .ud-72rtr7 .ud-hTQx5 span,
+      .ud-72rtr7 .ud-hTQx5 p {
+        white-space: nowrap !important;
+      }
     </style>
   </head>
   <body style="background:#030303;margin:0">
