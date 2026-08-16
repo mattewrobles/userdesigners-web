@@ -784,3 +784,18 @@ Uso: `<BlobField variant="blog" count={5} opacity={0.85} speed={20} />`
 **Pendiente:**
 - CTA nosotros: la animación de la imagen dashboard con scroll (Mau la mencionó). El CTA está funcional pero sin la animación parallax/sticky del original.
 - Mau validará el responsive en su celular.
+
+## Ago 16 (noche 3) — Responsive móvil verificado en las 4 páginas + CTA nosotros
+
+**Responsive verificado en viewport 390px (celular):**
+- Home: título hero arreglado (overflow-wrap:anywhere). Sin scroll horizontal.
+- Servicios: sin scroll horizontal. Hero con viñetas (las 4 en fila desbordan en móvil — Mau va a rediseñar la página, pendiente en el rediseño).
+- Nosotros: sin scroll horizontal (hero 460px + CTA dashboard). Team en grid 2x2 móvil (applyBreakpoints agrega ud-v-1rivokt). CTA dashboard centrado (transform:none en móvil).
+- Proyectos: sin scroll horizontal. Cards en 1 columna. Testimonios Marquee adaptado (tarjetas 320px).
+
+**CTA nosotros dashboard:** el transform 3D de entrada del player (perspective 1700px translateX(651px) translateY(-518px) scale) lo escalaba a 2009px desbordando el CTA. Fix: regex limpia el transform + width:100% de la imagen al contenedor (1088px desktop / 100% móvil).
+
+**Pendiente:**
+- Mau valida responsive en su celular.
+- Servicios: rediseño de la página (Mau dijo que la va a rediseñar) — las viñetas del hero en móvil desbordan.
+- Mau validó: footer SIEMPRE del DS (ya revertido), hover team OK, CTA dashboard posicionado.
