@@ -288,6 +288,18 @@ import HomeLogos from "./HomeLogos.astro";
       text-wrap: wrap;
       overflow-wrap: break-word;
     }
+    /* El h1 con LetterReveal (palabras inline-block nowrap) estira el contenedor
+       en móvil. Forzamos el wrap y el ancho al viewport. */
+    .hero-content,
+    .hero-text {
+      width: 100% !important;
+      max-width: 100% !important;
+      min-width: 0;
+    }
+    .hero-text :global(h1) {
+      overflow-wrap: anywhere;
+      word-break: normal;
+    }
     .hero-line { margin-top: 72px; }
     .hero-line-pulse { width: 100%; }
     .hero-title { padding: 72px 0 56px; }

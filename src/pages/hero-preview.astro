@@ -71,7 +71,7 @@ const secciones = blogStart > 0 ? fromProduct.slice(0, blogStart - secStart) : f
     <HomeHero />
     {/* El root framer (ud-tqfFO) envuelve las secciones: los selectores de
         home.css dependen de ese ancestro (.ud-tqfFO .ud-5r60op, etc.) */}
-    <div class="ud-tqfFO ud-72rtr7" data-ud-root="" style="min-height:100vh;width:1440px">
+    <div class="ud-tqfFO ud-72rtr7" data-ud-root="" style="min-height:100vh;width:100%;max-width:1440px">
       <Fragment set:html={secciones} />
     </div>
     <BlogSection />
