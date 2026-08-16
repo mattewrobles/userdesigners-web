@@ -763,3 +763,24 @@ Uso: `<BlobField variant="blog" count={5} opacity={0.85} speed={20} />`
 **Sin errores de consola en ninguna página.**
 
 **Pendiente:** Mau valida visualmente las 4 páginas. Luego: swap de index.astro a nativo, limpiar páginas temporales (diag, diag-logos, diag-logos2), verificación 0 código Framer, agente crítico >95%.
+
+## Ago 16 (noche 2) — Responsive móvil + footer DS + hover team + feedback Mau
+
+**Feedback de Mau:**
+1. Footer: SIEMPRE el del design system en todas las páginas (no el framer nativo blanco). Ya revertido.
+2. Team nosotros: al hover sobre una card debe expandirse (animación del carrusel original). Implementado con JS.
+3. CTA nosotros: había una imagen de dashboard que se animaba con scroll — pendiente de revisar (el fix del botón ya está).
+4. Responsive: las páginas se veían mal en celular. Arreglado.
+
+**Fixes responsive (las 4 páginas):**
+- Wrapper `width:1440px` fijo → `width:100%;max-width:1440px` (el width fijo rompía el CSS responsive del nativo que usa media queries: root 390px en móvil).
+- `body overflow-x:hidden` en las 4 páginas.
+- Home: `.hero-content/.hero-text` width:100% + h1 `overflow-wrap:anywhere` (el LetterReveal pone palabras inline-block nowrap que estiraban el contenedor a 620px → título cortado).
+- Nosotros: secciones `overflow-x:hidden` en móvil (el hero tenía imagen 460px que desbordaba). `applyBreakpoints`: agrega `ud-v-1rivokt` al carrusel del team en <810px para que el CSS mobile (grid 2x2) aplique.
+
+**Hover team (nosotros):**
+- Script `initTeamHover`: al mouseenter sobre una card se expande a flex:3 (grande) y las demás a flex:1, con desplazamiento del track (translateX) para que la activa quede en la posición grande. Igual al carrusel de Framer.
+
+**Pendiente:**
+- CTA nosotros: la animación de la imagen dashboard con scroll (Mau la mencionó). El CTA está funcional pero sin la animación parallax/sticky del original.
+- Mau validará el responsive en su celular.
