@@ -32,17 +32,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Install Doppler CLI
-        run: |
-          curl -fsSL --retry 3 https://github.com/DopplerHQ/doppler-cli/releases/latest/download/doppler_linux_amd64.tar.gz -o doppler.tar.gz
-          tar -xzf doppler.tar.gz
-          sudo mv doppler /usr/local/bin/doppler
-          doppler --version
+      - uses: DopplerHQ/doppler-action@v3
+        with:
+          doppler-token: ${{ secrets.DOPPLER_TOKEN_USER_DESIGNERS }}
+          project: user-designers
+          config: prd
       - name: Sync blog posts (desde Doppler)
-        run: |
-          export NOTION_TOKEN=$(doppler secrets get NOTION_TOKEN --plain --project user-designers --config prd)
-          export NOTION_DB_ID=$(doppler secrets get NOTION_DB_ID --plain --project user-designers --config prd)
-          node scripts/sync-notion-to-blog.js
+        run: node scripts/sync-notion-to-blog.js
       - name: Optimize blog images (WebP/JPEG 75%, max 1280px)
         run: |
           npm install --no-save sharp >/dev/null 2>&1
