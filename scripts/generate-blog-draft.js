@@ -30,6 +30,23 @@ if (!topic) {
   process.exit(1);
 }
 
+// Lista de posts existentes para links internos (SEO)
+function existingPostsBlock() {
+  try {
+    const files = fs.readdirSync("src/content/blog").filter((f) => f.endsWith(".md"));
+    const lines = files.map((f) => {
+      const content = fs.readFileSync(`src/content/blog/${f}`, "utf-8");
+      const title = (content.match(/^title:\s*"([^"]+)"/m) || [])[1] || f;
+      const cat = (content.match(/^category:\s*"([^"]+)"/m) || [])[1] || "";
+      const slug = f.replace(/\.md$/, "");
+      return `- [${title}] → /blog/${slug}/ (categoría: ${cat})`;
+    });
+    return lines.join("\n");
+  } catch {
+    return "- (sin posts aún)";
+  }
+}
+
 // Tono y voz de UserDesigners extraído de posts reales
 const SYSTEM_PROMPT = `Eres el editor de contenido de UserDesigners, una agencia de UX/UI Design en Cuenca, Ecuador.
 Escribes blogs B2B para fundadores, product managers y CTOs de empresas en Latam.
@@ -59,6 +76,16 @@ SERVICIOS DE USERDESIGNERS (contexto para hacer el contenido relevante):
 - Proyectos: Utransfer (fintech), Kaito (pagos B2B), Airpals (B2B shipping)
 
 CATEGORÍAS VÁLIDAS: UX Research, Design Systems, Product Design, UX Writing, Accesibilidad, Estrategia de Producto
+
+LINKS INTERNOS — OBLIGATORIO para SEO:
+- Incluye SIEMPRE entre 2 y 4 links internos a posts existentes del blog de UserDesigners, enlazados de forma natural dentro del texto (anchor text descriptivo, no "clic aquí")
+- Elige posts que tengan relación real con el tema del artículo (misma categoría idealmente)
+- Si el tema lo permite, menciona el post relacionado en contexto: ej: "como explicamos en [nuestro artículo sobre design systems](/blog/design-system-empresa/)..."
+- NUNCA inventes URLs: usa EXACTAMENTE las URLs de la lista de posts existentes abajo
+- Un link debe ir en los primeros 2 párrafos cuando haya un post relevante
+
+POSTS EXISTENTES DEL BLOG (usa solo estos, con estas URLs exactas):
+${existingPostsBlock()}
 
 OUTPUT FORMAT — devuelve SOLO JSON sin markdown, sin explicaciones:
 {
