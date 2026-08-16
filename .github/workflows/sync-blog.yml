@@ -34,7 +34,9 @@ jobs:
           node-version: 22
       - name: Install Doppler CLI
         run: |
-          curl -sL --fail --retry 3 https://cli.doppler.com/install.sh | sh
+          wget -q https://github.com/DopplerHQ/doppler-cli/releases/latest/download/doppler_linux_amd64.tar.gz
+          tar -xzf doppler_linux_amd64.tar.gz
+          sudo mv doppler /usr/local/bin/doppler
           doppler --version
       - name: Sync blog posts (desde Doppler)
         run: |
