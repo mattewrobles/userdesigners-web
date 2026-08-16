@@ -49,3 +49,11 @@ Integra complementos de análisis cuantitativo y automatización de investigaci�
 ## Siguiente paso
 
 Revisa el backlog de tu próximo trimestre y selecciona una sola tarea repetitiva de investigación para automatizar con un modelo de IA en el siguiente sprint.
+
+
+<!-- related-posts -->
+## Artículos relacionados
+
+- [Cómo hacer un rediseño de producto digital sin perder usuarios en el intento](/blog/como-hacer-un-redesign-sin-morir-en-el-intento/)
+- [¿Por qué tu software en Latam fracasa aunque el código sea impecable?](/blog/importancia-agencia-ux-ui-userdesigners/)
+- [Las mejores agencias de UX en LATAM: Guía para CTOs y Product Managers](/blog/mejores-agencias-ux-latam/)

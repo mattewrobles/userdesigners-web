@@ -48,3 +48,10 @@ Revisa cada sección con esta pregunta: ¿esto podría haberlo escrito alguien q
 ## Haz esto hoy
 
 Abre la página principal de tu sitio. Encuentra la frase más genérica que tenga. Reescríbela con un detalle específico de tu negocio. Repite hasta que cada sección suene a ti, no a un prompt.
+
+
+<!-- related-posts -->
+## Artículos relacionados
+
+- [GEO: cómo optimizar tu contenido para ChatGPT y AI Overviews de Google](/blog/geo-optimizar-contenido-chatgpt-ai-overviews/)
+- [¿Por qué tu sitio web actual no genera ingresos y cómo solucionarlo?](/blog/importancia-pagina-web-generar-ingresos/)

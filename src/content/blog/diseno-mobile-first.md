@@ -55,3 +55,9 @@ Google Search Console muestra los errores de usabilidad móvil específicamente.
 Si tu score móvil es 30 puntos menor que el de desktop, tienes un problema de diseño, no de performance. Y ese problema lo sienten tus usuarios antes de que lo veas en las métricas.
 
 > Diseña primero para el usuario con la peor conexión, en el peor dispositivo, en el peor momento. Si funciona ahí, funciona para todos.
+
+
+<!-- related-posts -->
+## Artículos relacionados
+
+- [Prototipado rápido: valida tu idea antes de gastar en desarrollo](/blog/prototipado-rapido-valida-idea/)

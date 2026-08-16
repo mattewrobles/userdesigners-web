@@ -36,6 +36,12 @@ jobs:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_DB_ID: ${{ secrets.NOTION_DB_ID }}
         run: node scripts/sync-notion-to-blog.js
+      - name: Optimize blog images (WebP/JPEG 75%, max 1280px)
+        run: |
+          npm install --no-save sharp >/dev/null 2>&1
+          node scripts/optimize-blog-images.mjs
+      - name: Add internal links (related posts)
+        run: node scripts/add-internal-links.mjs
       - name: Commit and push
         run: |
           git config user.name "blog-bot"

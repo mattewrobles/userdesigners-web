@@ -54,3 +54,9 @@ Cinco sesiones de prueba de usuario, 30 minutos cada una, te dan más informaci�
 > No necesitas el prototipo perfecto. Necesitas el prototipo que te dé la respuesta que buscas.
 
 Si tienes un producto que no convierte o un feature que nadie usa, antes de rediseñar: prototipa la solución alternativa y pruébala. El costo de equivocarte en un prototipo es cero. El costo de equivocarte en producción, no.
+
+
+<!-- related-posts -->
+## Artículos relacionados
+
+- [Diseño mobile-first: no es una tendencia, es una necesidad](/blog/diseno-mobile-first/)

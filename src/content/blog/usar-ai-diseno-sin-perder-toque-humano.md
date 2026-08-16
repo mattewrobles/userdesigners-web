@@ -34,3 +34,11 @@ La clave está en que la AI nunca pasa al paso 3 sin tu revisión. Si dejas que 
 ## Tu siguiente paso
 
 Identifica una tarea repetitiva en tu flujo actual (generar copy de botones, variantes de layout, resumir notas). Automatízala con AI. Luego usa el tiempo que ganaste para hacer lo que la AI no puede: pensar en la estrategia.
+
+
+<!-- related-posts -->
+## Artículos relacionados
+
+- [Cómo hacer un rediseño de producto digital sin perder usuarios en el intento](/blog/como-hacer-un-redesign-sin-morir-en-el-intento/)
+- [¿Por qué tu software en Latam fracasa aunque el código sea impecable?](/blog/importancia-agencia-ux-ui-userdesigners/)
+- [Inteligencia artificial en diseño de productos: Qué sirve y qué es humo para CTOs](/blog/inteligencia-artificial-en-diseno-de-productos/)
