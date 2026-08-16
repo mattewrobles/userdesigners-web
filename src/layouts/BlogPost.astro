@@ -111,7 +111,7 @@ const hasToc = headings && headings.length > 0;
     })(window, document, "clarity", "script", "xytbbmamwh");
   </script>
 </head>
-<body style="margin:0;background-color:var(--surface-1);color:var(--text-primary);font-family:var(--font-body)">
+<body style="margin:0;background-color:var(--surface-1);color:var(--text-primary);font-family:var(--font-body)" data-post-id={post.id}>
   <div class="bg-blob"></div>
   <div id="reading-progress"></div>
   <Navbar />
@@ -197,13 +197,35 @@ const hasToc = headings && headings.length > 0;
 </html>
 
 <script>
+  import { track, duration, pageView } from "../lib/analytics";
   import { animate, scroll, inView } from "motion";
+
+  const postId = document.body.dataset.postId || "unknown";
+  pageView(`/blog/${postId}`);
+
+  const started = performance.now();
+  let readFired = false;
+  const elapsed = () => Math.round(performance.now() - started);
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") {
+      duration("blog_read_time_ms", elapsed(), { post: postId });
+    }
+  });
+
+  window.addEventListener("beforeunload", () => {
+    duration("blog_read_time_ms", elapsed(), { post: postId });
+  });
 
   const progress = document.getElementById("reading-progress");
   if (progress) {
     scroll(
       (p) => {
         progress.style.transform = `scaleX(${p})`;
+        if (p > 0.5 && !readFired) {
+          readFired = true;
+          track("blog_post_read", 1, { post: postId });
+        }
       },
       { target: document.body }
     );

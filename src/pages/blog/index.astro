@@ -138,6 +138,18 @@ const categories = [...new Set(allPosts.map(p => p.data.category).filter(Boolean
 </body>
 </html>
 
+<script>
+  import { track } from "../../lib/analytics";
+  track("page_view", 1, { page: "/blog" });
+  document.addEventListener("click", (e) => {
+    const el = (e.target as HTMLElement)?.closest?.("a.blog-card, a.featured-entrance");
+    if (el) {
+      const slug = (el.getAttribute("href") || "").replace("/blog/", "");
+      track("blog_post_click", 1, { post: slug });
+    }
+  });
+</script>
+
 <script is:inline>
   document.addEventListener("DOMContentLoaded", () => {
     const hero = document.getElementById("blogHero");

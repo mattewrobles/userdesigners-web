@@ -344,7 +344,7 @@ const testimonios = [
         <Button href="https://wa.me/593961026799?text=Hola%20UserDesigners%2C%20quiero%20agendar%20una%20sesi%C3%B3n" target="_blank" size="lg" variant="ghost">Escribir por WhatsApp</Button>
       </div>
       <div class="hero-channels" data-gsap="hero-channels">
-        <a class="channel" href="https://wa.me/593961026799?text=Hola%20UserDesigners%2C%20quiero%20agendar%20una%20sesi%C3%B3n" target="_blank" rel="noopener">
+        <a class="channel" data-channel="whatsapp" href="https://wa.me/593961026799?text=Hola%20UserDesigners%2C%20quiero%20agendar%20una%20sesi%C3%B3n" target="_blank" rel="noopener">
           <span class="channel-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 2.5A9.5 9.5 0 0 0 3.4 16.2L2.5 21l4.9-1A9.5 9.5 0 1 0 12 2.5Z"/><path d="M9 9c0 3 3 6 6 6l1.5-1.5-2-1.5-1.5.5A5.4 5.4 0 0 1 11 11l.5-1.5-1.5-2L9 9Z"/></svg>
           </span>
@@ -353,7 +353,7 @@ const testimonios = [
             <span class="channel-value">(+593) 0961026799</span>
           </span>
         </a>
-        <a class="channel" href="mailto:latam@userdesigners.com">
+        <a class="channel" data-channel="email" href="mailto:latam@userdesigners.com">
           <span class="channel-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
           </span>
@@ -443,6 +443,8 @@ const testimonios = [
 <Footer />
 
 <script>
+  import { track, pageView } from "../../lib/analytics";
+  pageView("/contacto");
   const form = document.getElementById("contactForm");
   const status = document.getElementById("formStatus");
 
@@ -454,16 +456,19 @@ const testimonios = [
     const descripcion = form.querySelector("#f-descripcion").value.trim();
 
     if (!nombre || !email || !concepto || !descripcion) {
+      track("contact_form_error", 1, { reason: "incomplete" });
       status.textContent = "Completa todos los campos para continuar.";
       status.classList.add("show");
       return;
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      track("contact_form_error", 1, { reason: "invalid_email" });
       status.textContent = "Revisa el email: parece que no es válido.";
       status.classList.add("show");
       return;
     }
 
+    track("contact_form_submit", 1, { channel: "whatsapp" });
     const msg =
       "Hola UserDesigners, quiero hablar de mi proyecto.%0A%0A" +
       "*Nombre:* " + encodeURIComponent(nombre) + "%0A" +
@@ -474,6 +479,14 @@ const testimonios = [
     status.textContent = "Abriendo WhatsApp…";
     status.classList.add("show");
     window.open("https://wa.me/593961026799?text=" + msg, "_blank", "noopener");
+  });
+
+  document.addEventListener("click", (e) => {
+    const el = (e.target as HTMLElement)?.closest?.("a.channel, a[data-channel]");
+    if (el) {
+      const channel = el.getAttribute("data-channel") || "whatsapp";
+      track("contact_channel_click", 1, { channel });
+    }
   });
 </script>
 

@@ -599,11 +599,25 @@ const schema = {
 <Footer />
 
 <script>
+  import { track, pageView } from "../../lib/analytics";
   import { gsap } from "gsap";
   import { ScrollTrigger } from "gsap/ScrollTrigger";
   import { SplitText } from "gsap/SplitText";
 
   gsap.registerPlugin(ScrollTrigger, SplitText);
+
+  pageView("/seo-doctores");
+  document.addEventListener("click", (e) => {
+    const el = (e.target as HTMLElement)?.closest?.("a[href]");
+    if (el && el.closest("main")) {
+      const href = el.getAttribute("href") || "";
+      if (href.startsWith("https://wa.me")) {
+        track("seo_doctor_cta_click", 1, { cta: "whatsapp" });
+      } else if (href.startsWith("#")) {
+        track("seo_doctor_cta_click", 1, { cta: "section" });
+      }
+    }
+  });
 
   document.addEventListener("DOMContentLoaded", () => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;

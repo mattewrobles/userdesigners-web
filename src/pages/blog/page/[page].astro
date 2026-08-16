@@ -100,6 +100,17 @@ const { posts, currentPage, totalPages, totalPosts, categories } = Astro.props;
 
   <Footer />
   <script>
+    import { track } from "../../../lib/analytics";
+    track("page_view", 1, { page: `/blog/page/${currentPage}`, blog_page: currentPage });
+    document.addEventListener("click", (e) => {
+      const el = (e.target as HTMLElement)?.closest?.("a.blog-card, a.featured-entrance");
+      if (el) {
+        const slug = (el.getAttribute("href") || "").replace("/blog/", "");
+        track("blog_post_click", 1, { post: slug, blog_page: currentPage });
+      }
+    });
+  </script>
+  <script>
     document.addEventListener("DOMContentLoaded", () => {
       document.querySelectorAll(".blog-card").forEach((el, i) => {
         el.style.opacity = "0";
