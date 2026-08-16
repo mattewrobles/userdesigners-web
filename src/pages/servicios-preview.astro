@@ -1,0 +1,66 @@
+---
+// Servicios — 100% Astro: HTML nativo renombrado (ud-) + Navbar/Footer DS.
+import fs from "fs";
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+
+let html = fs.readFileSync("src/html/servicios-native.html", "utf-8");
+
+// Forzar visibilidad (estados del player) — los <style> se conservan (CSS nativo)
+html = html.replace(/opacity:\s*0\.001/gi, "opacity:1");
+html = html.replace(/opacity:\s*0;/gi, "opacity:1;");
+html = html.replace(/opacity:0(?!\d)/gi, "opacity:1");
+html = html.replace(/transform:\s*translateY\(-?\d+px\)/gi, "transform:none");
+html = html.replace(/transform:\s*perspective\([^)]*\)\s*translateY\([^)]*\)/gi, "transform:none");
+html = html.replace(/filter:\s*blur\(10px\)/gi, "filter:none");
+
+// Extraer el contenido (nav/footer/hero del home se reemplazan por DS y HomeHero)
+const bodyMatch = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+const body = bodyMatch ? bodyMatch[1] : html;
+// Empezar desde la primera sección de contenido (excluye hero global del home)
+const contentStart = body.indexOf('data-ud-name="How It Works"');
+const footerStart = body.indexOf("<footer");
+const desde = contentStart > 0 ? body.lastIndexOf("<section", contentStart) : -1;
+const hasta = footerStart > 0 ? footerStart : body.length;
+const secciones = desde >= 0 ? body.slice(desde, hasta) : body;
+// CSS de la página (los <style> del head renombrados) — necesario para el layout
+const cssStyles = html.match(/<style[^>]*>[\s\S]*?<\/style>/gi) || [];
+---
+
+<html lang="es-EC">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Servicios nativo | UserDesigners</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Familjen+Grotesk:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles/tokens.css" />
+    {cssStyles.map((s) => (
+      <Fragment set:html={s} />
+    ))}
+    <style>
+      /* Los textos de la plantilla vienen en negro (0,0,0) porque el player de
+         Framer les ponía color en runtime. Sobre fondo negro deben ser blancos. */
+      .ud-tqfFO h1, .ud-tqfFO h2, .ud-tqfFO h3,
+      .ud-tqfFO p, .ud-tqfFO li, .ud-tqfFO span,
+      .ud-tqfFO .ud-text {
+        color: #fff !important;
+      }
+      .ud-tqfFO .ud-text[style*="--ud-text-color"] {
+        --ud-text-color: #fff !important;
+      }
+    </style>
+  </head>
+  <body style="background:#030303;margin:0">
+    <Navbar />
+    <div class="ud-tqfFO" data-ud-root="" style="min-height:100vh;width:auto">
+      <Fragment set:html={secciones} />
+    </div>
+    <Footer />
+  </body>
+</html>
