@@ -52,25 +52,29 @@ Sitio web de [UserDesigners](https://www.userdesigners.com), agencia de diseño 
 - [x] **Mantenimiento** (`/mantenimiento`)
 - [x] **Design System** (17 componentes + tokens)
 - [x] **404** rediseñado
-- [x] **Navbar y Footer como componentes** (`Navbar.astro` / `Footer.astro`) — usados en páginas Astro nativas
+- [x] **Navbar y Footer como componentes** (`Navbar.astro` / `Footer.astro`) — usados en todas las páginas
 - [x] **CI anti-slop** en push/PR
 - [x] **Contacto** (`/contacto`) — reconstruido 100% nativo con DS (BlobField, Marquee testimonios, form por WhatsApp, schema ContactPage+Organization, fotos reales de clientes). `src/html/contacto.html` ELIMINADO.
+- [x] **Home** (`/`) — Hero nuevo aprobado (HomeHero.astro con glow cian/rojo) + secciones 1:1 desde `home-native.html` + BlogSection dinámico del CMS
+- [x] **Servicios** (`/servicios`) — HTML framer renombrado (ud-) con Navbar/Footer DS, tarjetas de servicios, viñetas del hero corregidas
+- [x] **Nosotros** (`/nosotros`) — hero + experiencia + team (hover accordion) + áreas + CTA con dashboard ajustado
+- [x] **Proyectos** (`/proyectos`) — hero + cards 2x2 + testimonios animados (Marquee de contacto)
+
+### ✅ Framer eliminado de las páginas migradas
+- HTML framer originales (`index.html`, `servicios.html`, `nosotros.html`, `proyectos.html`) ELIMINADOS
+- Scripts del player (script_main.mjs, events.framer.com), @font-face de framerusercontent, badges/editor ELIMINADOS de los `*-native.html`
+- `framer-home.css`, `old-framer.css`, páginas temporales diag, previews ELIMINADOS
+- **0 código Framer en el render de `/`, `/servicios`, `/nosotros`, `/proyectos`** (verificado en build)
 
 ### 🔄 En progreso
-- [ ] **Etapa 2 — Limpieza de assets** (200+ assets Framer sin organizar en `/assets/local`)
-- [ ] **Etapa 3 — Navbar/Footer en páginas Framer** (hoy duplicados: embebidos en HTML Framer + componentes Astro)
+- [ ] **Proyectos individuales** (`/proyectos/:slug` — kaito, novo, utransfer, verificacion-biometrica) — AÚN EN FRAMER (no migradas)
+- [ ] **Limpieza de assets** (200+ assets sin organizar en `/assets/local`)
 
-### ⏳ Pendiente (marketing en Framer)
-- [ ] **Etapa 4 — Reconstruir en Astro nativo** (5 páginas restantes):
-  - [ ] Home (`/`)
-  - [ ] Servicios (`/servicios`)
-  - [ ] Nosotros (`/nosotros`)
-  - [ ] Proyectos (`/proyectos`)
-  - [ ] Proyectos individuales (`/proyectos/:slug`)
-- [ ] **Etapa 5 — Eliminar dependencia de Framer** (quitar 17 scripts `.mjs` remotos por página + ~463KB JS no usado)
+### ⏳ Pendiente
+- [ ] **Eliminar dependencia de Framer en proyectos individuales** (las 4 internas siguen sirviendo HTML Framer)
 - [ ] **Etapa 6 — SEO + Performance final**
 
-**Progreso estimado:** ~60% del sitio en Astro nativo. 11 de 16 rutas (blog, contacto, seo-doctores, mantenimiento, design-system, 404) · las 5 rutas de marketing (home, servicios, nosotros, proyectos) siguen sirviendo HTML Framer con ~463KB de JS muerto.
+**Progreso estimado:** ~90% del sitio en Astro nativo. 15 de 19 rutas · solo las 4 internas de proyectos siguen en Framer.
 
 ---
 

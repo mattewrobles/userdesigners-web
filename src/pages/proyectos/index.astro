@@ -1,5 +1,204 @@
 ---
+// Proyectos — 100% Astro: HTML nativo renombrado (ud-) + Navbar/Footer DS.
 import fs from "fs";
-const html = fs.readFileSync("src/html/proyectos.html", "utf-8");
-return new Response(html, { headers: { "content-type": "text/html; charset=utf-8" } });
+import Navbar from "../../components/Navbar.astro";
+import Footer from "../../components/Footer.astro";
+import SectionLabel from "../../components/ui/SectionLabel.astro";
+import Marquee from "../../components/ui/Marquee.astro";
+import TestimonialCard from "../../components/TestimonialCard.astro";
+
+// Testimonios (los mismos de contacto, que ya funcionan con Marquee animado)
+const testimonios = [
+  {
+    quote: "Llegamos con una idea muy difusa y salimos con un producto claro, ordenado y listo para crecer. Su proceso de UX Research nos abrió los ojos.",
+    name: "Juan Méndez",
+    role: "Director General",
+  },
+  {
+    quote: "Nuestra landing estaba bonita, pero no convertía. Después del rediseño, nuestra tasa de conversión aumentó más del doble.",
+    name: "Sandra García",
+    role: "Directora en OM Dental y Destino Salud",
+  },
+  {
+    quote: "Diseñaron nuestra app con un nivel de detalle increíble. Todo fluye. Nuestro equipo de desarrollo dijo que es el prototipo más claro y usable que han recibido. Nos ahorraron meses de retrabajo.",
+    name: "Diego Morales",
+    role: "CTO de app",
+  },
+  {
+    quote: "Trabajar con este equipo fue un antes y después para nuestra marca. No solo entendieron lo que queríamos… entendieron lo que necesitábamos. Nuestro producto ahora se siente más claro.",
+    name: "Rosalía Moscoso",
+    role: "Fundadora de Destino Salud",
+  },
+  {
+    quote: "No solo diseñaron pantallas, diseñaron el producto completo. Desde el mapa de usuario hasta el sistema visual. Su trabajo elevó el proyecto y nos ayudó a conseguir inversión. Literalmente marcó la diferencia.",
+    name: "Grecia Ochoa",
+    role: "CEO de una startup en etapa seed",
+  },
+  {
+    quote: "Le dieron vida a la página con un diseño totalmente innovador, ahora los clientes pueden encontrarnos con facilidad gracias a su posicionamiento.",
+    name: "Dra. Janne",
+    role: "Manager en Destino Salud",
+  },
+];
+
+let html = fs.readFileSync("src/html/proyectos-native.html", "utf-8");
+
+// Forzar visibilidad (estados del player) — el hero usa opacity:0 + translateY
+// como estado inicial de entrada; sin player quedan invisibles. Los transforms
+// de layout (translateX(-50%), scale) NO se tocan.
+html = html.replace(/opacity:\s*0\.001/gi, "opacity:1");
+html = html.replace(/opacity:\s*0;/gi, "opacity:1;");
+html = html.replace(/opacity:0(?!\d)/gi, "opacity:1");
+html = html.replace(/transform:\s*perspective\([^)]*\)\s*translateY\([^)]*\)/gi, "transform:none");
+html = html.replace(/transform:\s*scale\(0\.8\)/gi, "transform:none");
+html = html.replace(/filter:\s*blur\(10px\)/gi, "filter:none");
+// visibility:hidden son estados de entrada que el player animaba
+html = html.replace(/visibility:\s*hidden/gi, "visibility:visible");
+
+// Extraer el contenido (nav se reemplaza por Navbar DS; footer por Footer DS)
+const bodyMatch = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+const body = bodyMatch ? bodyMatch[1] : html;
+const footerStart = body.indexOf("<footer");
+const heroSecStart = body.indexOf('data-ud-name="Hero Section"');
+const secTag = heroSecStart > 0 ? body.lastIndexOf("<section", heroSecStart) : -1;
+// El bloque nativo de testimonios (se corta sin el player) se reemplaza por la
+// sección animada de contacto (Marquee). Localizar sus límites para excluirlo.
+const testiStart = body.indexOf("TESTIMONIALES");
+const testiDivStart = testiStart > 0 ? body.lastIndexOf("<div", testiStart) : -1;
+const bodyEnd = footerStart > 0 ? footerStart : body.length;
+// Parte 1: desde el Hero hasta antes del bloque de testimonios
+const parte1 = secTag >= 0 && testiDivStart > secTag ? body.slice(secTag, testiDivStart) : "";
+// Parte 2: lo que queda del bloque de testimonios hasta el footer (se descarta)
+// — los proyectos ya están en parte1, los testimonios van reemplazados abajo.
+// CSS de la página (los <style> del head renombrados) — necesario para el layout
+const cssStyles = html.match(/<style[^>]*>[\s\S]*?<\/style>/gi) || [];
 ---
+
+<html lang="es-EC">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Proyectos | UserDesigners</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Familjen+Grotesk:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles/tokens.css" />
+    <link rel="stylesheet" href="/home.css" />
+    {cssStyles.map((s) => (
+      <Fragment set:html={s} />
+    ))}
+    <style is:inline>
+      /* Los textos de la plantilla vienen en negro (0,0,0) porque el player de
+         Framer les ponía color en runtime. Sobre fondo negro deben ser blancos. */
+      .ud-tqfFO h1, .ud-tqfFO h2, .ud-tqfFO h3,
+      .ud-tqfFO p, .ud-tqfFO li, .ud-tqfFO span,
+      .ud-tqfFO .ud-text {
+        color: #fff !important;
+      }
+      .ud-tqfFO .ud-text[style*="--ud-text-color"] {
+        --ud-text-color: #fff !important;
+      }
+      /* El CSS del framework (border desde --border-* variables) no aplica sin el
+         player → las cards de proyectos quedan con border azul de link default. */
+      .ud-tqfFO [data-ud-name="Desktop"],
+      .ud-tqfFO [data-ud-name="Default"],
+      .ud-tqfFO .ud-GISSF {
+        border: 1px solid rgb(62, 62, 65) !important;
+        text-decoration: none !important;
+        color: #fff !important;
+      }
+    </style>
+  </head>
+  <body style="background:#030303;margin:0;overflow-x:hidden">
+    <Navbar />
+    <div class="ud-tqfFO ud-72rtr7 ud-YXLyn ud-WOlJs ud-azf2I ud-rQvtk ud-GISSF" data-ud-root="" style="min-height:100vh;width:100%;max-width:1440px">
+      <Fragment set:html={parte1} />
+    </div>
+    <!-- Testimonios animados (los mismos de contacto, con Marquee) -->
+    <section class="testimonials">
+      <div class="testimonials-inner">
+        <div class="testimonials-head">
+          <div>
+            <SectionLabel>Testimonios</SectionLabel>
+            <h2>Nuestros clientes hablan</h2>
+          </div>
+          <p>Lo que dicen quienes ya trabajaron con nosotros, de la investigación al lanzamiento.</p>
+        </div>
+        <div class="testimonials-marquee">
+          <Marquee speed={26} gap={24}>
+            {testimonios.map((t, i) => <TestimonialCard testimonio={t} index={i} />)}
+          </Marquee>
+          <Marquee speed={30} gap={24} reverse>
+            {testimonios.slice(3).map((t, i) => <TestimonialCard testimonio={t} index={i + 3} />)}
+            {testimonios.slice(0, 3).map((t, i) => <TestimonialCard testimonio={t} index={i} />)}
+          </Marquee>
+        </div>
+      </div>
+    </section>
+    <Footer />
+    <style is:inline>
+      .testimonials {
+        position: relative;
+        padding: 120px var(--space-pad) 130px;
+        background: var(--ud-black);
+      }
+      .testimonials-inner { max-width: var(--container-max); margin: 0 auto; }
+      .testimonials-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 32px; flex-wrap: wrap; margin-bottom: 56px; }
+      .testimonials-head h2 {
+        font-family: var(--font-display);
+        font-size: var(--heading-1);
+        font-weight: 500;
+        letter-spacing: -0.03em;
+        line-height: 1.1;
+        text-wrap: balance;
+        max-width: 22ch;
+        color: var(--text-primary);
+        margin: 0;
+      }
+      .testimonials-head p { color: var(--text-secondary); max-width: 34ch; line-height: 1.7; margin: 0; }
+      .testimonials-marquee { display: flex; flex-direction: column; gap: 24px; }
+      @media (max-width: 720px) {
+        .testimonials-head { margin-bottom: 32px; }
+      }
+    </style>
+    <script is:inline>
+      // El player de Framer calculaba alturas en runtime (height:min-content +
+      // hijos absolute colapsan sin él). Medimos el contenido real y fijamos
+      // min-height en los contenedores principales para revivir el layout.
+      const fixLayout = () => {
+        const root = document.querySelector(".ud-tqfFO");
+        if (!root) return;
+        const fix = (el) => {
+          for (const child of Array.from(el.children)) {
+            if (child.tagName === "STYLE") continue;
+            const isBlock = child.tagName === "SECTION" || child.tagName === "HEADER";
+            const isCard = (child.className || "").toString().includes("-container") && child.querySelector(":scope > *");
+            if (isBlock || isCard) {
+              const childRect = child.getBoundingClientRect();
+              const currentH = childRect.height;
+              if (isBlock || currentH < 100) {
+                let maxBottom = currentH;
+                for (const c of child.querySelectorAll("*")) {
+                  const cr = c.getBoundingClientRect();
+                  if (cr.left > childRect.right + 10 || cr.right < childRect.left - 10) continue;
+                  const b = cr.bottom - childRect.top;
+                  if (b > maxBottom) maxBottom = b;
+                }
+                if (maxBottom > currentH + 20) {
+                  child.style.minHeight = Math.ceil(maxBottom) + "px";
+                }
+              }
+            }
+            fix(child);
+          }
+        };
+        fix(root);
+      };
+      window.addEventListener("DOMContentLoaded", fixLayout);
+      window.addEventListener("load", () => setTimeout(fixLayout, 150));
+    </script>
+  </body>
+</html>

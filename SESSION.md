@@ -799,3 +799,23 @@ Uso: `<BlobField variant="blog" count={5} opacity={0.85} speed={20} />`
 - Mau valida responsive en su celular.
 - Servicios: rediseño de la página (Mau dijo que la va a rediseñar) — las viñetas del hero en móvil desbordan.
 - Mau validó: footer SIEMPRE del DS (ya revertido), hover team OK, CTA dashboard posicionado.
+
+## Ago 16 (final) — ELIMINACIÓN COMPLETA DE FRAMER en páginas migradas ✅
+
+Mau: "borremos todo lo que sea framer ya no quiero nada de framer" — pero las internas de proyectos (kaito/novo/utransfer/verificacion-biometrica) AÚN NO migradas → DEJAR.
+
+**Hecho:**
+1. Los 4 `*-native.html` quedaron en **0 menciones de framer**:
+   - @font-face de framerusercontent.com eliminados (las fuentes vienen de Google Fonts: DM Sans + Familjen Grotesk)
+   - Script del player (`script_main.CjZEVzFK.mjs` de framerusercontent) eliminado
+   - Script de analytics `events.framer.com/script` eliminado
+   - Comentario "Made in Framer", CSS de badge/editor, `data-ud-components` con prefijos framer- eliminados
+2. Previews copiados a rutas reales: `hero-preview.astro→index.astro`, `servicios-preview.astro→servicios/index.astro`, etc.
+   - **Importante**: al mover a subcarpeta, imports relativos cambian `../components/` → `../../components/`
+3. Eliminados: previews, páginas diag (diag/diag-logos/diag-logos2), HTML framer originales (index.html/servicios.html/nosotros.html/proyectos.html), `framer-home.css`, `old-framer.css`, `.shots`, `.playwright-mcp`
+4. Titles actualizados (sin "nativo"), `noindex` quitado de las páginas reales
+5. Build verificado: 33 páginas sin errores, **0 código framer en dist de las 4 migradas**
+
+**Queda en Framer (intencional):** las 4 internas `/proyectos/:slug` (kaito, novo, utransfer, verificacion-biometrica) — aún no migradas. Sus `src/html/proyectos/*.html` y sus páginas `src/pages/proyectos/{kaito,novo,utransfer,verificacion-biometrica}.astro` intactas.
+
+**Menciones "framer" restantes en src:** solo comentarios de código (explican que los selectores ud- vienen de framer renombrados) y `design-system.astro` (documentación del DS). No son código ejecutable.
