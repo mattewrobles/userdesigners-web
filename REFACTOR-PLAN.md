@@ -1,215 +1,131 @@
-# Refactor UserDesigners Web — Plan por Etapas
+# Refactor UserDesigners Web — Plan por Fases (v2)
 
-> **Branch:** `refactor/test-fase1`  
-> **Proyecto:** `~/Developer/work/userdesigners-web-migration`  
-> **Status actual:** Híbrido Framer HTML + Astro nativo
-
----
-
-## Diagnóstico corto
-
-El sitio tiene **dos mundos conviviendo**:
-
-| Mundo | Páginas | Cómo se sirven |
-|-------|---------|----------------|
-| **Framer HTML** | Home, Servicios, Nosotros, Contacto, Proyectos, Proyectos indiv. | HTML exportado crudo via `return new Response()` |
-| **Astro nativo** | Blog, /blog/:slug, SEO Doctores | Componentes Astro con layouts |
-
-**Problemas raíz:**
-- CSS de Framer (200+ líneas solo de @font-face) + 463KB de JS de Framer que no se usa
-- Navbar y Footer duplicados: en cada HTML de Framer (embebido) + Navbar.astro / Footer.astro para páginas Astro
-- 200+ assets locales sin organizar
-- 6 páginas Framer no se pueden editar sin re-exportar
+> **Branch de trabajo:** `refactor/test-fase1` → merge a `main` (producción)
+> **Proyecto:** `~/Developer/work/userdesigners/userdesigners-web-migration`
+> **Objetivo:** Migrar TODO a Astro nativo replicando el diseño original de Framer al pixel. Las versiones Framer originales SE QUEDAN en `src/html/` como respaldo (nunca se borran hasta fase final).
 
 ---
 
-## Etapa 1 — Quick wins ✅ (YA en branch)
+## Principios (reglas de trabajo)
 
-- [x] Corregir slug del blog (`dise-o` → `diseno`) 
-- [x] Eliminar `Welcome.astro` (boilerplate muerto)
-- [x] Crear `public/_headers` (X-Frame-Options, CSP, CORS)
-- [x] `trailingSlash: "always"` en `astro.config.mjs`
-- [ ] Commitar y pushear branch
-
-**Riesgo:** Cero. Cosas que no afectan nada si algo sale mal.
-
----
-
-## Etapa 2 — Limpieza de CSS y assets
-
-### Qué hacer
-
-1. **Unificar framer.css y framer-global.css**
-   - Ambos tienen las mismas @font-face declarations (DM Sans, Inter, Outfit, Geist Mono, etc.)
-   - Dejar solo UNO con las fuentes que REALMENTE se usan
-   - Las fuentes que están en `assets/local/*.woff2` vs `framerusercontent.com` — decidir local (más rápido)
-
-2. **Auditar qué fonts se usan realmente**
-   - El CSS declara 10+ familias: DM Sans, Outfit, Geist Mono, Inter (regular+italic 300/400/500/600/700/900), Inter Display, Familjen Grotesk, Manrope, Poppins, General Sans, Clash Grotesk, Satoshi
-   - Probablemente solo se usan 3-4: Inter, Familjen Grotesk, DM Sans, Poppins
-   - Eliminar las no usadas → ahorro de ~200KB en fonts
-
-3. **Mover assets organizados**
-   - `public/assets/local/` tiene 200+ archivos mezclados (fonts, JS, imágenes)
-   - Separar:
-     - `public/fonts/` — solo woff2
-     - `public/images/` — PNGs, JPGs, WebP
-     - `public/js/` — solo JS necesario (si algo se usa realmente)
-
-### Archivos a modificar
-- `src/styles/framer.css`
-- `src/styles/framer-global.css`
-- `src/layouts/BlogPost.astro` (referencia a CSS)
-- `src/pages/blog/index.astro` (referencia a CSS)
-- `src/pages/seo-doctores/index.astro` (referencia a CSS)
-
-### Riesgo
-- **Bajo.** Si una fuente falta, el browser usa fallback. No se rompe nada.
+1. **Fidelidad total, no rediseño.** Cada página Astro = misma animación, spacing, border, imagen, color, botón que la original. El DS ya contiene los tokens extraídos de Framer (`tokens.css`). Verificar con screenshot + modelo vision.
+2. **Sección por sección.** Cada sección es un ciclo: analizar HTML/CSS Framer → construir en Astro con DS → build → screenshot → vision → arreglar → re-verificar (hasta 10x). Nada de "hacer la página de un tirón".
+3. **DS obligatorio.** `public/styles/tokens.css` + componentes `src/components/ui/` (Button, BlobField, Container, Reveal...). Nunca hex suelto en CSS nuevo. Si falta un token → agregarlo al DS con justificación.
+4. **Animación:** motion.dev (ya instalado) para reveals/micro-interacciones, GSAP para scroll choreography. Respetar `prefers-reduced-motion`.
+5. **Anti-slop:** correr `npm run slop` y dejar CI verde antes de mergear.
+6. **Seguridad:** fixes en partes, nunca en el mismo cambio que una migración.
+7. **Verificación:** NUNCA decir "listo" sin build + screenshot + vision. Si no puedo verificar → avisar a Mau.
 
 ---
 
-## Etapa 3 — Componentizar Navbar y Footer
+## Fase 0 — Seguridad + higiene (en partes, riesgos bajos)
 
-### Qué hacer
+### 0a. Headers de seguridad
+- [ ] Agregar `Strict-Transport-Security` (HSTS) en `public/_headers`
+- [ ] Agregar `Content-Security-Policy` básica (default-src 'self', allow framerusercontent mientras exista, GA4, fonts) — diseñada para NO romper las páginas Framer actuales
+- [ ] Verificar en producción que los headers apliquen (incluyendo páginas servidas con `return new Response()`)
 
-1. **Analizar el navbar actual de Framer**
-   - `public/navbar.html` tiene 1.3KB de HTML Framer con clases ofuscadas
-   - Extraer la estructura real (logo, 6 links, CTA WhatsApp)
-   - Reconstruir como HTML semántico limpio en `Navbar.astro`
+### 0b. Fixes de errores del audit
+- [ ] Link interno roto: `/proyectos/verificaci-n-biom-trica` → apuntar al slug correcto `/proyectos/verificacion-biometrica`
+- [ ] Home mobile: H1 desbordado ("Fintec...") → fix CSS
+- [ ] CI anti-slop rojo: tokenizar colores/radios fuera del DS o actualizar DESIGN.md → dejar `npm run slop` en 0
 
-2. **Analizar el footer actual de Framer**
-   - `public/footer.html` tiene 21KB (mucho gradient/blur de Framer)
-   - Extraer contenido real (logo, copyright, redes sociales)
-   - Reconstruir con CSS limpio en `Footer.astro`
-
-3. **Problema a resolver:**
-   Hoy hay 2 navbars diferentes:
-   - En páginas Framer: navbar embebido en el HTML exportado
-   - En páginas Astro: `Navbar.astro` y `Footer.astro` injectados
-   
-   Solución temporal: que ambas versiones se vean IGUAL. Revisar que `Navbar.astro` nuevo se vea idéntico al de Framer. No reemplazar el embebido hasta etapa 4.
-
-### Archivos a modificar
-- `public/navbar.html` (referencia)
-- `public/footer.html` (referencia)
-- `src/components/Navbar.astro`
-- `src/components/Footer.astro`
-- `src/styles/navbar.css` (nuevo)
-
-### Riesgo
-- **Medio.** El navbar es crítico. Si se ve diferente en blog vs home, es mala experiencia.
+### 0c. Cache edge
+- [ ] Evaluar `Cache-Control: public, s-maxage` para HTML en `_headers` (hoy `max-age=0, must-revalidate` → cf-cache-status DYNAMIC)
 
 ---
 
-## Etapa 4 — Reconstruir páginas Framer como Astro nativas
+## Fase 1 — HOME → Astro nativo (sección por sección)
 
-### Qué hacer
+El home tiene 13 secciones (mapeadas del HTML Framer):
 
-Una por una, convertir las 6 páginas Framer de HTML crudo a componentes Astro:
+| # | Sección Framer | Sección Astro |
+|---|----------------|---------------|
+| 1 | Navbar (`1j7ffam`) | `Navbar.astro` (ya existe — alinear al pixel con el Framer) |
+| 2 | Content/Top (H1 + sub + CTA) | `HeroTop.astro` |
+| 3 | SocialProof (logos clientes) | `SocialProof.astro` |
+| 4 | Gradient Blur (blob) | `BlobField variant="home"` |
+| 5 | Line (animación de línea) | `HeroLine.astro` |
+| 6 | Title (título grande) | parte de HeroTop |
+| 7 | Tabs container (cards servicios) | `ServiceTabs.astro` |
+| 8 | Benefits (line-scroll features) | `Benefits.astro` |
+| 9 | Proyectos header | `ProjectsSection.astro` |
+| 10 | Team | `TeamSection.astro` |
+| 11 | Content (Top Container) | sección testimonios/stats |
+| 12 | Featured Articles (blog) | `FeaturedArticles.astro` (usa BlogList/content) |
+| 13 | CTA final + Footer | `CTASection.astro` + `Footer.astro` |
 
-1. **Home** (`/`) — la más compleja (673KB)
-2. **Servicios** (`/servicios`) — 555KB
-3. **Nosotros** (`/nosotros`) — 448KB
-4. **Contacto** (`/contacto`) — 384KB
-5. **Proyectos** (`/proyectos`) — 366KB
-6. **Proyectos individuales** (kaito, novo, utransfer, verificación) — ~265KB c/u
+**Orden:** Hero (secciones 1-6) → verificar 10x → Services tabs → Benefits → Proyectos → Team → Blog → CTA. Cada sección termina con build + screenshot + vision.
 
-**Estrategia:**
-- Extraer el contenido REAL de cada HTML (textos, imágenes, estructura)
-- Reconstruir como componentes Astro con CSS limpio
-- Preservar animaciones/efectos visuales clave
-- Usar `BaseLayout.astro` como layout común (actualmente muerto)
-- Reemplazar `return new Response()` con renderizado Astro real
-
-**Para animaciones de Framer:**
-- Framer usa motion.js para animaciones de entrada (appear)
-- Se puede replicar con CSS animations + Intersection Observer
-- El 463KB de `framer.D73RSanu.mjs` se puede eliminar al final
-
-### Archivos a crear
-- `src/components/sections/HeroSection.astro`
-- `src/components/sections/ServiciosSection.astro`
-- `src/components/sections/ProyectosSection.astro`
-- etc.
-
-### Riesgo
-- **Alto.** Cambia TODO el sitio visualmente. Hacer de a una página, desplegar, validar.
+**Nota de fidelidad:** el original usa texto en letras separadas con blur(10px) inicial (animación letter-by-letter). Replicar con `LetterReveal`/motion.dev. El fondo negro puro + glow conic-gradients reales → tokens `--glow-*` (ya están en tokens.css).
 
 ---
 
-## Etapa 5 — Eliminar dependencia Framer
+## Fase 2 — NOSOTROS → Astro nativo
 
-### Qué hacer cuando todas las páginas son Astro nativas
-
-1. Eliminar JS bundles de Framer (`public/assets/local/*.mjs`) — ahorro de ~600KB
-2. Eliminar CSS de Framer inline en cada página
-3. Unificar todo en `BaseLayout.astro` como layout único
-4. Eliminar archivos body-*.html y componentes/content/ (sobrantes de migración)
-5. Eliminar la carpeta `public/components/` entera (7 archivos HTML de ~1.3MB)
-
-### Riesgo
-- **Bajo** (si etapa 4 está completa). Solo cleanup.
+Misma lógica sección por sección. `src/html/nosotros.html` (458KB) como fuente de verdad.
 
 ---
 
-## Etapa 6 — SEO + Performance final
+## Fase 3 — SERVICIOS → Astro nativo
 
-### Qué hacer
-
-1. **Blog SEO:**
-   - Internal linking: conectar blog posts entre sí y con páginas de servicio
-   - Breadcrumb schema en blog posts
-   - Topic clusters: los posts actuales son "Product Design" — necesitan más clusters
-   - Optimizar hero images (WebP con srcset)
-
-2. **Performance:**
-   - Lazy loading en imágenes below the fold (home tiene 54 imágenes)
-   - Preload de hero image (LCP)
-   - CSS crítico inline para el home
-   - Eliminar Google Analytics y Clarity de páginas Framer (ya están en las Astro)
-
-3. **Páginas Framer:**
-   - Actualmente 404.html no existe en Astro nativo — está en `public/404.html`
-   - Verificar que Cloudflare lo sirva correctamente
+Misma lógica. `src/html/servicios.html` (567KB). 109 imágenes con alt — conservar las reales, organizarlas.
 
 ---
 
-## Resumen de fases
+## Fase 4 — PROYECTOS → landing + template interno + automatización
 
-| Fase | Qué | Riesgo | Tiempo estimado |
-|------|-----|--------|-----------------|
-| 1 | Quick wins (slug, _headers, trailingSlash, Welcome) | 🟢 Cero | 30 min |
-| 2 | Limpieza CSS y fonts | 🟢 Bajo | 2-3 hrs |
-| 3 | Componentizar Navbar y Footer | 🟡 Medio | 3-4 hrs |
-| 4 | Reconstruir páginas Framer → Astro | 🔴 Alto | 2-3 semanas |
-| 5 | Eliminar dependencia Framer | 🟢 Bajo | 1 día |
-| 6 | SEO + Performance final | 🟢 Bajo | 2-3 días |
+### 4a. Landing `/proyectos/`
+Replicar tal cual (tarjeta de casos).
+
+### 4b. Template interno (casos de estudio)
+Analizar los 4 casos actuales (`src/html/proyectos/{kaito,novo,utransfer,verificacion-biometrica}.html`). Extraer el PATRÓN común:
+- estructura de secciones (hero, contexto, rol, entregables, screenshots, resultados)
+- tipo de contenido (texto, imágenes, stats, quotes)
+→ Crear `src/layouts/CasoEstudio.astro` + Content Collection `src/content/proyectos/` con frontmatter tipado (slug, cliente, categoría, año, descripción, imágenes, stats).
+
+### 4c. Automatización
+- Misma mecánica que el blog: Content Collections + `getStaticPaths` (ya funciona así con `src/pages/proyectos/[...slug].astro`).
+- Evaluar pipeline Notion (como blogs) para publicar casos nuevos sin tocar código.
 
 ---
 
-## Stack final (cuando termine)
+## Fase 5 — Eliminar dependencia Framer
 
-```
-userdesigners.com
-├── src/
-│   ├── components/
-│   │   ├── Navbar.astro       ← limpio, semántico
-│   │   ├── Footer.astro       ← limpio, semántico
-│   │   └── sections/           ← secciones reutilizables
-│   ├── layouts/
-│   │   ├── BaseLayout.astro   ← layout ÚNICO para todo
-│   │   └── BlogPost.astro     ← layout de blog post
-│   ├── pages/                  ← TODAS nativas Astro
-│   ├── content/blog/           ← posts en markdown
-│   └── styles/
-│       └── global.css          ← CSS unificado (sin Framer)
-├── public/
-│   ├── fonts/                  ← solo woff2 que se usan
-│   ├── images/                 ← organizado
-│   ├── _headers                ← seguridad
-│   ├── robots.txt
-│   └── _redirects
-└── astro.config.mjs
-```
+Cuando todas las páginas sean nativas:
+- [ ] Quitar el player remoto `script_main.*.mjs` y los 17 scripts .mjs por página (ahorro ~463KB JS)
+- [ ] Reemplazar imágenes `framerusercontent.com` por locales organizadas (`/assets/local` → `/images`)
+- [ ] Eliminar CSS inline Framer sobrante
+- [ ] Mover fuentes a locales y eliminar refs remotas (105 por página)
 
-Sin Framer. Sin JS bundles de 463KB. Sin @font-face duplicados. Sin dead code.
+---
+
+## Fase 6 — SEO + Performance final
+
+- [ ] Lazy loading + width/height en todas las imágenes (hoy 1 `loading="lazy"` en el home)
+- [ ] Preload hero image (LCP)
+- [ ] Edge cache HTML (`s-maxage`)
+- [ ] Internal linking blog ↔ páginas
+- [ ] Breadcrumb schema
+- [ ] Sitemap final + verificación
+
+---
+
+## Seguridad pendiente (post-migración)
+
+- [ ] Cuando no quede JS de framerusercontent → endurecer CSP a `script-src 'self'`
+- [ ] Revisar `access-control-allow-origin: *` (lo inyecta Cloudflare)
+- [ ] Rotar/limpiar `.secrets` local (GITHUB_PAT, N8N_API_KEY, tokens Notion/tokenrouter)
+
+---
+
+## Estado
+
+- [x] Fase 0a-0b: análisis completo del audit (SESSION.md)
+- [ ] Fase 0: fixes seguridad + CI verde
+- [ ] Fase 1: Home nativo (en curso — hero primero)
+- [ ] Fase 2: Nosotros
+- [ ] Fase 3: Servicios
+- [ ] Fase 4: Proyectos landing + template + automatización
+- [ ] Fase 5: limpieza Framer
+- [ ] Fase 6: SEO/perf final

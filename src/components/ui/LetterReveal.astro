@@ -59,6 +59,19 @@ const elId = `letters-${Math.random().toString(36).slice(2, 8)}`;
     const chars = el.querySelectorAll("span > span");
     let started = false;
 
+    // Fallback de robustez: SIEMPRE fuerza el estado visible a los 3s, cancelando
+    // cualquier animación WAAPI congelada (headless, tab oculta). El texto jamás
+    // queda oculto o borroso.
+    window.setTimeout(() => {
+      started = true;
+      chars.forEach((c) => {
+        c.getAnimations().forEach((a) => a.cancel());
+        c.style.opacity = "1";
+        c.style.transform = "translateY(0)";
+        c.style.filter = "blur(0px)";
+      });
+    }, 3000);
+
     inView(
       el,
       () => {

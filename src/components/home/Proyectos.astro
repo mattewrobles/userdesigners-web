@@ -1,0 +1,142 @@
+---
+// Proyectos — réplica de la sección "Casos de estudio" del home (Framer 1024udx).
+const proyectos = [
+  { img: "/assets/local/proyectos/utransfer-screen.png", nombre: "Utransfer", cat: "Fintech", tag: "App + Web" },
+  { img: "/assets/local/proyectos/proyecto-n.png", nombre: "N***", cat: "Fintech", tag: "App" },
+  { img: "/assets/local/proyectos/proyecto-n.png", nombre: "K***", cat: "Fintech Cripto", tag: "App" },
+  { img: "/assets/local/proyectos/papers-logo.png", nombre: "Papers", cat: "UserDesigners", tag: "Identidad" },
+  { img: "/assets/local/proyectos/utransfer-screen.png", nombre: "Verificación biométrica", cat: "Digital Identity", tag: "UX" },
+];
+---
+
+<section class="proyectos" id="proyectos">
+  <div class="pr-head">
+    <p class="pr-kicker">CASOS DE ESTUDIO</p>
+    <div class="pr-head-right">
+      <h2 class="pr-title">Mira nuestros proyectos</h2>
+      <a class="pr-link" href="/proyectos/">Ver todos los proyectos <span aria-hidden="true">→</span></a>
+    </div>
+  </div>
+
+  <div class="pr-grid">
+    {proyectos.map((p) => (
+      <a class="pr-card" href="/proyectos/">
+        <div class="pr-img">
+          <img src={p.img} alt={p.nombre} width="1080" height="1080" loading="lazy" />
+          <span class="pr-tag">{p.tag}</span>
+        </div>
+        <div class="pr-meta">
+          <span class="pr-name">{p.nombre}</span>
+          <span class="pr-cat">{p.cat}</span>
+        </div>
+      </a>
+    ))}
+  </div>
+</section>
+
+<style>
+  .proyectos {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px 120px;
+    box-sizing: border-box;
+  }
+  .pr-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 56px;
+  }
+  .pr-kicker {
+    font: 12px var(--font-body);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgb(187, 187, 187);
+    margin: 0;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+  }
+  .pr-head-right { text-align: right; }
+  .pr-title {
+    font-family: var(--font-display);
+    font-size: clamp(30px, 4vw, 46px);
+    font-weight: 400;
+    letter-spacing: -0.04em;
+    color: #fff;
+    margin: 0 0 14px;
+  }
+  .pr-link {
+    font: 14px var(--font-body);
+    color: rgb(150, 150, 155);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .pr-link:hover { color: #fff; }
+
+  .pr-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 24px;
+  }
+  .pr-card {
+    text-decoration: none;
+    display: block;
+  }
+  .pr-img {
+    position: relative;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid rgb(35, 35, 38);
+    background: #0d0d0d;
+    aspect-ratio: 1 / 1;
+  }
+  .pr-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .pr-card:hover .pr-img img { transform: scale(1.04); }
+  .pr-tag {
+    position: absolute;
+    left: 12px;
+    bottom: 12px;
+    font: 11px var(--font-body);
+    color: rgb(200, 200, 205);
+    background: rgba(10, 10, 10, 0.7);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 999px;
+    padding: 5px 12px;
+  }
+  .pr-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 14px 4px 0;
+    gap: 12px;
+  }
+  .pr-name {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 500;
+    color: #fff;
+  }
+  .pr-cat {
+    font: 13px var(--font-body);
+    color: rgb(140, 140, 145);
+  }
+
+  @media (max-width: 700px) {
+    .proyectos { padding: 0 16px 80px; }
+    .pr-head { flex-direction: column; align-items: flex-start; }
+    .pr-kicker { writing-mode: horizontal-tb; transform: none; }
+    .pr-head-right { text-align: left; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pr-card:hover .pr-img img { transform: none; }
+  }
+</style>

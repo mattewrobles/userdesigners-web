@@ -1,5 +1,13 @@
 # UserDesigners Web — Astro Migration
 
+## Ago 15 — Analytics: SA + Sentry SUMADOS, GA4 y Clarity se quedan
+
+- **Se suman** SimpleAnalytics + Sentry browser loader en headStart/head de todas las páginas (30 en build)
+- **Se quedan**: GA4 (G-PDZVJDG9Y5), Microsoft Clarity (xytbbmamwh), Mixpanel
+- Nota: hubo un intento de retirar GA4/Clarity revertido desde HEAD — la config actual es ADD-only
+- Verificado: build OK 37 páginas, GA4+Clarity+SA+Sentry presentes
+- Pendiente: push + deploy Cloudflare Pages
+
 ## Ago 12 — Contacto nativo final + Framer eliminado del blog ★
 
 **Contacto `/contacto/` definido como página final** (100% Astro nativo):
@@ -455,3 +463,194 @@ Uso: `<BlobField variant="blog" count={5} opacity={0.85} speed={20} />`
 - Contenido: en el body de la página (headings, bullets, quotes, párrafos)
 - Status = Ready para publicar, Archived para borrar
 - Propiedad "Content" es solo respaldo, ignorarla
+
+## Ago 13 — Home migración: HERO reconstruido en Astro nativo ★ (en curso)
+
+**Inicio de la migración total Framer→Astro** (plan en REFACTOR-PLAN.md v2). Estrategia: fidelidad 1:1, sección por sección, verificación visual iterativa.
+
+**Hero del home reconstruido** (`src/components/home/HomeHero.astro`):
+- Replica exacta de: Content(Top+SocialProof) + Gradient Blur + Line + Title del HTML Framer
+- H1 "Agencia de UX/UI orientada a Fintechs": Familjen Grotesk clamp(38px,5.2vw,72px) 500, -0.03em, balance, centrado (break natural: "Agencia de UX/UI" / "orientada a Fintechs")
+- Sub: blanco 94%, glow corregido (ya no tapa el texto)
+- Botón "Ver servicios": Button stroke + borde brillante glass (box-shadow inset) reforzado
+- Glow: masa linear-gradient 140deg oro→coral→lila→cian (blur 80px, hard-light, left -167px) + 2 radial-gradients (amarillo arriba-izq, cian abajo) — fiel al original
+- Línea con pulso blanco animado (keyframes CSS)
+- Kicker "NUESTROS SERVICIOS" (14px, rgb(187,187,187), uppercase) + H2 "Más de 12 años..." (49px -0.04em 1.4em)
+
+**Logos de clientes** (`src/components/home/HomeLogos.astro`):
+- Extraídos del HTML Framer: 7 SVGs (con <use> resueltos) + 4 SVGs data-URI + 3 PNG
+- Guardados en `public/assets/local/logos/` (14 assets)
+- Carrusel infinito con `Marquee` (mask fade, speed 32), blancos brillantes (filter brightness(0) invert(1))
+
+**BUGS RAÍZ encontrados y arreglados (mejoras globales del DS):**
+- `Reveal.astro` y `LetterReveal.astro`: añadido fallback de robustez (3s) que CANCELA las animaciones WAAPI congeladas y fuerza el estado visible. El contenido ya NUNCA queda oculto/borroso si la animación no corre (headless, tab oculta, JS pausado). Antes el H1/sub podían quedar en opacity 0 o blur(10px) — el mismo anti-pattern que tenía el Framer original.
+- H1 wrap: el flex item no wrappaba por `min-width:auto`. Fix: hero-text como block + `min-width:0` + `text-wrap:balance`.
+
+**Verificación:** 13 iteraciones build+screenshot+modelo vision. H1 10/10, botón 8/10, glow 8/10. NOTA: el modelo vision de bajo costo FALLA en contrastes de textos secundarios sobre negro (percibe oscuro lo que PIL mide blanco puro) — verificar el sub/kicker en browser real.
+
+**Páginas temporales (borrar al finalizar migración):**
+- `src/pages/hero-preview.astro` — preview del hero (localhost:4322/hero-preview)
+- `src/pages/diag.astro` — diagnóstico de medidas (h1 wrap, colores)
+
+**Próximo:** sección Service Tabs (5r60op) del home → luego Benefits (clnx2s) → Proyectos → Team → Blog → CTA. Repetir ciclo por sección.
+
+## Ago 13 — Home hero: FIXES feedback de Mau (glow blog + logos + textos)
+
+**Feedback Mau y fixes (v14-v22):**
+- **Textos secundarios blancos y más pequeños:** sub a clamp(14px,1.3vw,15px) weight 400 + trust 14px regular — ANTES estaban en rgba(255,255,255,0.94)/19px. **Causa raíz del "apagado":** los textos estaban envueltos en `Reveal` (opacity 0 + blur inicial) → si la animación no corría, quedaban invisibles. **Fix global:** los textos secundarios del hero ya NO usan Reveal (visibles desde el primer frame). Los componentes Reveal/LetterReveal tienen fallback 3s que cancela WAAPI.
+- **Glow animado tipo blog:** reemplazado el glow estático (masa linear-gradient) por **BlobField variant="hero"** (creada). 3 blobs arriba-izquierda, colores análogos con sat 95-100% + lum 60-72% (antes 90-100/52-66 → se veían apagados), opacity 0.65, blur 24.
+- **BUG importante del BlobField:** el `<script>` tiene su PROPIO mapa `schemes` por variante (separado del frontmatter `variants`). Si una variante no existe en el script, cae a `schemes.blog` (blobs ABAJO). Hubo que agregar `hero` al schemes del script. **LECCIÓN:** al crear una variante nueva hay que agregarla en 2 lugares (frontmatter + script schemes).
+- **Logos del marquee:** tamaños EXACTOS del original (extraídos del CSS Framer: Banco 141x28, Toyota 123x21, Logo2 140x21, Group1316 135x22, Logo3 107x29, Logo1 140x29, Logo4 115x24, Group355 89x22, Logo5 124x25, Logo6 117x29, Logo7 84x29, AIG 78x40...). Width fijo en cada logo → marquee estable.
+- **SVGs de logos rotos (por eso se veía "Cliente"):** los SVGs extraídos del `#svg-templates` del Framer tenían `fill="none"` en el raíz → los paths no dibujaban. Fix: `fill="none"` → `fill="black"` en los 7 SVGs `<use>`. Los data-URI tienen fill rgb(188,188,188) → con el filter brightness(0) invert(1) quedan blancos. Los 3 PNG son blancos (para fondo oscuro) → OK con el filter.
+
+**Estado hero v22:** glow 9/10 (rojos/corales/magentas vivos arriba-izq, legibilidad 10/10), H1 9-10/10, botón 8/10, sub blanco 9/10. Global ~8.5/10.
+
+**Pendiente:** Mau verificar en browser real (el modelo vision de bajo costo falla en contrastes y alucina alts). Luego siguiente sección del home (Service Tabs 5r60op).
+
+## Ago 13 — Home hero v23-24: marquee 620px + logos SVG inline (fix definitivo "textos")
+
+**Feedback Mau:**
+- Marquee original "no tan ancha" → `max-width: 620px` (ancho del SocialProof del Framer). Animación más suave → Marquee `speed={70}`.
+- Blob "no tan arriba" → scheme hero `[{x:30,y:190},{x:210,y:300},{x:110,y:420}]` (punto medio entre el blog y el extremo superior).
+- **"Logos sin imagen, estás poniendo textos"** → causa raíz: los `<img src=".svg">` fallan en Chrome real de Mau (los SVGs data-URI decodificados + refs a clipPath ausentes) → el browser muestra el ALT como texto. **Fix definitivo: SVGs INLINE** en el componente (no dependen de archivos externos). 11 SVGs inline con `fill: currentColor` + `color:#fff`. PNG (utransfer/banner/blanco) siguen como img con aria-hidden. Contenedor con aria-label. A11y correcto sin mostrar texto si algo falla.
+
+**Estado hero v24:** vision confirma logos CHANGAN/FIDEVAL/Utransfer/BCP/Toyota visibles, sin textos raros. Glow OK. Global 8.5/10.
+
+## Ago 13 — Home hero: responsive arreglado (box-sizing) + logos OK
+
+- **Bug responsive mobile:** el hero usaba content-box → width 100% + padding 16 = 532px (desborde 32px). Fix: `box-sizing: border-box` en .hero + hijos. El H1 ya no se expande a 500px (wrap correcto en 2 líneas).
+- **Logo mancha blanca (logo-117x29):** el CSS `svg * { fill: currentColor }` rellenaba el rectángulo `fill="transparent"` del SVG → bloque blanco. Fix: `filter: brightness(0) invert(1)` en los SVG inline (respeta transparente, blanquea paths). Ninguna mancha restante (vision: "ninguna").
+- **Colores del glow:** baseHue ahora SIN verde/ámbar → rojos/corales (0-45), azules/violetas (210-270), magentas/violetas (300-360).
+- **Páginas diag temporales:** diag.astro, diag-logos.astro, diag-logos2.astro, hero-preview.astro (borrar al final).
+- **Estado hero:** listo (desktop 9/10, mobile sin overflow). SIGUIENTE: Service Tabs (5r60op) del home.
+
+## Ago 13 — Home: ServiceTabs construido (v1)
+
+**`src/components/home/ServiceTabs.astro`** — sección de servicios del home (Framer 5r60op):
+- Split: mockup UI a la izquierda (card oscura border 1px rgb(40,40,40), radius 22, dashboard fintech: barras doradas gradient + gráfica de línea oro→cian + "DOM LUN MAR..." + "$4,508.00 Esta semana") + 4 servicios a la derecha.
+- 4 servicios interactivos (Research, UX/UI & Redesign, Métricas y OKRs, Consultoría de MVPs) con título + descripción. Active state (título dorado, bg sutil). Click cambia.
+- Responsive: column-reverse <900px, ajustes <480px.
+- Pendiente: verificar en browser real + refinar los mockups de los otros tabs (hoy dashboard/wireframe genéricos).
+
+**Verificado v1:** split correcto, mockup fintech OK, Research activo dorado OK.
+
+**Próximo:** Benefits (clnx2s, line-scroll) → Proyectos (1024udx) → Team (14rvqy3) → Blog (161p1ww) → CTA. Luego ensamblar index.astro nativo.
+
+## Ago 14 — Análisis real del original (playwright con scroll) + fixes hero
+
+**Método nuevo (lo que Mau pidió):** monté playwright (chromium cache ms-playwright) para capturar el home ORIGINAL con scroll real (10 posiciones, /tmp/udcaptures/original/) y comparar contra mi versión con el modelo vision + muestreo de pixels (PIL).
+
+**Hero — glow CORREGIDO con datos:** muestreo de pixels mostró que el original tiene CIAN ancho a la izquierda (x5-35%) + franja naranja en x45% + derecha limpia. Mi glow ahora coincide estructuralmente: masa estática horizontal (cian 0-55% → coral 80% → oro 93% → transparente) + BlobField sutil (0.3, colors cian/azul/coral/oro sin lila/magenta). Blobs solo a la izquierda.
+- H1 (66px Familjen), sub (15px), botón (borde sutil), logos: vision confirma "coinciden".
+- Animaciones de appear al scroll: re-activados los Reveal (fade up, blur=false) con fallback robusto.
+- padding-top subido a clamp(120px,15vh,170px) para compensar navbar.
+
+**ServiceTabs v1 — DIFIERE del original (a rehacer):**
+- Original: mockup izquierdo = DASHBOARD FINANCIERO complejo (sidebar Dashboard/Transactions/Payments, tablas, gráfica de líneas, tarjeta "Bono" flotante). Items derecha = TEXTO PLANO (sin cards), primer ítem activo.
+- Mi v1: mockup = barras simplificadas (NO es el dashboard original), items en cards. **Rehacer: mockup dashboard original + items texto plano.**
+- El mockup original = componente "Shoperz_screen" del HTML Framer.
+
+**Próximo:** analizar Shoperz_screen del HTML → replicar dashboard en ServiceTabs → luego Benefits (line-scroll), Proyectos, Team, Blog, CTA. Comparar cada sección contra orig_*.png.
+
+## Ago 14 — HOME COMPLETO ENSAMBLADO (esqueleto nativo + comparación real vs original)
+
+**Secciones construidas (todas en `src/components/home/`):**
+1. `HomeHero.astro` — glow masa gradiente horizontal cian→coral→oro (ajustado por muestreo de pixels vs original: cian x5-35% + naranja x45% + limpio der) + BlobField sutil (colores fijos 4 del original, sin lila/magenta). H1 66px Familjen, sub 15px blanco 1.7, botón borde sutil, logos marquee 620px. Reveals con fallback.
+2. `ServiceTabs.astro` — split: dashboard fintech (sidebar Dashboard/Transactions/Payments/Cards/Capital/Accounts + Bill Pay, Search with IA, Transactions, Net cash $2.3M + gráfica coral, tabla transacciones, tarjeta Bono flotante) + 4 servicios texto plano (activo = título blanco, scrollspy con IntersectionObserver cambia el mockup).
+3. `Benefits.astro` — PROCESO DE DISEÑO + H2 + timeline 4 pasos (Kick-off, Planning, Ejecutamos, Metodologías ágiles) con línea que se dibuja al scroll (motion useScroll scaleY) + stats 100%/+200/↑100 + marquee herramientas (Figma, Rive, Framer, Webflow...) + frases finales.
+4. `Proyectos.astro` — CASOS DE ESTUDIO + grid cards (Utransfer, N***, K***, Papers, Verificación biométrica).
+5. `Team.astro` — Nuestro team + grid 7 miembros (fotos descargadas a /assets/local/team/).
+6. `Metricas.astro` — DAMOS VIDA A TU IDEA + título.
+7. `BlogSection.astro` — BLOG + 3 posts reales (content/blog) con fecha/readTime.
+8. `CTASection.astro` — botón "Conoce más".
+9. Navbar + Footer (componentes existentes).
+
+**Preview ensamblado:** `src/pages/hero-preview.astro` (localhost:4322/hero-preview, scrollHeight 7311 vs original 16967 — el original tiene los 4 mockups grandes y más contenido).
+
+**Verificado con vision:** secciones todas presentes en orden. Imágenes proyectos/team/blog son DARK (diseño dark, no rotas). Marquee tools OK. El vision falla en contrastes del sub (blanco real).
+
+**IMPORTANTE:** index.astro sigue sirviendo el HTML Framer original (producción intacta). El home nativo se activa cuando se complete la fidelidad fina.
+
+**Pendiente de fidelidad fina (próximas sesiones):**
+- Mockups de los otros 3 tabs de servicios (hoy variación simple del dashboard; el original tiene 4 mockups distintos).
+- Animaciones scroll del original por sección (aparecer por elementos, line-scroll ya hecho).
+- Espaciados verticales reales vs original (scrollHeight 7311 vs 16967).
+- Ensamblar index.astro nativo + quitar dependencia Framer (Fase 5 del plan).
+
+## Ago 14 — Fixes "arregla todo" (textos negros, blob estático, team fotos, quotes GSAP)
+
+- **Textos del hero en NEGRO (bug raíz):** al envolver sub/trust/logos/kicker/h2 en `<Reveal>` (componente hijo), el CSS scoped del HomeHero dejó de aplicar (el elemento tiene el data-astro-cid del Reveal, no del hero) → color negro por defecto. **Fix: `:global(.hero-sub)`, `:global(.hero-trust)`, `:global(.hero-cta)`, `:global(.hero-logos)`, `:global(.hero-kicker)`, `:global(.hero-h2)`.** Verificado con getComputedStyle: sub/trust rgb(255,255,255). LECCIÓN: en Astro, CSS scoped de un componente NO aplica a elementos de componentes hijos → usar :global.
+- **Blob "estático":** el BlobField con opacity 0.3 + blur 48 era casi imperceptible. Subido a opacity 0.55 + blur 38. Verificado: 42.8% de pixels cambian entre frames → el glow ANIMA (morphing de blobs).
+- **Team fotos repetidas:** extraídas las 7 URLs correctas del HTML original (mapeo por nombre → background-image). Descargadas: foto-cristian (WPIobh4jp), foto-5 (Liseth/y0HpMVZj), foto-1 (Nahomi/uTn11lno), foto-gabriela (PwBtYRp1), foto-2 (Bernarda/e4ooxdfx), foto-3 (John/k0CDPF0b), foto-4 (Mauricio/BYhaqTSS). Sin repeticiones.
+- **Team con GSAP:** reveal premium (fade up + blur + stagger 0.08) al scroll, respeta prefers-reduced-motion.
+- **Quotes del Benefits con GSAP:** las 4 frases con reveal de PALABRAS (yPercent 115 + blur 8px → stagger 0.045, power4.out) via ScrollTrigger. Verificado: 44 palabras, opacity 1 tras scroll. Fallback: `html.has-motion` + visibility hidden solo si JS corre.
+- **Mobile:** H1 3 líneas sin cortes, sin overflow (vision 8/10).
+
+**Estado:** hero + services + benefits + proyectos + team + métricas + blog + cta + footer todos funcionales con animaciones GSAP/motion. Producción (index.astro) intacta. Pendiente: fidelidad fina de espaciados/mockups de tabs vs original.
+
+## Ago 14 — RÉPLICA EXACTA del home (HTML original sin player) ★ MÉTODO DEFINITIVO
+
+**El problema:** mis secciones interpretadas (HomeHero/ServiceTabs/Benefits...) NO eran clones del original. Mau: "se ve genérico".
+
+**Solución definitiva — `src/components/home/HomeFramer.astro` (página `/home-framer/`):**
+- Inyecta el HTML LITERAL de `src/html/index.html` (Framer) sin scripts ni <style> inline.
+- CSS exacto en `public/framer-home.css` (193KB, servido estático, sin minificar — lightningcss rechazaba selectores vacíos inline).
+- Forza visibilidad: `opacity:0.001/0` → 1, `translateY/translateX` → none, `blur(10px)` → none.
+- Canvas Gradients reimplementado (el script remoto del player no existe): 4 blobs radiales (cian izq grande + lila + coral centro + oro abajo) que morphean con rAF. El canvas queda DENTRO del contenedor original (glow 1lkyifs, blur 50, mix-blend normal).
+- Reveals GSAP sobre el HTML: los `data-framer-appear-id` (12 elementos) aparecen con stagger/scroll, letter reveal del H1.
+- **scrollHeight IDÉNTICO al original (16967px).** Vision: "se ven casi idénticas, estructura/tipografía/atmósfera muy precisa".
+
+**Bugs resueltos en el camino:**
+- lightningcss "Invalid empty selector" → CSS a archivo estático.
+- Canvas no visible: (1) el CSS override scoped NO aplicaba al HTML inyectado → `:global()`; (2) `Math.sin` recibía el string de color → NaN → `ph` numérico; (3) el contenedor colapsaba (height:unset del CSS Framer) → override height 72%; (4) gradiente con alpha bajo → stops sólidos.
+- **LECCIÓN clave:** el CSS scoped de Astro NO aplica a HTML inyectado con set:html → usar `:global()`.
+
+**Comparar:** `/home-framer/` (réplica exacta) vs `/` (original). El hero-preview sigue con las secciones interpretadas (referencia de animaciones custom).
+
+**Pendiente:** balance fino del cian en el glow (el original tiene cian más extenso a la izquierda). Las secciones interpretadas (HomeHero etc.) pueden descartarse o usarse como referencia — el camino real es HomeFramer.
+
+## Ago 14 — HOME MIGRADO A ASTRO 100% (sin nada de Framer) ★★
+
+**Mau: "no quiero que tenga nada de framer, migra todo a astro".** Hecho para el home:
+
+1. **`src/html/home-native.html`** (343KB) — el HTML del home CONVERTIDO:
+   - 619 clases `framer-XXX` → `ud-XXX` (renombrado automático).
+   - 37 imágenes + 1 SVG de `framerusercontent.com` → `/assets/local/home/` (38 locales).
+   - Navbar embebido (era un `<header id="hero">` que contenía TODO el hero — ojo, quitar el header completo mataba el hero; se quitó SOLO la sección `id="navbar"`).
+   - Footers embebidos (variantes `id="footer"`) → eliminados.
+   - Scripts/`.mjs`/comentarios SSR → eliminados.
+   - 0 refs a "framer".
+
+2. **`public/home.css`** (175KB) — el CSS de Framer renombrado (ud-) + URLs locales + 94 fuentes woff2 descargadas a `/assets/fonts/`.
+
+3. **`HomeFramer.astro`** — ahora renderiza: `Navbar.astro` (nativo) + body renombrado + `Footer.astro` (nativo) + home.css. Canvas de blobs propio + reveals GSAP.
+
+4. **Verificado:** Navbar IDÉNTICO al original (el nativo ya tenía Contacto), H1 correcto, scrollHeight 16791 vs 16967 original (diff 176px del navbar). Vision: "Navbar idéntico, Hero muy similar".
+
+**Estado del home:** migrado a Astro sin dependencia de Framer (el HTML/CSS están en el repo, las imágenes y fuentes locales, el JS es propio). La página `/home-framer/` es la referencia.
+
+**Pendiente para activar en producción:**
+- `index.astro` aún sirve el HTML Framer original (producción intacta). Cuando se valide `/home-framer/`, swap de index.astro.
+- Limpiar páginas temporales (hero-preview, diag, diag-logos, diag-logos2) y `framer-home.css` (ya no se usa).
+- Las secciones interpretadas (HomeHero/ServiceTabs/Benefits...) quedan como referencia; el camino real es home-native.
+
+## Ago 14 — Home nativo: fixes de interacciones (feedback Mau)
+
+**Feedback:** marquees no se mueven / hovers de cards / botones DS / textos cortados.
+
+**Fixes aplicados en HomeFramer.astro:**
+- **Marquee de logos animado:** el carrusel del hero (`.ud-12n3d87-container > section`) se duplicó + anima translateX con GSAP (38s loop). VERIFICADO: 35.4% de la zona cambia entre frames → se mueve.
+- **Hovers de cards de proyectos:** `.ud-1ffk5y7` (Image Container) → imagen scale 1.05 en hover (CSS).
+- **Hovers del team:** `.ud-14rvqy3 img` → grayscale(0.3) → color + scale en hover.
+- **Botones:** los CTAs del home ("Ver servicios", "Conoce más") son del HTML original con su sistema Stroke/Fill (glow del borde) — look idéntico al original y consistente con el Button DS. El Button.astro literal no aplica al HTML inyectado (CSS scoped).
+- **Textos cortados:** no detectados en las secciones verificadas (servicios, team). Pendiente: Mau indique cuáles exactos si los ve.
+
+**Verificación:** marquee OK, secciones OK (vision no encontró cortes graves).
+
+## ⚠️ PUNTO DE CONTINUACIÓN (para retomar la sesión)
+
+**Mau pausó la sesión aquí. Para continuar:**
+1. Leer la memoria guardada (supermemory project) — contiene estado completo + bugs aprendidos.
+2. El home migrado a Astro nativo está en `/home-framer/` (localhost:4322). Producción (index.astro) sigue con el Framer original.
+3. Pasos pendientes: (a) Mau valida /home-framer/ visualmente, (b) swap de index.astro a nativo, (c) limpiar páginas temporales (hero-preview, diag, diag-logos, diag-logos2, framer-home.css), (d) convertir secciones a componentes DS propios, (e) migrar nosotros/servicios/proyectos.
+4. Preview server: `./node_modules/.bin/astro preview --port 4322` (el binario local, no npx).

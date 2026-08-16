@@ -1,0 +1,46 @@
+---
+// PREVIEW TEMPORAL del home nativo (para verificación visual).
+// Se elimina cuando la migración del home esté completa.
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+import HomeHero from "../components/home/HomeHero.astro";
+import ServiceTabs from "../components/home/ServiceTabs.astro";
+import Benefits from "../components/home/Benefits.astro";
+import Proyectos from "../components/home/Proyectos.astro";
+import Team from "../components/home/Team.astro";
+import Metricas from "../components/home/Metricas.astro";
+import BlogSection from "../components/home/BlogSection.astro";
+import CTASection from "../components/home/CTASection.astro";
+---
+
+<html lang="es-EC">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Preview Hero | UserDesigners</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Familjen+Grotesk:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles/tokens.css" />
+    <style>
+      html, body { background: #030303; margin: 0; }
+      body { min-height: 100vh; }
+    </style>
+  </head>
+  <body style="background:#030303;margin:0">
+    <Navbar />
+    <HomeHero />
+    <ServiceTabs />
+    <Benefits />
+    <Proyectos />
+    <Team />
+    <Metricas />
+    <BlogSection />
+    <CTASection />
+    <Footer />
+  </body>
+</html>

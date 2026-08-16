@@ -1,0 +1,183 @@
+---
+// HomeFramer — home 100% Astro: HTML del home migrado a clases propias
+// (src/html/home-native.html, sin "framer", imágenes locales) + Navbar/Footer
+// nativos del proyecto. Solo queda el canvas de blobs (JS propio) + reveals GSAP.
+import fs from "fs";
+import Navbar from "../Navbar.astro";
+import Footer from "../Footer.astro";
+
+let html = fs.readFileSync("src/html/home-native.html", "utf-8");
+
+// 1) Quitar styles inline (quedan 1-2 en el body) — el fondo se aplica en la página
+html = html.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "");
+
+// 2) Forzar visibilidad (estados que el player animaba)
+html = html.replace(/opacity:\s*0\.001/gi, "opacity:1");
+html = html.replace(/opacity:\s*0;/gi, "opacity:1;");
+html = html.replace(/opacity:0(?!\d)/gi, "opacity:1");
+html = html.replace(/transform:\s*translateY\(-?\d+px\)/gi, "transform:none");
+html = html.replace(/transform:\s*perspective\([^)]*\)\s*translateY\([^)]*\)/gi, "transform:none");
+html = html.replace(/filter:\s*blur\(10px\)/gi, "filter:none");
+
+// 3) Extraer body (solo el contenido dentro de #main)
+const bodyMatch = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+const body = bodyMatch ? bodyMatch[1] : html;
+---
+
+<Navbar />
+<Fragment set:html={body} />
+<Footer />
+
+<link rel="stylesheet" href="/home.css" />
+
+<style>
+  /* overrides del HTML de Framer inyectado — :global obligatorio (el CSS
+     scoped de Astro no aplica a elementos sin el data-astro-cid) */
+  :global(.framer-bd4ic1-container) {
+    height: 72% !important;
+    width: 120% !important;
+    top: 20px !important;
+    left: -167px !important;
+    bottom: auto !important;
+  }
+  :global(.framer-1lkyifs) {
+    mix-blend-mode: normal !important;
+    filter: blur(50px) !important;
+  }
+  :global(#Gradients) {
+    position: absolute;
+    inset: 0;
+  }
+  :global(#Gradients canvas) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  /* hovers de las cards de proyectos (imagen scale) — como el original con player */
+  :global(.ud-1ffk5y7) {
+    overflow: hidden;
+  }
+  :global(.ud-1ffk5y7 img) {
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  :global(.ud-1ffk5y7:hover img) {
+    transform: scale(1.05);
+  }
+  /* hovers del team: grayscale → color */
+  :global(.ud-14rvqy3 img) {
+    transition: filter 0.4s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    filter: grayscale(0.3);
+  }
+  :global(.ud-14rvqy3 [class*="hover"]:hover img),
+  :global(.ud-14rvqy3 a:hover img),
+  :global(.ud-14rvqy3 [data-ud-name]:hover img) {
+    filter: grayscale(0);
+    transform: scale(1.04);
+  }
+</style>
+
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  gsap.registerPlugin(ScrollTrigger);
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // ---- Canvas Gradients (blobs animados del glow) — reemplaza el script remoto.
+  const canvas = document.querySelector("#Gradients canvas");
+  if (canvas) {
+    const ctx = canvas.getContext("2d");
+    let raf = null;
+    const colors = ["rgb(132,217,250)", "rgb(153,141,208)", "rgb(227,103,83)", "rgb(246,198,95)"];
+    const blobs = [
+      { x: 0.05, y: 0.5, r: 0.5, vx: 0.0004, vy: 0.0003, ph: 0.0, c: colors[0] },
+      { x: 0.28, y: 0.35, r: 0.24, vx: -0.0005, vy: 0.0004, ph: 1.6, c: colors[1] },
+      { x: 0.58, y: 0.45, r: 0.34, vx: 0.0003, vy: -0.0004, ph: 3.2, c: colors[2] },
+      { x: 0.45, y: 0.68, r: 0.2, vx: -0.0003, vy: -0.0005, ph: 4.7, c: colors[3] },
+    ];
+
+    function resize() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const glow = canvas.closest(".framer-1lkyifs");
+      const w = glow ? glow.offsetWidth : canvas.offsetWidth;
+      const h = glow ? glow.offsetHeight : canvas.offsetHeight;
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    resize();
+    window.addEventListener("resize", resize);
+
+    function frame(t) {
+      const glow = canvas.closest(".framer-1lkyifs");
+      const w = glow ? glow.offsetWidth : canvas.offsetWidth;
+      const h = glow ? glow.offsetHeight : canvas.offsetHeight;
+      ctx.clearRect(0, 0, w, h);
+      const time = t / 1000;
+      blobs.forEach((b) => {
+        const x = (b.x + Math.sin(time * 0.3 + b.ph) * 0.06 + b.vx * time * 100) * w;
+        const y = (b.y + Math.cos(time * 0.24 + b.ph) * 0.06 + b.vy * time * 100) * h;
+        const r = b.r * w * (1 + Math.sin(time * 0.4 + b.ph * 2) * 0.08);
+        const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+        g.addColorStop(0, b.c);
+        g.addColorStop(0.6, b.c);
+        g.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      if (!reduceMotion) raf = requestAnimationFrame(frame);
+    }
+    if (reduceMotion) frame(0);
+    else raf = requestAnimationFrame(frame);
+  }
+
+  // ---- Reveals (reemplazan el player de Framer) ----
+  const appears = gsap.utils.toArray("[data-framer-appear-id]");
+  if (reduceMotion || appears.length === 0) {
+    gsap.set(appears, { autoAlpha: 1, clearProps: "all" });
+  } else {
+    gsap.set(appears, { autoAlpha: 0, y: 26 });
+    gsap.to(appears.slice(0, 6), {
+      autoAlpha: 1, y: 0, duration: 0.9, ease: "power3.out", stagger: 0.12, delay: 0.15,
+    });
+    gsap.utils.toArray(appears.slice(6)).forEach((el) => {
+      gsap.to(el, {
+        autoAlpha: 1, y: 0, duration: 0.9, ease: "power3.out",
+        scrollTrigger: { trigger: el, start: "top 88%", once: true },
+      });
+    });
+  }
+
+  const h1 = document.querySelector(".framer-oclxee, h1.framer-text, .ud-oclxee, h1.ud-text");
+  if (h1 && !reduceMotion) {
+    const chars = h1.querySelectorAll("span > span");
+    gsap.set(chars, { autoAlpha: 0, y: 14, filter: "blur(8px)" });
+    gsap.to(chars, {
+      autoAlpha: 1, y: 0, filter: "blur(0px)",
+      duration: 0.5, ease: "power3.out", stagger: 0.03, delay: 0.4,
+    });
+  } else if (h1) {
+    gsap.set(h1.querySelectorAll("span > span"), { autoAlpha: 1, clearProps: "all" });
+  }
+
+  // ---- Marquee de logos del hero (carrusel que el player animaba) ----
+  if (!reduceMotion) {
+    const logoWrap = document.querySelector(".ud-12n3d87-container, .framer-12n3d87-container");
+    if (logoWrap) {
+      const track = logoWrap.querySelector("section");
+      if (track && track.scrollWidth > logoWrap.clientWidth * 1.3) {
+        const clone = track.cloneNode(true);
+        track.appendChild(clone);
+        const distance = track.scrollWidth / 2;
+        gsap.to(track, { x: () => -distance, duration: 38, ease: "none", repeat: -1 });
+      }
+    }
+  }
+
+  // ---- Hovers de cards (proyectos / team) si el CSS original no los incluye ----
+  document.documentElement.classList.add("home-native");
+
+  window.addEventListener("load", () => ScrollTrigger.refresh());
+</script>

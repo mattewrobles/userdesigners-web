@@ -1,0 +1,52 @@
+---
+// Página temporal de diagnóstico: mide el ancho del H1 y contenedores.
+import HomeHero from "../components/home/HomeHero.astro";
+---
+<html lang="es-EC">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Diag</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Familjen+Grotesk:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/styles/tokens.css" />
+  </head>
+  <body style="background:#030303;margin:0">
+    <HomeHero />
+    <script>
+      setTimeout(() => {
+        const h1 = document.querySelector("h1");
+        const row = [];
+        if (h1) {
+          const cs = getComputedStyle(h1);
+          const all = h1.textContent.replace(/\s+/g, " ").trim();
+          const wordSpans = h1.querySelectorAll("span[style*='nowrap']");
+          const widths = Array.from(wordSpans).map(s => s.getBoundingClientRect().width).slice(0, 8);
+          const parentOverflow = getComputedStyle(h1.parentElement).overflow;
+          row.push(`chars=${all.length} text="${all.slice(0, 42)}"`);
+          row.push(`h1W=${h1.clientWidth} scrollW=${h1.scrollWidth} lines=${h1.getClientRects().length}`);
+          row.push(`wordWidths=${widths.map(w => Math.round(w)).join(",")}`);
+          const first = wordSpans[0].getBoundingClientRect();
+          const last = wordSpans[5].getBoundingClientRect();
+          row.push(`firstWord rect x=${Math.round(first.x)} w=${Math.round(first.width)} | lastWord x=${Math.round(last.x)} w=${Math.round(last.width)}`);
+          const h1r = h1.getBoundingClientRect();
+          row.push(`h1 rect x=${Math.round(h1r.x)} w=${Math.round(h1r.width)}`);
+          const allWords = Array.from(wordSpans).map(s => {
+            const r = s.getBoundingClientRect();
+            return `${s.textContent.slice(0,6)}@${Math.round(r.x)},y${Math.round(r.y)}`;
+          }).join(" ");
+          row.push(`POS: ${allWords}`);
+        }
+        const ht = document.querySelector('.hero-text');
+        const hc = document.querySelector('.hero-content');
+        const hp = document.querySelector('.hero');
+        if (ht) row.push('hero-text w='+ht.clientWidth+' rect='+Math.round(ht.getBoundingClientRect().width)+' x='+Math.round(ht.getBoundingClientRect().x));
+        if (hc) row.push('hero-content w='+hc.clientWidth+' rect='+Math.round(hc.getBoundingClientRect().width));
+        if (hp) row.push('hero w='+hp.clientWidth+' rect='+Math.round(hp.getBoundingClientRect().width)+' body='+document.body.scrollWidth+'/'+document.documentElement.clientWidth);
+        document.title = "DIAG: " + row.join(" | ");
+      }, 4000);
+    </script>
+  </body>
+</html>

@@ -4,7 +4,7 @@
 // internamente sin "efecto capa" de elementos HTML superpuestos.
 // Cada blob deriva en trayectoria elíptica (translación real) y morphea su forma.
 interface Props {
-  variant?: "blog" | "home" | "contacto" | "servicios" | "proyectos" | "left" | "right" | "center" | "bicolor" | "seo";
+  variant?: "blog" | "hero" | "home" | "contacto" | "servicios" | "proyectos" | "left" | "right" | "center" | "bicolor" | "seo";
   colors?: string[];
   opacity?: number;
   blur?: number;
@@ -26,6 +26,14 @@ const variants = {
     blobs: [
       { x: 18,  y: 38, s: 580, rx: 16, ry: 12, spd: 32, ph: 0.3 },
       { x: 50,  y: 44, s: 520, rx: 14, ry: 14, spd: 38, ph: 2.6 },
+    ],
+  },
+  hero: {
+    blobs: [
+      { x: 40, y: 350, s: 1500, rx: 24, ry: 18, spd: 30, ph: 0.4 },
+      { x: 160, y: 260, s: 1000, rx: 22, ry: 18, spd: 36, ph: 2.0 },
+      { x: 300, y: 420, s: 1100, rx: 20, ry: 16, spd: 34, ph: 3.8 },
+      { x: 220, y: 520, s: 950, rx: 22, ry: 18, spd: 32, ph: 5.2 },
     ],
   },
   seo: {
@@ -100,9 +108,14 @@ const variants = {
 const cfg = variants[variant] || variants.blog;
 const blobs = cfg.blobs;
 const isBicolor = variant === "bicolor";
+// Hero: colores fijos = los del gradiente original del home (oro→coral→lila→cian)
+const fixedColors =
+  variant === "hero"
+    ? ["rgb(132,217,250)", "rgb(120,160,220)", "rgb(227,103,83)", "rgb(246,198,95)"]
+    : null;
 ---
 
-<div class="blobfield" data-variant={variant} data-bicolor={isBicolor} data-nblobs={blobs.length} data-static={isStatic} style={`--bf-opacity:${opacity};--bf-blur:${blur}px;${extraStyle ? extraStyle : ""}`} aria-hidden="true">
+<div class="blobfield" data-variant={variant} data-bicolor={isBicolor} data-nblobs={blobs.length} data-static={isStatic} data-colors={fixedColors ? fixedColors.join("|") : ""} style={`--bf-opacity:${opacity};--bf-blur:${blur}px;${extraStyle ? extraStyle : ""}`} aria-hidden="true">
   <svg width="0" height="0" style="position:absolute">
     <defs>
       <filter id="bf-gooey" colorInterpolationFilters="sRGB">
@@ -119,26 +132,26 @@ const isBicolor = variant === "bicolor";
 <script>
   function randomHue() {
     const roll = Math.random();
-    if (roll < 0.4) return Math.floor(Math.random() * 40);
-    if (roll < 0.7) return 170 + Math.floor(Math.random() * 80);
-    return 230 + Math.floor(Math.random() * 70);
+    if (roll < 0.5) return Math.floor(Math.random() * 45);
+    if (roll < 0.75) return 210 + Math.floor(Math.random() * 60);
+    return 300 + Math.floor(Math.random() * 60);
   }
   // colores ANÁLOGOS: un hue base al azar (familia), todos los blobs se derivan
   // de él con variaciones suaves (±20-40°) → SIEMPRE armonizan y se funden.
-  // Paleta premium: rojo/coral, violeta/morado, azul profundo, ámbar (SIN verde/cian pastel).
+  // Paleta del original: rojos/corales/magentas + azules/violetas (SIN verde/ámbar).
   function baseHue() {
     const roll = Math.random();
-    if (roll < 0.5) return Math.floor(Math.random() * 40);        // familia rojo/coral (0-40)
-    if (roll < 0.8) return 255 + Math.floor(Math.random() * 55);  // familia violeta/morado (255-310)
-    return 330 + Math.floor(Math.random() * 30);                  // familia magenta/rosa intenso (330-360)
+    if (roll < 0.4) return Math.floor(Math.random() * 45);        // familia rojo/coral (0-45)
+    if (roll < 0.75) return 210 + Math.floor(Math.random() * 60); // familia azul/violeta (210-270)
+    return 300 + Math.floor(Math.random() * 60);                  // familia magenta/violeta (300-360)
   }
   function analogColor(hBase, step, bright) {
     // hue dentro de ±45° del base + pequeña deriva por paso
     const h = (hBase + (step * 22) + Math.floor(Math.random() * 14) + 360) % 360;
     // saturación máxima fija → color vivo garantizado (nunca desaturado)
-    const s = 90 + Math.floor(Math.random() * 10);
-    // luminosidad media-alta pero NO pastel: 52-66%
-    const l = bright ? 58 + Math.floor(Math.random() * 8) : 52 + Math.floor(Math.random() * 10);
+    const s = 95 + Math.floor(Math.random() * 5);
+    // luminosidad alta pero NO pastel: 60-72%
+    const l = bright ? 64 + Math.floor(Math.random() * 8) : 58 + Math.floor(Math.random() * 10);
     return `hsl(${h}, ${s}%, ${l}%)`;
   }
   function randomColor2(h1) {
@@ -159,6 +172,7 @@ const isBicolor = variant === "bicolor";
     const variant = field.dataset.variant;
     const schemes = {
       blog:   [{x:60,y:560,s:1500},{x:320,y:520,s:1350}],
+      hero:   [{x:40,y:350,s:1500},{x:160,y:260,s:1000},{x:300,y:420,s:1100},{x:220,y:520,s:950}],
       home:   [{x:140,y:380,s:500},{x:720,y:200,s:460},{x:580,y:700,s:440},{x:300,y:80,s:420}],
       contacto:[{x:500,y:300,s:1000},{x:500,y:560,s:900}],
       servicios:[{x:220,y:240,s:480},{x:760,y:280,s:440},{x:400,y:680,s:460},{x:820,y:640,s:420}],
@@ -175,9 +189,11 @@ const isBicolor = variant === "bicolor";
     const blobs = [];
     // hue base compartido → todos los blobs son análogos (armonizan)
     const hBase = baseHue();
+    // colores fijos (variante hero = gradiente original del home)
+    const fixed = field.dataset.colors ? field.dataset.colors.split("|") : null;
     for (let i = 0; i < count; i++) {
       const base = s[i];
-      const c1 = analogColor(hBase, i, i === 0);
+      const c1 = fixed ? fixed[i % fixed.length] : analogColor(hBase, i, i === 0);
       const c2 = isBicolor ? randomColor2(i * 40) : null;
 
       // gradiente por blob (relleno de su path)

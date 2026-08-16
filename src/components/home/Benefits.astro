@@ -1,0 +1,330 @@
+---
+// Benefits — réplica de la sección "Proceso de diseño" del home (Framer clnx2s).
+// Timeline con línea que se dibuja al scroll (motion.dev) + stats + marquee.
+import Marquee from "../ui/Marquee.astro";
+
+const pasos = [
+  { t: "Kick-off de producto", d: "Nos reunimos contigo para entender el contexto de tu producto, conocer el alcance y determinar las oportunidades de mejora." },
+  { t: "Planning", d: "Creamos un backlog o cronograma de trabajo para que tanto tú como nuestro equipo estemos alineados con los alcances." },
+  { t: "Ejecutamos", d: "Tenemos un equipo de diseñadores capacitados para resolver cualquier problemática relacionada con el producto." },
+  { t: "Metodologías ágiles", d: "Nuestros procesos de diseño requieren una planificación o definición del producto para poder ejecutarlo en sprints." },
+];
+
+const stats = [
+  { v: "100%", l: "Confianza total" },
+  { v: "+200", l: "Proyectos entregados" },
+  { v: "↑100", l: "Clientes felices" },
+];
+
+const tools = [
+  "Metodología ágil", "Diseño documentado", "Investigamos y testeamos", "Spline",
+  "Figma", "Rive", "Framer", "Affinity", "Wordpress", "Webflow",
+];
+---
+
+<section class="benefits" id="proceso">
+  <div class="bf-title">
+    <p class="bf-kicker">PROCESO DE DISEÑO</p>
+    <h2 class="bf-h2">Todos nuestros diseños están sustentados en la investigación</h2>
+  </div>
+
+  <div class="bf-steps" id="bf-steps">
+    <div class="bf-line" aria-hidden="true">
+      <span class="bf-line-fill"></span>
+    </div>
+    <div class="bf-step">
+      <span class="bf-dot"></span>
+      <div class="bf-step-body">
+        <h3 class="bf-step-title">{pasos[0].t}</h3>
+        <p class="bf-step-desc">{pasos[0].d}</p>
+      </div>
+    </div>
+    {pasos.slice(1).map((p) => (
+      <div class="bf-step">
+        <span class="bf-dot"></span>
+        <div class="bf-step-body">
+          <h3 class="bf-step-title">{p.t}</h3>
+          <p class="bf-step-desc">{p.d}</p>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <div class="bf-stats">
+    {stats.map((s) => (
+      <div class="bf-stat">
+        <span class="bf-stat-value">{s.v}</span>
+        <span class="bf-stat-label">{s.l}</span>
+      </div>
+    ))}
+  </div>
+
+  <div class="bf-tools">
+    <p class="bf-tools-label">Metodologías y herramientas:</p>
+    <Marquee speed={30} gap={28}>
+      {tools.map((t) => (
+        <span class="bf-tool">{t}</span>
+      ))}
+    </Marquee>
+  </div>
+
+  <div class="bf-quotes">
+    <p class="bf-quote" data-motion-text="words">Investigamos lo que nadie te dice, pero tu producto necesita saber.</p>
+    <p class="bf-quote" data-motion-text="words">Transformamos ideas en experiencias: desde la investigación y el UX hasta el diseño visual y el desarrollo.</p>
+    <p class="bf-quote" data-motion-text="words">Menos pasos. Más intención. Mejor experiencia.</p>
+    <p class="bf-quote" data-motion-text="words">Webs, apps y productos que no solo funcionan… funcionan mejor.</p>
+  </div>
+</section>
+
+<script>
+  import { animate, inView } from "motion";
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+  gsap.registerPlugin(ScrollTrigger);
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // Línea del timeline (motion.dev)
+  const steps = document.querySelector("#bf-steps");
+  if (steps) {
+    const fill = steps.querySelector(".bf-line-fill");
+    inView(
+      steps,
+      () => {
+        animate(fill, { scaleY: [0, 1] }, { duration: 1.4, ease: [0.16, 1, 0.3, 1], transformOrigin: "top center" });
+      },
+      { amount: 0.3, once: false }
+    );
+  }
+
+  // Tipografía animada de las frases (GSAP: palabras con stagger + blur)
+  const quotes = document.querySelectorAll("[data-motion-text='words']");
+  if (quotes.length) {
+    document.documentElement.classList.add("has-motion");
+  }
+
+  function splitWords(el) {
+    const text = el.textContent || "";
+    const parts = text.split(/(\s+)/);
+    el.textContent = "";
+    el.setAttribute("aria-label", text.trim());
+    parts.forEach((part) => {
+      if (!part.trim()) {
+        el.appendChild(document.createTextNode(part));
+        return;
+      }
+      const mask = document.createElement("span");
+      const word = document.createElement("span");
+      mask.className = "motion-word-mask";
+      mask.setAttribute("aria-hidden", "true");
+      word.className = "motion-word";
+      word.textContent = part;
+      mask.appendChild(word);
+      el.appendChild(mask);
+    });
+  }
+
+  if (reduceMotion) {
+    quotes.forEach((q) => gsap.set(q, { autoAlpha: 1, clearProps: "all" }));
+  } else {
+    quotes.forEach((q) => {
+      splitWords(q);
+      const words = q.querySelectorAll(".motion-word");
+      gsap.set(q, { autoAlpha: 1 });
+      gsap.fromTo(
+        words,
+        { yPercent: 115, autoAlpha: 0, filter: "blur(8px)" },
+        {
+          yPercent: 0,
+          autoAlpha: 1,
+          filter: "blur(0px)",
+          duration: 0.9,
+          ease: "power4.out",
+          stagger: 0.045,
+          scrollTrigger: { trigger: q, start: "top 85%", once: true },
+        }
+      );
+    });
+  }
+</script>
+
+<style>
+  .benefits {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 120px 24px 0;
+    box-sizing: border-box;
+  }
+  .bf-title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    text-align: center;
+    margin-bottom: 80px;
+  }
+  .bf-kicker {
+    font: 12px var(--font-body);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgb(187, 187, 187);
+    margin: 0;
+  }
+  .bf-h2 {
+    font-family: var(--font-display);
+    font-size: clamp(30px, 4vw, 48px);
+    font-weight: 400;
+    letter-spacing: -0.04em;
+    line-height: 1.3;
+    color: #fff;
+    max-width: 760px;
+    margin: 0;
+  }
+
+  /* ---------- Timeline ---------- */
+  .bf-steps {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+    margin-bottom: 100px;
+  }
+  .bf-line {
+    position: absolute;
+    left: 4px;
+    top: 8px;
+    bottom: 8px;
+    width: 1px;
+    background: rgb(40, 40, 40);
+  }
+  .bf-line-fill {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, rgb(246, 198, 95), rgb(227, 103, 83));
+    transform: scaleY(0);
+  }
+  .bf-step {
+    position: relative;
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+    padding-left: 32px;
+  }
+  .bf-dot {
+    position: absolute;
+    left: 0;
+    top: 6px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: rgb(246, 198, 95);
+    box-shadow: 0 0 0 4px rgba(246, 198, 95, 0.15);
+  }
+  .bf-step-body { max-width: 560px; }
+  .bf-step-title {
+    font-family: var(--font-display);
+    font-size: clamp(22px, 2.4vw, 30px);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    color: #fff;
+    margin: 0 0 10px;
+  }
+  .bf-step-desc {
+    font: 15px/1.7 var(--font-body);
+    color: rgb(150, 150, 155);
+    margin: 0;
+  }
+
+  /* ---------- Stats ---------- */
+  .bf-stats {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    border-top: 1px solid rgb(35, 35, 38);
+    border-bottom: 1px solid rgb(35, 35, 38);
+    padding: 56px 0;
+    margin-bottom: 80px;
+  }
+  .bf-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+    text-align: center;
+  }
+  .bf-stat-value {
+    font-family: var(--font-display);
+    font-size: clamp(40px, 5vw, 64px);
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    color: #fff;
+  }
+  .bf-stat-label {
+    font: 14px var(--font-body);
+    color: rgb(140, 140, 145);
+  }
+
+  /* ---------- Tools marquee ---------- */
+  .bf-tools {
+    margin-bottom: 100px;
+  }
+  .bf-tools-label {
+    font: 14px var(--font-body);
+    color: rgb(150, 150, 155);
+    margin: 0 0 28px;
+  }
+  .bf-tool {
+    font: 15px var(--font-body);
+    color: rgb(190, 190, 195);
+    border: 1px solid rgb(45, 45, 50);
+    border-radius: 999px;
+    padding: 10px 22px;
+    white-space: nowrap;
+  }
+
+  /* ---------- Quotes ---------- */
+  .bf-quotes {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    max-width: 900px;
+    margin: 0 auto;
+    padding-bottom: 120px;
+  }
+  .bf-quote {
+    font-family: var(--font-display);
+    font-size: clamp(24px, 3.4vw, 40px);
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+    color: rgb(225, 225, 225);
+    margin: 0;
+  }
+  /* máscaras para el reveal tipográfico (GSAP) */
+  :global(.motion-word-mask) {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: top;
+    padding-bottom: 0.08em;
+    margin-bottom: -0.08em;
+  }
+  :global(.motion-word) {
+    display: inline-block;
+    will-change: transform, opacity, filter;
+  }
+  :global(html.has-motion [data-motion-text]) {
+    visibility: hidden;
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 700px) {
+    .benefits { padding: 80px 16px 0; }
+    .bf-stats { flex-direction: column; gap: 40px; }
+    .bf-step { gap: 20px; padding-left: 24px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bf-line-fill { transform: scaleY(1); }
+  }
+</style>

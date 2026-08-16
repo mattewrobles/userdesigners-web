@@ -1,0 +1,475 @@
+---
+// ServiceTabs — réplica de la sección de servicios del home (Framer 5r60op).
+// Split: mockup dashboard fintech (Shoperz) a la izquierda + 4 servicios en
+// texto plano a la derecha (como el original, sin cards).
+const servicios = [
+  {
+    id: "research",
+    titulo: "Research",
+    desc: "Si necesitas validar tu app o web, conocer qué opinan los usuarios sobre ciertas funcionalidades, gustos y preferencias.",
+  },
+  {
+    id: "uxui",
+    titulo: "UX/UI & Redesign",
+    desc: "Creación y rediseño de interfaces usando sistemas de diseño, prototipado, animaciones, UI Design y diseño responsive.",
+  },
+  {
+    id: "metricas",
+    titulo: "Métricas y OKRs",
+    desc: "Nos enfocamos en resultados de producto basados en métricas y objetivos que se alineen con los OKRs empresariales.",
+  },
+  {
+    id: "mvp",
+    titulo: "Consultoría de MVPs",
+    desc: "Te acompañamos en todo el proceso de toma de decisiones en la creación del producto para poder validarlo en el mercado en el menor tiempo posible.",
+  },
+];
+
+const nav = ["Dashboard", "Transactions", "Payments", "Cards", "Capital", "Accounts"];
+const txns = [
+  { name: "Nicolas Diaz", ref: "XQZ-8F93", date: "14 Dec, 12:30", amount: "+$2,300.00", tipo: "in" },
+  { name: "Elena Rosado", ref: "TRP-2241", date: "14 Dec, 11:08", amount: "-$850.00", tipo: "out" },
+  { name: "Javier Luna", ref: "KLA-7710", date: "13 Dec, 18:45", amount: "+$1,120.50", tipo: "in" },
+  { name: "Mia Torres", ref: "PLM-5590", date: "13 Dec, 09:12", amount: "-$240.00", tipo: "out" },
+];
+---
+
+<section class="services-tabs" id="servicios">
+  <div class="services-grid">
+    <!-- Mockup dashboard (izquierda) -->
+    <div class="mockup-panel" aria-hidden="true">
+      <div class="dash">
+        <!-- Sidebar -->
+        <div class="dash-side">
+          <div class="dash-logo">uds</div>
+          <nav class="dash-nav">
+            {nav.map((n, i) => (
+              <span class:list={["dash-nav-item", i === 0 && "is-on"]}>{n}</span>
+            ))}
+          </nav>
+          <div class="dash-workflows">
+            <span class="dash-wf-label">Workflows</span>
+            <span class="dash-nav-item">Bill Pay</span>
+          </div>
+        </div>
+        <!-- Contenido -->
+        <div class="dash-main">
+          <div class="dash-top">
+            <span class="dash-search">Search with IA</span>
+            <span class="dash-avatar"></span>
+          </div>
+          <div class="dash-head">
+            <h3 class="dash-title">Transactions</h3>
+            <div class="dash-toolbar">
+              <span class="chip">Data view</span>
+              <span class="chip">Filters</span>
+              <span class="chip">Date</span>
+              <span class="chip">Keywords</span>
+              <span class="chip">Amount</span>
+            </div>
+          </div>
+
+          <div class="dash-body">
+            <div class="dash-cash">
+              <span class="cash-label">Net cash</span>
+              <span class="cash-value">$2.3<span class="cash-unit">M</span></span>
+              <svg class="cash-chart" viewBox="0 0 100 30" preserveAspectRatio="none">
+                <path d="M0,26 L14,22 L28,24 L42,16 L56,18 L70,10 L84,12 L100,4" fill="none" stroke="#c96a52" stroke-width="1.4" />
+                <path d="M0,26 L14,22 L28,24 L42,16 L56,18 L70,10 L84,12 L100,4 L100,30 L0,30 Z" fill="rgba(201,106,82,0.08)" />
+              </svg>
+            </div>
+            <div class="dash-table">
+              {txns.map((t) => (
+                <div class="trow">
+                  <span class="t-avatar">{t.name[0]}</span>
+                  <div class="t-info">
+                    <span class="t-name">{t.name}</span>
+                    <span class="t-ref">{t.ref} · {t.date}</span>
+                  </div>
+                  <span class:list={["t-amount", t.tipo === "in" ? "in" : "out"]}>{t.amount}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+        <!-- Tarjeta flotante -->
+        <div class="dash-bono">
+          <span class="bono-title">Bono</span>
+          <span class="bono-amount">$1,240.00</span>
+          <span class="bono-msg">Compra online con Cashback 5%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lista de servicios (derecha, texto plano) -->
+    <div class="services-list" role="tablist" aria-label="Servicios">
+      {servicios.map((s, idx) => (
+        <button
+          class:list={["service-item", idx === 0 && "is-active"]}
+          type="button"
+          role="tab"
+          aria-selected={idx === 0}
+          data-service={s.id}
+        >
+          <span class="service-title">{s.titulo}</span>
+          <span class="service-desc">{s.desc}</span>
+        </button>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  const items = document.querySelectorAll(".service-item");
+  const setActive = (btn) => {
+    items.forEach((b) => {
+      b.classList.remove("is-active");
+      b.setAttribute("aria-selected", "false");
+    });
+    btn.classList.add("is-active");
+    btn.setAttribute("aria-selected", "true");
+    document.querySelector(".mockup-panel").dataset.service = btn.dataset.service;
+  };
+  items.forEach((btn) => {
+    btn.addEventListener("click", () => setActive(btn));
+  });
+  // Como el original: el servicio activo sigue el scroll (scrollspy)
+  const io = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) setActive(e.target);
+      });
+    },
+    { rootMargin: "-45% 0px -45% 0px" }
+  );
+  items.forEach((btn) => io.observe(btn));
+</script>
+
+<style>
+  .services-tabs {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px 40px;
+    box-sizing: border-box;
+  }
+  .services-grid {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 60px;
+    width: 100%;
+  }
+
+  /* ---------- Mockup dashboard ---------- */
+  .mockup-panel {
+    flex: 1 1 55%;
+    min-width: 0;
+    display: flex;
+    justify-content: center;
+  }
+  .dash {
+    position: relative;
+    display: flex;
+    width: 100%;
+    max-width: 560px;
+    height: 520px;
+    background: #0d0d0d;
+    border: 1px solid rgb(40, 40, 40);
+    border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+  }
+  .dash-side {
+    width: 132px;
+    flex-shrink: 0;
+    background: #111;
+    border-right: 1px solid rgb(30, 30, 30);
+    padding: 18px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .dash-logo {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: -0.02em;
+    margin-bottom: 18px;
+  }
+  .dash-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .dash-nav-item {
+    font: 12px var(--font-body);
+    color: rgb(140, 140, 145);
+    padding: 7px 10px;
+    border-radius: 7px;
+    cursor: default;
+  }
+  .dash-nav-item.is-on {
+    background: rgb(34, 34, 34);
+    color: #fff;
+  }
+  .dash-workflows {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .dash-wf-label {
+    font: 10px var(--font-body);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgb(90, 90, 95);
+    padding: 0 10px;
+    margin-bottom: 4px;
+  }
+
+  .dash-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    gap: 16px;
+    min-width: 0;
+  }
+  .dash-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .dash-search {
+    font: 12px var(--font-body);
+    color: rgb(110, 110, 115);
+    background: #161616;
+    border: 1px solid rgb(32, 32, 32);
+    border-radius: 8px;
+    padding: 7px 14px;
+    flex: 1;
+    margin-right: 12px;
+  }
+  .dash-avatar {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: linear-gradient(140deg, #f6c65f, #e36753);
+  }
+  .dash-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .dash-title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 500;
+    color: #fff;
+    margin: 0;
+  }
+  .dash-toolbar {
+    display: flex;
+    gap: 6px;
+  }
+  .chip {
+    font: 11px var(--font-body);
+    color: rgb(120, 120, 125);
+    background: #161616;
+    border: 1px solid rgb(32, 32, 32);
+    border-radius: 20px;
+    padding: 4px 10px;
+    white-space: nowrap;
+  }
+
+  .dash-body {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    flex: 1;
+    min-height: 0;
+  }
+  .dash-cash {
+    background: #141414;
+    border: 1px solid rgb(32, 32, 32);
+    border-radius: 12px;
+    padding: 14px 16px 0;
+    position: relative;
+    height: 120px;
+    overflow: hidden;
+  }
+  .cash-label {
+    font: 11px var(--font-body);
+    color: rgb(120, 120, 125);
+  }
+  .cash-value {
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-weight: 500;
+    color: #fff;
+    display: block;
+    margin-top: 2px;
+  }
+  .cash-unit { font-size: 16px; color: rgb(140,140,145); }
+  .cash-chart {
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    bottom: 8px;
+    height: 56px;
+    width: calc(100% - 32px);
+  }
+  .dash-table {
+    display: flex;
+    flex-direction: column;
+  }
+  .trow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 0;
+    border-bottom: 1px solid rgb(28, 28, 28);
+  }
+  .t-avatar {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: rgb(38, 38, 38);
+    color: #fff;
+    font: 11px var(--font-body);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .t-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .t-name { font: 12px var(--font-body); color: #e8e8e8; }
+  .t-ref { font: 10px var(--font-body); color: rgb(100, 100, 105); }
+  .t-amount { font: 12px var(--font-body); font-weight: 500; }
+  .t-amount.in { color: #7fd8a0; }
+  .t-amount.out { color: #e87878; }
+
+  .dash-bono {
+    position: absolute;
+    right: 20px;
+    bottom: 18px;
+    width: 150px;
+    background: #1a1a1a;
+    border: 1px solid rgb(50, 50, 50);
+    border-radius: 14px;
+    padding: 14px;
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.6);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    transition: opacity 0.3s ease;
+  }
+  .bono-title { font: 11px var(--font-body); letter-spacing: 0.08em; text-transform: uppercase; color: rgb(130,130,135); }
+  .bono-amount { font-family: var(--font-display); font-size: 20px; font-weight: 500; color: #fff; }
+  .bono-msg { font: 10px var(--font-body); color: rgb(110,110,115); }
+
+  /* Variación del mockup según el servicio activo */
+  .mockup-panel[data-service="uxui"] .dash-table { opacity: 0.25; }
+  .mockup-panel[data-service="metricas"] .dash-title { font-size: 18px; }
+  .mockup-panel[data-service="metricas"] .dash-cash { background: #161616; }
+  .mockup-panel[data-service="metricas"] .cash-value { color: #7fd8a0; }
+  .mockup-panel[data-service="metricas"] .dash-table { display: none; }
+  .mockup-panel[data-service="metricas"] .dash-body::after {
+    content: "OKR: +18% activación · 92% retención · NPS 47";
+    font: 12px var(--font-body);
+    color: rgb(140,140,145);
+    background: #161616;
+    border: 1px solid rgb(32,32,32);
+    border-radius: 10px;
+    padding: 12px 14px;
+  }
+  .mockup-panel[data-service="mvp"] .dash-table { opacity: 0.4; }
+  .mockup-panel[data-service="mvp"] .dash-title { font-size: 18px; }
+  .mockup-panel[data-service="mvp"] .dash-cash { display: none; }
+  .mockup-panel[data-service="mvp"] .dash-body::after {
+    content: "Onboarding MVP · Validación de mercado en 6 semanas";
+    font: 12px var(--font-body);
+    color: rgb(140,140,145);
+    background: #161616;
+    border: 1px solid rgb(32,32,32);
+    border-radius: 10px;
+    padding: 12px 14px;
+  }
+  .mockup-panel[data-service="uxui"] .dash-body::after {
+    content: "Rediseño · Design System · Prototipado interactivo";
+    font: 12px var(--font-body);
+    color: rgb(140,140,145);
+    background: #161616;
+    border: 1px solid rgb(32,32,32);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-top: 10px;
+  }
+
+  /* ---------- Lista de servicios (texto plano) ---------- */
+  .services-list {
+    flex: 1 1 45%;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-top: 90px;
+  }
+  .service-item {
+    display: block;
+    text-align: left;
+    background: transparent;
+    border: none;
+    padding: 18px 16px;
+    cursor: pointer;
+    transition: background 0.3s ease, padding-left 0.3s ease;
+  }
+  .service-item:hover {
+    padding-left: 24px;
+  }
+  .service-item.is-active {
+    padding-left: 24px;
+  }
+  .service-title {
+    display: block;
+    font-family: var(--font-display);
+    font-size: clamp(22px, 2.2vw, 30px);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+  .service-desc {
+    display: block;
+    font: 14px/1.6 var(--font-body);
+    color: rgb(150, 150, 155);
+    max-width: 46ch;
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 900px) {
+    .services-grid {
+      flex-direction: column-reverse;
+      gap: 40px;
+    }
+    .services-list { padding-top: 0; }
+    .dash { height: 480px; }
+  }
+  @media (max-width: 480px) {
+    .services-tabs { padding: 0 16px 32px; }
+    .dash-side { width: 96px; }
+    .dash-toolbar { display: none; }
+    .dash-bono { width: 120px; right: 12px; bottom: 12px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .service-item { transition: none; }
+  }
+</style>

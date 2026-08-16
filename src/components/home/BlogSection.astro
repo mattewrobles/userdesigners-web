@@ -1,0 +1,129 @@
+---
+// BlogSection — réplica de "Featured Articles" del home (Framer 161p1ww).
+import { getCollection } from "astro:content";
+const posts = (await getCollection("blog"))
+  .sort((a, b) => new Date(b.data.date || b.data.pubDate).getTime() - new Date(a.data.date || a.data.pubDate).getTime())
+  .slice(0, 3);
+
+function readTime(post: any): string {
+  return post.data.readTime || `${Math.max(1, Math.round((post.body || "").split(/\s+/).length / 200))} min read`;
+}
+
+function formatDate(post: any): string {
+  const d = post.data.date || post.data.pubDate;
+  if (!d) return "";
+  const date = typeof d === "string" ? new Date(d) : d;
+  return date.toLocaleDateString("es-EC", { day: "numeric", month: "long", year: "numeric" });
+}
+---
+
+<section class="bloghome" id="blog">
+  <div class="bh-head">
+    <p class="bh-kicker">BLOG</p>
+    <h2 class="bh-title">Investigación, diseño y resultados reales</h2>
+  </div>
+
+  <div class="bh-grid">
+    {posts.map((p) => (
+      <a class="bh-card" href={`/blog/${p.id}`}>
+        <div class="bh-img">
+          {p.data.heroImage && <img src={p.data.heroImage} alt="" loading="lazy" />}
+        </div>
+        <div class="bh-meta">
+          <span class="bh-cat">{p.data.category || "UX Design"}</span>
+          <h3 class="bh-post-title">{p.data.title}</h3>
+          <span class="bh-info">{formatDate(p)} · {readTime(p)}</span>
+        </div>
+      </a>
+    ))}
+  </div>
+</section>
+
+<style>
+  .bloghome {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px 120px;
+    box-sizing: border-box;
+  }
+  .bh-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 56px;
+  }
+  .bh-kicker {
+    font: 12px var(--font-body);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgb(187, 187, 187);
+    margin: 0;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+  }
+  .bh-title {
+    font-family: var(--font-display);
+    font-size: clamp(30px, 4vw, 46px);
+    font-weight: 400;
+    letter-spacing: -0.04em;
+    color: #fff;
+    margin: 0;
+    text-align: right;
+  }
+  .bh-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+  }
+  .bh-card {
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .bh-img {
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid rgb(35, 35, 38);
+    aspect-ratio: 16 / 10;
+    background: #0d0d0d;
+  }
+  .bh-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .bh-card:hover .bh-img img { transform: scale(1.04); }
+  .bh-meta { display: flex; flex-direction: column; gap: 6px; padding: 0 4px; }
+  .bh-cat {
+    font: 11px var(--font-body);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgb(246, 198, 95);
+  }
+  .bh-post-title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 500;
+    color: #fff;
+    margin: 0;
+  }
+  .bh-info {
+    font: 13px var(--font-body);
+    color: rgb(140, 140, 145);
+  }
+
+  @media (max-width: 700px) {
+    .bloghome { padding: 0 16px 80px; }
+    .bh-head { flex-direction: column; align-items: flex-start; }
+    .bh-kicker { writing-mode: horizontal-tb; transform: none; }
+    .bh-title { text-align: left; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bh-card:hover .bh-img img { transform: none; }
+  }
+</style>

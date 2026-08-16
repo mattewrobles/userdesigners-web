@@ -1,0 +1,285 @@
+---
+// Hero del home — réplica 1:1 del HTML Framer (src/html/index.html).
+// Secciones: Content(Top+SocialProof) + Gradient Blur + Line + Title.
+import Button from "../ui/Button.astro";
+import LetterReveal from "../ui/LetterReveal.astro";
+import Reveal from "../ui/Reveal.astro";
+import BlobField from "../ui/BlobField.astro";
+import HomeLogos from "./HomeLogos.astro";
+---
+
+<section class="hero" id="inicio">
+  <!-- Glow: masa estática EXACTA del original (gradiente 140deg, blur 80, hard-light) + blobs animados sutiles encima -->
+  <div class="hero-glow" aria-hidden="true">
+    <div class="hero-glow-mass"></div>
+  </div>
+  <div class="hero-blobs" aria-hidden="true">
+    <BlobField variant="hero" opacity={0.55} blur={38} />
+  </div>
+
+  <!-- Content -->
+  <div class="hero-content">
+    <div class="hero-top">
+      <div class="hero-text">
+        <LetterReveal as="h1" stagger={0.035} duration={0.5}>Agencia de UX/UI orientada a Fintechs</LetterReveal>
+        <Reveal as="p" y={24} delay={0.15} blur={false} class="hero-sub">
+          Desde la investigación hasta la escalabilidad: Somos una agencia de experiencias
+          digitales guiada por datos ideal para Fintechs, Banks y Neo Banks.
+        </Reveal>
+        <Reveal y={18} delay={0.3} blur={false} class="hero-cta">
+          <Button variant="stroke" href="/servicios">Ver servicios</Button>
+        </Reveal>
+      </div>
+
+      <div class="hero-social">
+        <Reveal as="p" y={16} delay={0.5} blur={false} class="hero-trust">Marcas con las que trabajamos:</Reveal>
+        <Reveal y={16} delay={0.6} blur={false} class="hero-logos">
+          <HomeLogos />
+        </Reveal>
+      </div>
+    </div>
+  </div>
+
+  <!-- Line -->
+  <div class="hero-line" aria-hidden="true">
+    <span class="hero-line-pulse"></span>
+  </div>
+
+  <!-- Title: intro a la sección de servicios -->
+  <div class="hero-title">
+    <Reveal y={16} blur={false} class="hero-kicker-wrap"><p class="hero-kicker">NUESTROS SERVICIOS</p></Reveal>
+    <Reveal as="h2" y={24} delay={0.1} blur={false} class="hero-h2">
+      Más de 12 años en el mercado de Startups y Fintechs
+    </Reveal>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+    padding: clamp(120px, 15vh, 170px) 24px 0;
+    overflow: clip;
+  }
+  .hero *, .hero *::before, .hero *::after {
+    box-sizing: border-box;
+  }
+
+  /* ---------- Glow (masa original + blobs animados) ---------- */
+  .hero-glow {
+    filter: blur(80px);
+    mix-blend-mode: hard-light;
+    z-index: 1;
+    flex: none;
+    width: 59%;
+    height: 60%;
+    position: absolute;
+    top: 20%;
+    left: -0.03%;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .hero-glow-mass {
+    position: absolute;
+    top: 20px;
+    left: -167px;
+    width: 120%;
+    height: 72%;
+    border-radius: 48px;
+    background: linear-gradient(
+      90deg,
+      rgb(132, 217, 250) 0%,
+      rgb(132, 217, 250) 55%,
+      rgb(120, 160, 220) 66%,
+      rgb(227, 103, 83) 80%,
+      rgb(246, 198, 95) 93%,
+      rgba(16, 17, 22, 0) 100%
+    );
+  }
+  .hero-blobs {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  /* ---------- Content ---------- */
+  .hero-content {
+    width: 100%;
+    max-width: 880px;
+    margin: 0 auto;
+    min-width: 0;
+    display: block;
+    position: relative;
+    z-index: 2;
+  }
+  .hero-top {
+    flex-flow: column;
+    place-content: center flex-start;
+    align-items: center;
+    gap: 36px;
+    width: 100%;
+    min-width: 0;
+    display: flex;
+  }
+  .hero-text {
+    width: 100%;
+    max-width: 720px;
+    display: block;
+    text-align: center;
+  }
+  .hero-text :global(h1) {
+    font-family: var(--font-display);
+    font-size: clamp(34px, 4.6vw, 66px);
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    text-align: center;
+    color: var(--text-primary);
+    line-height: 1.1;
+    margin: 0 auto;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-wrap: break-word;
+  }
+  :global(.hero-sub) {
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.7;
+    text-align: center;
+    color: #ffffff;
+    max-width: 720px;
+    margin: 24px auto 0;
+  }
+  :global(.hero-cta) {
+    display: flex;
+    justify-content: center;
+    margin-top: 8px;
+  }
+
+  /* Botón del hero: borde brillante tipo glass como el original Framer.
+     (refuerza el glow del Button stroke dentro de este contexto) */
+  :global(.hero-cta .btn--stroke) {
+    background: rgba(255, 255, 255, 0.06);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.38);
+  }
+  :global(.hero-cta .btn-stroke-glow) {
+    opacity: 1;
+    background: conic-gradient(
+      from 0deg,
+      transparent 0deg,
+      rgba(255, 255, 255, 0) 50deg,
+      rgba(255, 255, 255, 0.85) 100deg,
+      rgba(255, 255, 255, 0) 160deg
+    );
+  }
+  :global(.hero-cta .btn-stroke-glow--2) {
+    opacity: 0.75;
+  }
+
+  /* ---------- SocialProof ---------- */
+  .hero-social {
+    flex-flow: column;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    max-width: 620px;
+    display: flex;
+  }
+  :global(.hero-trust) {
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.4;
+    color: #ffffff;
+    margin: 0;
+  }
+
+  /* ---------- Line ---------- */
+  .hero-line {
+    background: linear-gradient(90deg, rgba(16, 17, 22, 0) 0%, #101116 16.2% 87.9%, rgba(16, 17, 22, 0) 100%);
+    flex: none;
+    width: 100%;
+    max-width: 1200px;
+    height: 1px;
+    margin-top: 96px;
+    position: relative;
+    z-index: 2;
+    overflow: visible;
+  }
+  .hero-line-pulse {
+    background-color: rgba(255, 255, 255, 0.29);
+    border-radius: 222px;
+    flex: none;
+    width: 70px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    animation: hero-line-run 7s cubic-bezier(0.45, 0, 0.2, 1) infinite;
+  }
+  @keyframes hero-line-run {
+    0% { transform: translateX(0); opacity: 0.35; }
+    45% { opacity: 1; }
+    100% { transform: translateX(calc(min(1200px, 100vw) - 70px)); opacity: 0.35; }
+  }
+
+  /* ---------- Title (intro servicios) ---------- */
+  .hero-title {
+    flex-flow: column;
+    align-items: center;
+    gap: 24px;
+    width: 100%;
+    max-width: 800px;
+    padding: 96px 0 80px;
+    display: flex;
+    position: relative;
+    z-index: 2;
+  }
+  :global(.hero-h2) {
+    font-family: var(--font-display);
+    font-size: clamp(30px, 4vw, 49px);
+    font-weight: 400;
+    letter-spacing: -0.04em;
+    line-height: 1.4em;
+    text-align: center;
+    color: var(--text-primary);
+    margin: 0;
+    text-wrap: balance;
+  }
+  :global(.hero-kicker) {
+    font-family: var(--font-body);
+    font-size: 14px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: rgb(187, 187, 187);
+    margin: 0;
+  }
+
+  /* ---------- Mobile (breakpoints reales Framer) ---------- */
+  @media (max-width: 809.98px) {
+    .hero {
+      padding: clamp(84px, 14vh, 110px) 16px 0;
+    }
+    .hero-content { gap: 56px; }
+    .hero-text :global(h1) {
+      font-size: clamp(32px, 8.6vw, 44px);
+      line-height: 1.12;
+      text-wrap: wrap;
+      overflow-wrap: break-word;
+    }
+    .hero-line { margin-top: 72px; }
+    .hero-line-pulse { width: 100%; }
+    .hero-title { padding: 72px 0 56px; }
+    .hero-blobs { opacity: 0.75; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-line-pulse { animation: none; opacity: 1; }
+  }
+</style>

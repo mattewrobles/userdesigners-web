@@ -1,0 +1,127 @@
+---
+// Team — réplica de "Nuestro team" del home (Framer 14rvqy3).
+// 7 miembros con SUS fotos reales (extraídas del HTML original) + reveal GSAP.
+const miembros = [
+  { nombre: "Cristian Ramón", rol: "Director & Líder de diseño", img: "/assets/local/team/foto-cristian.png" },
+  { nombre: "Liseth Gómez", rol: "UX Researcher", img: "/assets/local/team/foto-5.png" },
+  { nombre: "Nahomi Quito", rol: "Senior UX/UI Designer | Branding", img: "/assets/local/team/foto-1.jpg" },
+  { nombre: "Gabriela Galván", rol: "Product Designer", img: "/assets/local/team/foto-gabriela.png" },
+  { nombre: "Bernarda Terreros", rol: "UX PM | UX Writer", img: "/assets/local/team/foto-2.jpg" },
+  { nombre: "John Macas", rol: "SEO Analyst", img: "/assets/local/team/foto-3.png" },
+  { nombre: "Mauricio Robles", rol: "UX/UI Designer", img: "/assets/local/team/foto-4.png" },
+];
+---
+
+<section class="team" id="nosotros">
+  <div class="tm-head" data-reveal="fade-up">
+    <p class="tm-kicker">Nuestro team</p>
+  </div>
+  <div class="tm-grid" data-reveal-group>
+    {miembros.map((m) => (
+      <div class="tm-card" data-reveal-item>
+        <div class="tm-img">
+          <img src={m.img} alt={m.nombre} loading="lazy" width="800" height="1000" />
+        </div>
+        <div class="tm-info">
+          <span class="tm-name">{m.nombre}</span>
+          <span class="tm-rol">{m.rol}</span>
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
+
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  gsap.registerPlugin(ScrollTrigger);
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (reduceMotion) {
+    gsap.set("[data-reveal], [data-reveal-item]", { autoAlpha: 1, clearProps: "all" });
+  } else {
+    gsap.utils.toArray("[data-reveal]").forEach((el) => {
+      gsap.set(el, { autoAlpha: 1 });
+      gsap.fromTo(el, { y: 26, autoAlpha: 0 }, {
+        y: 0, autoAlpha: 1, duration: 0.9, ease: "power4.out",
+        scrollTrigger: { trigger: el, start: "top 85%", once: true },
+      });
+    });
+    gsap.utils.toArray("[data-reveal-group]").forEach((group) => {
+      const items = group.querySelectorAll("[data-reveal-item]");
+      gsap.set(group, { autoAlpha: 1 });
+      gsap.fromTo(items, { y: 40, autoAlpha: 0, filter: "blur(8px)" }, {
+        y: 0, autoAlpha: 1, filter: "blur(0px)",
+        duration: 0.9, ease: "power4.out", stagger: 0.08,
+        scrollTrigger: { trigger: group, start: "top 82%", once: true },
+      });
+    });
+  }
+</script>
+
+<style>
+  .team {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px 120px;
+    box-sizing: border-box;
+  }
+  .tm-head {
+    margin-bottom: 48px;
+  }
+  .tm-kicker {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 3.6vw, 42px);
+    font-weight: 400;
+    letter-spacing: -0.03em;
+    color: #fff;
+    margin: 0;
+  }
+  .tm-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+  }
+  .tm-card { text-align: left; }
+  .tm-img {
+    border-radius: 14px;
+    overflow: hidden;
+    aspect-ratio: 3 / 4;
+    background: #111;
+    margin-bottom: 14px;
+  }
+  .tm-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: grayscale(0.25);
+    transition: filter 0.4s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .tm-card:hover .tm-img img {
+    filter: grayscale(0);
+    transform: scale(1.03);
+  }
+  .tm-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .tm-name {
+    font: 16px var(--font-body);
+    font-weight: 500;
+    color: #fff;
+  }
+  .tm-rol {
+    font: 13px var(--font-body);
+    color: rgb(140, 140, 145);
+  }
+
+  @media (max-width: 700px) {
+    .team { padding: 0 16px 80px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tm-card:hover .tm-img img { transform: none; }
+  }
+</style>

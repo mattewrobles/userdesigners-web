@@ -55,6 +55,16 @@ const elId = `reveal-${Math.random().toString(36).slice(2, 8)}`;
       },
       { amount: 0.2, once }
     );
+
+    // Fallback de robustez: fuerza el estado visible SIEMPRE a los 3s, cancelando
+    // cualquier animación WAAPI congelada (headless, tab oculta). El contenido
+    // nunca queda oculto o borroso.
+    window.setTimeout(() => {
+      el.getAnimations().forEach((a) => a.cancel());
+      el.style.opacity = "1";
+      el.style.transform = "translateY(0) scale(1)";
+      el.style.filter = "blur(0px)";
+    }, 3000);
   });
 </script>
 
