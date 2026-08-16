@@ -663,3 +663,29 @@ Uso: `<BlobField variant="blog" count={5} opacity={0.85} speed={20} />`
 2. El home migrado a Astro nativo está en `/home-framer/` (localhost:4322). Producción (index.astro) sigue con el Framer original.
 3. Pasos pendientes: (a) Mau valida /home-framer/ visualmente, (b) swap de index.astro a nativo, (c) limpiar páginas temporales (hero-preview, diag, diag-logos, diag-logos2, framer-home.css), (d) convertir secciones a componentes DS propios, (e) migrar nosotros/servicios/proyectos.
 4. Preview server: `./node_modules/.bin/astro preview --port 4322` (el binario local, no npx).
+
+## Ago 16 — Migración a Astro: home 1:1 + previews de páginas (avance nocturno)
+
+**Estado:** el home migrado a Astro nativo está en `/hero-preview` (hero nuevo aprobado con glow cian/rojo fijo + secciones 1:1 del home-native.html + BlogSection dinámico). Producción `/` sigue con el Framer original (localhost:4321). **NO usar `/home-framer/` (fue eliminado).**
+
+### Lo que funciona (verificado)
+- `/hero-preview`: hero nuevo (HomeHero.astro, glow cian rgb(20,138,188) + rojo rgb(175,2,2), screen+blur40, blobs morph) + Product/Solutions/Service/Team/Bannner 1:1 (alturas idénticas al original) + blog dinámico CMS.
+- `scripts/migrate-pages.mjs` genera `servicios/nosotros/proyectos-native.html` desde los framer (renombra framer→ud, limpia player, URLs locales, quita nav/footer).
+- 71 imágenes framer descargadas a `public/assets/local/`.
+- `servicios-preview.astro`: hero de servicios OK (título + mockup de app), navbar/footer DS OK, logos OK. **PENDIENTE**: carruseles internos (proceso, tarjetas Works) se ven superpuestos/espacios negros — el player de Framer rotaba slides; sin player quedan en fila/inflados.
+
+### Bugs aprendidos (clave para retomar)
+1. **Wrapper root:** los selectores del CSS nativo usan `.ud-pRmuk .ud-X` — el wrapper del preview debe tener `class="ud-tqfFO ud-72rtr7 ud-pRmuk"` (3 clases). Sin `ud-pRmuk` TODO colapsa a 196px.
+2. **Header del hero sin cierre:** el `<header data-ud-name="Hero">` del export NO tiene `</header>`. En el preview hay que separarlo del contenido y cerrarlo (`+ "</header>"`), si no el navegador mete las secciones siguientes DENTRO.
+3. **Astro pierde `<style>` y `<script>` inline** de página cuando hay `set:html` masivo → usar `is:inline` en ambos, o no se sirven.
+4. **Fix de alturas:** `height:min-content` + hijos `position:absolute` colapsan sin el player. El script `fixLayout` (is:inline) mide el bottom real de los hijos visibles y setea `min-height`. OJO: infla si hay carruseles horizontales (slides a left:9000) — el filtro de ancho (`cr.left > childRect.right`) ayuda pero el hero quedó a 2297px (debería ~700px).
+5. **Carruseles de Framer (Stack rotativo)** no se replican sin JS: muestran la 1ª slide o fila horizontal. En servicios afectan: proceso (rectángulo blanco) y tarjetas Works (solo Diseño de Apps visible, resto oculto con display:none de slides 1tww95g/pclehy/3ayvaa).
+6. **cleo-vision rate limit:** máx 2 req/min → esperar ~65s entre llamadas.
+7. **Dev server:** reiniciar con `kill <pid astro>` (ps aux | grep astro) y `npx astro dev --host 127.0.0.1`. `pkill -f "astro dev"` NO matchea el proceso real (`astro.mjs dev`).
+
+### Siguiente sesión
+1. Terminar servicios-preview: arreglar carrusel del proceso (mockup vertical) y tarjetas Works (grid). Considerar: ocultar las slides internas que inflan, o aceptar 1ª slide.
+2. Crear `nosotros-preview.astro` y `proyectos-preview.astro` (mismo patrón: wrapper ud-tqfFO ud-72rtr7 ud-pRmuk + hero separado + style/script is:inline + fixLayout).
+3. Mau valida `/hero-preview` y `/servicios-preview`, luego swap de index.astro a nativo.
+4. Limpiar páginas temporales (diag, diag-logos, diag-logos2) y framer-home.css.
+5. Verificación final: 0 código Framer en render + agente crítico >95% por sección.
