@@ -5,6 +5,7 @@ category: "UX Design"
 author: "UserDesigners"
 tags: ["UX Design", "UX"]
 heroImage: "/assets/blog/por-que-elegir-userdesigners-agencia-ux-ui-latam.jpg"
+heroImageSource: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1600&h=900&fit=crop"
 date: "2026-08-10"
 readTime: "2 min"
 ---

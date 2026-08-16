@@ -5,6 +5,7 @@ category: "UX Design"
 author: "UserDesigners"
 tags: ["UX Design", "UX"]
 heroImage: "/assets/blog/como-hacer-un-redesign-sin-morir-en-el-intento.jpg"
+heroImageSource: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1600&h=900&fit=crop"
 date: "2026-08-08"
 readTime: "2 min"
 ---

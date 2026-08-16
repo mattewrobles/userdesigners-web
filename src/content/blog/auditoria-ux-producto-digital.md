@@ -5,6 +5,7 @@ category: "UX Research"
 author: "UserDesigners"
 tags: []
 heroImage: "/assets/blog/auditoria-ux-producto-digital.jpg"
+heroImageSource: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&h=630&fit=crop"
 date: "2026-08-05"
 readTime: "1 min"
 ---

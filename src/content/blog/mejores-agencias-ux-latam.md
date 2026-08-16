@@ -5,6 +5,7 @@ category: "UX Design"
 author: "UserDesigners"
 tags: ["UX Design", "UX"]
 heroImage: "/assets/blog/mejores-agencias-ux-latam.jpg"
+heroImageSource: "https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=1600&h=900&fit=crop"
 date: "2026-08-11"
 readTime: "2 min"
 ---

@@ -5,6 +5,7 @@ category: "UX Design"
 author: "UserDesigners"
 tags: ["UX Design", "UX"]
 heroImage: "/assets/blog/inteligencia-artificial-en-diseno-de-productos.jpg"
+heroImageSource: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1600&h=900&fit=crop"
 date: "2026-08-10"
 readTime: "3 min"
 ---

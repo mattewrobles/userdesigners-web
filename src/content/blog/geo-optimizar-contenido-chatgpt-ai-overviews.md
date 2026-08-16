@@ -5,6 +5,7 @@ category: "SEO"
 author: "UserDesigners"
 tags: ["SEO", "IA", "UX Design"]
 heroImage: "/assets/blog/geo-optimizar-contenido-chatgpt-ai-overviews.jpg"
+heroImageSource: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1600&h=900&fit=crop"
 date: "2026-08-08"
 readTime: "2 min"
 ---

@@ -5,6 +5,7 @@ category: "SEO"
 author: "UserDesigners"
 tags: ["UX Design"]
 heroImage: "/assets/blog/importancia-pagina-web-generar-ingresos.jpg"
+heroImageSource: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=1600&h=900&fit=crop"
 date: "2026-08-10"
 readTime: "2 min"
 ---

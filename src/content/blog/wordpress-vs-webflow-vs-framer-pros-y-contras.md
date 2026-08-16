@@ -5,6 +5,7 @@ category: "Websites"
 author: "UserDesigners"
 tags: ["UX Design", "UX Research"]
 heroImage: "/assets/blog/wordpress-vs-webflow-vs-framer-pros-y-contras.jpg"
+heroImageSource: "https://images.unsplash.com/photo-1556761175-b413da4baf72?w=1600&h=900&fit=crop"
 date: "2026-08-08"
 readTime: "3 min"
 ---

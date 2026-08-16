@@ -5,6 +5,7 @@ category: "UX Design"
 author: "UserDesigners"
 tags: ["UX Design", "UX"]
 heroImage: "/assets/blog/importancia-agencia-ux-ui-userdesigners.jpg"
+heroImageSource: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1600&h=900&fit=crop"
 date: "2026-08-08"
 readTime: "2 min"
 ---

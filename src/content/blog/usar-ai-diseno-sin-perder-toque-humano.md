@@ -5,6 +5,7 @@ category: "UX Design"
 author: "UserDesigners"
 tags: ["UX Design", "UI Design", "IA"]
 heroImage: "/assets/blog/usar-ai-diseno-sin-perder-toque-humano.jpg"
+heroImageSource: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1600&h=900&fit=crop"
 date: "2026-08-08"
 readTime: "2 min"
 ---

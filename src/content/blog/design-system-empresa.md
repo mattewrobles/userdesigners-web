@@ -5,6 +5,7 @@ category: "Design Systems"
 author: "UserDesigners"
 tags: []
 heroImage: "/assets/blog/design-system-empresa.jpg"
+heroImageSource: "https://images.unsplash.com/photo-1507925921958-8a62f3d1a50d?w=1200&h=630&fit=crop"
 date: "2026-08-05"
 readTime: "1 min"
 ---

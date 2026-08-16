@@ -5,6 +5,7 @@ category: "SEO"
 author: "UserDesigners"
 tags: ["SEO", "IA", "UX Design"]
 heroImage: "/assets/blog/sitios-web-ia-senales-alerta-bot.jpg"
+heroImageSource: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1600&h=900&fit=crop"
 date: "2026-08-08"
 readTime: "3 min"
 ---
