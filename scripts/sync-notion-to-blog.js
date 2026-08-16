@@ -134,7 +134,9 @@ async function sync() {
 
     let imgExt = "jpg";
     let imgPath = heroImg && !heroImg.startsWith("http") ? heroImg : "";
+    let imgSource = "";
     if (heroImg && heroImg.startsWith("http")) {
+      imgSource = heroImg;
       try {
         const imgData = await fetch(heroImg);
         if (imgData.ok) {
@@ -159,6 +161,7 @@ category: "${cat}"
 author: "${author}"
 tags: [${tags.map(t => `"${t.replace(/"/g, '\\"')}"`).join(", ")}]
 heroImage: "${imgPath || ""}"
+heroImageSource: "${imgSource.replace(/"/g, '\\"')}"
 date: "${date}"
 readTime: "${readTime}"
 ---

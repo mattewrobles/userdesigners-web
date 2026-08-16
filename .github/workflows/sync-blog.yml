@@ -43,6 +43,8 @@ jobs:
         run: |
           npm install --no-save sharp >/dev/null 2>&1
           node scripts/optimize-blog-images.mjs
+      - name: Build image registry (ids + hashes usados)
+        run: node scripts/build-image-registry.mjs
       - name: Add internal links (related posts)
         run: node scripts/add-internal-links.mjs
       - name: Validate SEO (reglas críticas)

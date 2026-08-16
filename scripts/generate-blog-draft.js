@@ -10,6 +10,7 @@
  */
 
 import https from "https";
+import fs from "fs";
 
 const OPENAI_KEY = process.env.TOKENROUTER_API_KEY || process.env.OPENAI_API_KEY;
 const NOTION_TOKEN = process.env.NOTION_TOKEN;
@@ -101,10 +102,10 @@ function openaiRequest(messages) {
   });
 }
 
-function unsplashFetch(query) {
+function unsplashFetch(query, page = 1) {
   if (!UNSPLASH_KEY) return Promise.resolve(null);
   return new Promise((resolve) => {
-    const path = `/search/photos?query=${encodeURIComponent(query)}&per_page=1&orientation=landscape`;
+    const path = `/search/photos?query=${encodeURIComponent(query)}&per_page=4&orientation=landscape&page=${page}`;
     const req = https.request({
       hostname: "api.unsplash.com",
       path,
@@ -116,13 +117,22 @@ function unsplashFetch(query) {
       res.on("end", () => {
         try {
           const json = JSON.parse(d);
-          resolve(json.results?.[0]?.urls?.regular || null);
-        } catch { resolve(null); }
+          resolve(json.results?.map((r) => ({ url: r.urls?.regular, id: r.id })) || []);
+        } catch { resolve([]); }
       });
     });
-    req.on("error", () => resolve(null));
+    req.on("error", () => resolve([]));
     req.end();
   });
+}
+
+// Registro de imágenes ya usadas (id Unsplash + hash). Evita reutilizar fotos.
+function loadImageRegistry() {
+  try {
+    return JSON.parse(fs.readFileSync("public/assets/blog/used-images.json", "utf-8"));
+  } catch {
+    return { byUnsplashId: {}, byHash: {} };
+  }
 }
 
 function notion(path, method = "GET", body = null) {
@@ -197,8 +207,19 @@ async function generate() {
   console.log(`  Title: ${draft.title}`);
   console.log(`  Slug: ${draft.slug}`);
 
-  // Fetch hero image from Unsplash (optional — skipped if no key)
-  const heroImage = await unsplashFetch(draft.title);
+  // Fetch hero image from Unsplash, saltando imágenes ya usadas (por id de Unsplash)
+  const registry = loadImageRegistry();
+  let heroImage = null;
+  if (UNSPLASH_KEY) {
+    for (let page = 1; page <= 3 && !heroImage; page++) {
+      const photos = await unsplashFetch(draft.title, page);
+      for (const photo of photos) {
+        if (registry.byUnsplashId && registry.byUnsplashId[photo.id]) continue;
+        heroImage = photo.url;
+        break;
+      }
+    }
+  }
   if (heroImage) console.log(`  Image: ${heroImage}`);
 
   const today = new Date().toISOString().slice(0, 10);
