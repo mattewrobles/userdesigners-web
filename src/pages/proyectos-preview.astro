@@ -3,6 +3,43 @@
 import fs from "fs";
 import Navbar from "../components/Navbar.astro";
 import Footer from "../components/Footer.astro";
+import SectionLabel from "../components/ui/SectionLabel.astro";
+import Marquee from "../components/ui/Marquee.astro";
+import TestimonialCard from "../components/TestimonialCard.astro";
+
+// Testimonios (los mismos de contacto, que ya funcionan con Marquee animado)
+const testimonios = [
+  {
+    quote: "Llegamos con una idea muy difusa y salimos con un producto claro, ordenado y listo para crecer. Su proceso de UX Research nos abrió los ojos.",
+    name: "Juan Méndez",
+    role: "Director General",
+  },
+  {
+    quote: "Nuestra landing estaba bonita, pero no convertía. Después del rediseño, nuestra tasa de conversión aumentó más del doble.",
+    name: "Sandra García",
+    role: "Directora en OM Dental y Destino Salud",
+  },
+  {
+    quote: "Diseñaron nuestra app con un nivel de detalle increíble. Todo fluye. Nuestro equipo de desarrollo dijo que es el prototipo más claro y usable que han recibido. Nos ahorraron meses de retrabajo.",
+    name: "Diego Morales",
+    role: "CTO de app",
+  },
+  {
+    quote: "Trabajar con este equipo fue un antes y después para nuestra marca. No solo entendieron lo que queríamos… entendieron lo que necesitábamos. Nuestro producto ahora se siente más claro.",
+    name: "Rosalía Moscoso",
+    role: "Fundadora de Destino Salud",
+  },
+  {
+    quote: "No solo diseñaron pantallas, diseñaron el producto completo. Desde el mapa de usuario hasta el sistema visual. Su trabajo elevó el proyecto y nos ayudó a conseguir inversión. Literalmente marcó la diferencia.",
+    name: "Grecia Ochoa",
+    role: "CEO de una startup en etapa seed",
+  },
+  {
+    quote: "Le dieron vida a la página con un diseño totalmente innovador, ahora los clientes pueden encontrarnos con facilidad gracias a su posicionamiento.",
+    name: "Dra. Janne",
+    role: "Manager en Destino Salud",
+  },
+];
 
 let html = fs.readFileSync("src/html/proyectos-native.html", "utf-8");
 
@@ -21,12 +58,18 @@ html = html.replace(/visibility:\s*hidden/gi, "visibility:visible");
 // Extraer el contenido (nav se reemplaza por Navbar DS; footer por Footer DS)
 const bodyMatch = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
 const body = bodyMatch ? bodyMatch[1] : html;
-// Las secciones (Hero Section → Service Section) hasta antes del footer
 const footerStart = body.indexOf("<footer");
 const heroSecStart = body.indexOf('data-ud-name="Hero Section"');
 const secTag = heroSecStart > 0 ? body.lastIndexOf("<section", heroSecStart) : -1;
-const hasta = footerStart > 0 ? footerStart : body.length;
-const secciones = secTag >= 0 ? body.slice(secTag, hasta) : body;
+// El bloque nativo de testimonios (se corta sin el player) se reemplaza por la
+// sección animada de contacto (Marquee). Localizar sus límites para excluirlo.
+const testiStart = body.indexOf("TESTIMONIALES");
+const testiDivStart = testiStart > 0 ? body.lastIndexOf("<div", testiStart) : -1;
+const bodyEnd = footerStart > 0 ? footerStart : body.length;
+// Parte 1: desde el Hero hasta antes del bloque de testimonios
+const parte1 = secTag >= 0 && testiDivStart > secTag ? body.slice(secTag, testiDivStart) : "";
+// Parte 2: lo que queda del bloque de testimonios hasta el footer (se descarta)
+// — los proyectos ya están en parte1, los testimonios van reemplazados abajo.
 // CSS de la página (los <style> del head renombrados) — necesario para el layout
 const cssStyles = html.match(/<style[^>]*>[\s\S]*?<\/style>/gi) || [];
 ---
@@ -64,9 +107,55 @@ const cssStyles = html.match(/<style[^>]*>[\s\S]*?<\/style>/gi) || [];
   <body style="background:#030303;margin:0">
     <Navbar />
     <div class="ud-tqfFO ud-72rtr7 ud-YXLyn ud-WOlJs ud-azf2I ud-rQvtk ud-GISSF" data-ud-root="" style="min-height:100vh;width:1440px">
-      <Fragment set:html={secciones} />
+      <Fragment set:html={parte1} />
     </div>
+    <!-- Testimonios animados (los mismos de contacto, con Marquee) -->
+    <section class="testimonials">
+      <div class="testimonials-inner">
+        <div class="testimonials-head">
+          <div>
+            <SectionLabel>Testimonios</SectionLabel>
+            <h2>Nuestros clientes hablan</h2>
+          </div>
+          <p>Lo que dicen quienes ya trabajaron con nosotros, de la investigación al lanzamiento.</p>
+        </div>
+        <div class="testimonials-marquee">
+          <Marquee speed={26} gap={24}>
+            {testimonios.map((t, i) => <TestimonialCard testimonio={t} index={i} />)}
+          </Marquee>
+          <Marquee speed={30} gap={24} reverse>
+            {testimonios.slice(3).map((t, i) => <TestimonialCard testimonio={t} index={i + 3} />)}
+            {testimonios.slice(0, 3).map((t, i) => <TestimonialCard testimonio={t} index={i} />)}
+          </Marquee>
+        </div>
+      </div>
+    </section>
     <Footer />
+    <style is:inline>
+      .testimonials {
+        position: relative;
+        padding: 12px var(--space-pad) 130px;
+        background: var(--ud-black);
+      }
+      .testimonials-inner { max-width: var(--container-max); margin: 0 auto; }
+      .testimonials-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 32px; flex-wrap: wrap; margin-bottom: 56px; }
+      .testimonials-head h2 {
+        font-family: var(--font-display);
+        font-size: var(--heading-1);
+        font-weight: 500;
+        letter-spacing: -0.03em;
+        line-height: 1.1;
+        text-wrap: balance;
+        max-width: 22ch;
+        color: var(--text-primary);
+        margin: 0;
+      }
+      .testimonials-head p { color: var(--text-secondary); max-width: 34ch; line-height: 1.7; margin: 0; }
+      .testimonials-marquee { display: flex; flex-direction: column; gap: 24px; }
+      @media (max-width: 720px) {
+        .testimonials-head { margin-bottom: 32px; }
+      }
+    </style>
     <script is:inline>
       // El player de Framer calculaba alturas en runtime (height:min-content +
       // hijos absolute colapsan sin él). Medimos el contenido real y fijamos
