@@ -1,6 +1,6 @@
 ---
 title: "GEO: cómo optimizar tu contenido para ChatGPT y AI Overviews de Google"
-description: "Guía práctica de Generative Engine Optimization (GEO). 5 reglas para que los LLMs te citen."
+description: "Guía práctica de Generative Engine Optimization (GEO). 5 reglas para que ChatGPT, Perplexity y AI Overviews citen tu contenido en sus respuestas."
 category: "SEO"
 author: "UserDesigners"
 tags: ["SEO", "IA", "UX Design"]

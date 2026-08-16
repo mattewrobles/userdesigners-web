@@ -1,6 +1,6 @@
 ---
 title: "Diseño mobile-first: no es una tendencia, es una necesidad"
-description: "Más del 60% del tráfico web viene de dispositivos móviles. Diseñar pensando en móvil primero no es opcional."
+description: "Más del 60% del tráfico web viene de dispositivos móviles. Descubre por qué diseñar mobile-first no es opcional y cómo afecta la conversión de tu producto."
 category: "Product Design"
 author: "UserDesigners"
 tags: ["UX Design", "Metodología"]

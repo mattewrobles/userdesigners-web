@@ -1,6 +1,6 @@
 ---
 title: "Design System: por qué tu empresa necesita uno ahora"
-description: "Una librería centralizada de componentes y reglas que acelera el diseño y el desarrollo, manteniendo la consistencia."
+description: "Una librería centralizada de componentes y reglas que acelera el diseño y el desarrollo, manteniendo la consistencia. Descubre por qué tu empresa necesita un design system."
 category: "Design Systems"
 author: "UserDesigners"
 tags: []

@@ -1,0 +1,47 @@
+# UserDesigners
+
+> Agencia de UX/UI Design especializada en Fintechs, Bancos y neobancos de Latinoamérica. Desde Cuenca, Ecuador, diseñamos productos digitales que convierten: investigación de usuarios, UX, UI y design systems.
+
+UserDesigners (userdesigners.com) es una agencia de experiencia de usuario (UX) y diseño de interfaz (UI) con más de 12 años de experiencia en fintech, banca digital y neobancos de Latinoamérica. Nuestro proceso combina investigación de usuarios, arquitectura de la información, diseño de interfaz y design systems para productos digitales que convierten.
+
+Contacto: latam@userdesigners.com | WhatsApp: +593 0961026799 | Cuenca, Ecuador
+
+## Key pages
+
+- [Home](https://www.userdesigners.com/): Agencia UX/UI para fintechs y bancos latinoamericanos
+- [Servicios](https://www.userdesigners.com/servicios/): Investigación de usuarios, UX design, UI design, design systems y prototipado
+- [Nosotros](https://www.userdesigners.com/nosotros/): Equipo de diseño UX/UI y metodología
+- [Proyectos](https://www.userdesigners.com/proyectos/): Casos de éxito — Utransfer, Kaito, Novo y más
+- [Contacto](https://www.userdesigners.com/contacto/): Hablemos de tu proyecto
+
+## Servicios
+
+- Investigación de usuarios y UX Research
+- Diseño de experiencia de usuario (UX)
+- Diseño de interfaz (UI)
+- Design systems para empresas
+- Prototipado rápido y validación de ideas
+- Auditoría UX de productos digitales
+- SEO médico y posicionamiento local (userdesigners.com/seo-doctores)
+
+## Proyectos destacados
+
+- [Utransfer](https://www.userdesigners.com/proyectos/utransfer/): UX Research para aplicación de transferencias
+- [Kaito](https://www.userdesigners.com/proyectos/kaito/): Diseño de fintech app
+- [Novo](https://www.userdesigners.com/proyectos/novo/): Banca digital
+- [Verificación biométrica](https://www.userdesigners.com/proyectos/verificacion-biometrica/): Biometría UX
+
+## Blog
+
+- [Por qué tu empresa necesita un design system](https://www.userdesigners.com/blog/design-system-empresa/): Centraliza componentes y reglas para acelerar diseño y desarrollo
+- [Cómo adaptar tu marca a un design system](https://www.userdesigners.com/blog/sistema-de-diseno-para-productos-digitales/): Escala tu producto digital con un sistema de diseño
+- [GEO: cómo optimizar tu contenido para ChatGPT y AI Overviews](https://www.userdesigners.com/blog/geo-optimizar-contenido-chatgpt-ai-overviews/): 5 reglas para que los LLMs citen tu contenido
+- [Diseño mobile-first](https://www.userdesigners.com/blog/diseno-mobile-first/): Por qué diseñar para móvil primero no es opcional
+- [Auditoría UX de producto digital](https://www.userdesigners.com/blog/auditoria-ux-producto-digital/): Análisis sistemático para identificar problemas
+- [Prototipado rápido: valida tu idea](https://www.userdesigners.com/blog/prototipado-rapido-valida-idea/): Simulación interactiva para probar con usuarios reales
+- [IA en diseño de productos](https://www.userdesigners.com/blog/inteligencia-artificial-en-diseno-de-productos/): Cómo aplicar IA sin perder el toque humano
+
+## Optional
+
+- [Robots](https://www.userdesigners.com/robots.txt)
+- [Sitemap](https://www.userdesigners.com/sitemap_index.xml)

@@ -1,6 +1,6 @@
 ---
 title: "Cómo usar AI en diseño sin perder el toque humano"
-description: "Guía para usar herramientas de IA en diseño UX/UI sin que tu trabajo se sienta genérico."
+description: "Guía para usar herramientas de IA en diseño UX/UI sin que tu trabajo se sienta genérico. Aprende a mantener el toque humano en cada entrega."
 category: "UX Design"
 author: "UserDesigners"
 tags: ["UX Design", "UI Design", "IA"]

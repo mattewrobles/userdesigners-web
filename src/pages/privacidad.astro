@@ -1,0 +1,49 @@
+---
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<!doctype html>
+<html lang="es-EC">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Política de Privacidad | UserDesigners</title>
+  <meta name="description" content="Política de privacidad de UserDesigners: qué datos recopilamos, cómo los usamos y tus derechos como usuario del sitio userdesigners.com." />
+  <link rel="canonical" href="https://www.userdesigners.com/privacidad/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Política de Privacidad | UserDesigners" />
+  <meta property="og:description" content="Qué datos recopilamos, cómo los usamos y tus derechos como usuario del sitio userdesigners.com." />
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Política de Privacidad",
+    "url": "https://www.userdesigners.com/privacidad/",
+    "inLanguage": "es-EC"
+  })} />
+  <link rel="stylesheet" href="/styles/tokens.css" />
+</head>
+<body style="margin:0;background-color:var(--surface-1);color:var(--text-primary);font-family:var(--font-body)">
+  <Navbar />
+  <main style="max-width:720px;margin:0 auto;padding:120px 24px 80px">
+    <h1 style="font-family:var(--font-display);font-size:40px;font-weight:500;letter-spacing:-0.02em;margin:0 0 12px">Política de Privacidad</h1>
+    <p style="color:var(--text-secondary);margin:0 0 40px">Última actualización: agosto 2026</p>
+
+    <h2 style="font-family:var(--font-display);font-size:22px;font-weight:500;margin:0 0 12px">1. Datos que recopilamos</h2>
+    <p style="color:var(--text-secondary);line-height:1.7;margin:0 0 24px">Este sitio utiliza herramientas de analítica (Google Analytics 4, SimpleAnalytics, Microsoft Clarity y Mixpanel) que recopilan datos anónimos de uso: páginas visitadas, tiempo de navegación, dispositivo, país y origen del tráfico. No recopilamos datos personales identificables salvo los que tú nos envías voluntariamente a través del formulario de contacto.</p>
+
+    <h2 style="font-family:var(--font-display);font-size:22px;font-weight:500;margin:0 0 12px">2. Uso de los datos</h2>
+    <p style="color:var(--text-secondary);line-height:1.7;margin:0 0 24px">Los datos de analítica se usan para entender cómo se usa el sitio y mejorar su contenido y experiencia. La información del formulario de contacto (nombre, email y descripción del proyecto) se usa únicamente para responder a tu solicitud.</p>
+
+    <h2 style="font-family:var(--font-display);font-size:22px;font-weight:500;margin:0 0 12px">3. Cookies y almacenamiento local</h2>
+    <p style="color:var(--text-secondary);line-height:1.7;margin:0 0 24px">SimpleAnalytics no usa cookies. Google Analytics y Clarity pueden usar cookies de terceros para medir el uso del sitio. Puedes bloquearlas desde la configuración de tu navegador.</p>
+
+    <h2 style="font-family:var(--font-display);font-size:22px;font-weight:500;margin:0 0 12px">4. Tus derechos</h2>
+    <p style="color:var(--text-secondary);line-height:1.7;margin:0 0 24px">Puedes solicitar el acceso, corrección o eliminación de tus datos personales escribiendo a <a href="mailto:latam@userdesigners.com" style="color:var(--accent-default)">latam@userdesigners.com</a>.</p>
+
+    <h2 style="font-family:var(--font-display);font-size:22px;font-weight:500;margin:0 0 12px">5. Contacto</h2>
+    <p style="color:var(--text-secondary);line-height:1.7;margin:0">UserDesigners · Cuenca, Ecuador · <a href="mailto:latam@userdesigners.com" style="color:var(--accent-default)">latam@userdesigners.com</a></p>
+  </main>
+  <Footer />
+</body>
+</html>

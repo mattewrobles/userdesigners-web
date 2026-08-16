@@ -1,6 +1,6 @@
 ---
 title: "Por qué UserDesigners es la agencia de UX ideal para tu empresa en Ecuador y Latam"
-description: "Descubre por qué fundadores y CTOs en Ecuador eligen a UserDesigners como su agencia de UX/UI para escalar productos digitales basados en datos y no en suposiciones."
+description: "Descubre por qué fundadores y CTOs en Ecuador eligen a UserDesigners: agencia UX/UI que escala productos digitales basados en datos y no en suposiciones."
 category: "UX Design"
 author: "UserDesigners"
 tags: ["UX Design", "UX"]

@@ -5,7 +5,12 @@ import sentry from "@sentry/astro";
 export default defineConfig({
   site: "https://www.userdesigners.com",
   integrations: [
-    sitemap(),
+    sitemap({
+      filter: (page) => {
+        const excluded = ["/diag", "/diag-logos", "/diag-logos2", "/hero-preview", "/home-framer", "/mantenimiento", "/design-system"];
+        return !excluded.some((path) => page.includes(path));
+      },
+    }),
     sentry({
       project: "users-website",
       org: "user-designers",
