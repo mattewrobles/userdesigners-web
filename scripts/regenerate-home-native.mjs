@@ -104,6 +104,46 @@ function removePlayerScript(html) {
 }
 html = removePlayerScript(html);
 
+// J) Eliminar los scripts inline del player de Framer que quedaron en el body:
+//    animator, framer_variant, estados de aparecer, svg defs inline, y cualquier
+//    script del player. Se conservan: analytics (GA4, Clarity, Sentry, SA) y schema.
+function removeAllPlayerScripts(html) {
+  const out = [];
+  let idx = 0;
+  const re = /<script\b[^>]*>/g;
+  let m;
+  while ((m = re.exec(html)) !== null) {
+    const openStart = m.index;
+    const openEnd = re.lastIndex;
+    const openTag = html.slice(openStart, openEnd);
+    const close = html.indexOf("</script>", openEnd);
+    if (close === -1) break;
+    const content = html.slice(openEnd, close);
+    const src = /src=/.test(openTag);
+    const isPlayer =
+      !src && (
+        content.includes("animator") ||
+        content.includes("framer_variant") ||
+        content.includes("framer-appear") ||
+        content.includes("__framer") ||
+        content.includes("svgContainer") ||
+        content.includes("Appear_Animation") ||
+        content.includes("window.process") ||
+        content.includes("history.pushState") ||
+        content.includes('document.body.appendChild(r),r.click') ||
+        content.includes("Date.prototype.toLocaleString") ||
+        content.includes("data-fid")
+      );
+    if (isPlayer) {
+      out.push(html.slice(idx, openStart));
+      idx = close + "</script>".length;
+    }
+  }
+  out.push(html.slice(idx));
+  return out.join("");
+}
+html = removeAllPlayerScripts(html);
+
 fs.writeFileSync(out, html);
 console.log(`Regenerado: ${out}`);
 console.log(`  tamaño: ${(fs.statSync(out).size / 1024).toFixed(0)}KB`);

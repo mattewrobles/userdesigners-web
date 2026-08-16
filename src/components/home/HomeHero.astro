@@ -4,7 +4,6 @@
 import Button from "../ui/Button.astro";
 import LetterReveal from "../ui/LetterReveal.astro";
 import Reveal from "../ui/Reveal.astro";
-import BlobField from "../ui/BlobField.astro";
 import HomeLogos from "./HomeLogos.astro";
 ---
 
@@ -12,9 +11,7 @@ import HomeLogos from "./HomeLogos.astro";
   <!-- Glow: masa estática EXACTA del original (gradiente 140deg, blur 80, hard-light) + blobs animados sutiles encima -->
   <div class="hero-glow" aria-hidden="true">
     <div class="hero-glow-mass"></div>
-  </div>
-  <div class="hero-blobs" aria-hidden="true">
-    <BlobField variant="hero" opacity={0.55} blur={38} />
+    <div class="hero-glow-mass hero-glow-mass--b"></div>
   </div>
 
   <!-- Content -->
@@ -71,39 +68,65 @@ import HomeLogos from "./HomeLogos.astro";
 
   /* ---------- Glow (masa original + blobs animados) ---------- */
   .hero-glow {
-    filter: blur(80px);
-    mix-blend-mode: hard-light;
+    filter: blur(20px);
+    mix-blend-mode: screen;
     z-index: 1;
     flex: none;
     width: 59%;
     height: 60%;
     position: absolute;
     top: 20%;
-    left: -0.03%;
+    left: 0%;
     overflow: hidden;
     pointer-events: none;
   }
   .hero-glow-mass {
     position: absolute;
-    top: 20px;
-    left: -167px;
-    width: 120%;
-    height: 72%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     border-radius: 48px;
-    background: linear-gradient(
-      90deg,
-      rgb(132, 217, 250) 0%,
-      rgb(132, 217, 250) 55%,
-      rgb(120, 160, 220) 66%,
-      rgb(227, 103, 83) 80%,
-      rgb(246, 198, 95) 93%,
-      rgba(16, 17, 22, 0) 100%
-    );
+    /* El gradiente es MÁS GRANDE que el elemento y se desplaza por
+       background-position → el blob cambia de forma (morph), no solo se mueve */
+    background-size: 220% 220%;
+    background-repeat: no-repeat;
+    animation:
+      hero-move-a 6s ease-in-out infinite alternate,
+      hero-morph-a 11s ease-in-out infinite alternate;
+    will-change: transform, background-position;
+  }
+  .hero-glow-mass--b {
+    animation:
+      hero-move-b 8.5s ease-in-out infinite alternate,
+      hero-morph-b 14s ease-in-out infinite alternate;
+  }
+
+  /* Movimiento independiente (péndulo suave: va y vuelve, sin saltos) */
+  @keyframes hero-move-a {
+    from { transform: translate(0%, 0%) scale(1); }
+    to   { transform: translate(10%, -8%) scale(1.15); }
+  }
+  @keyframes hero-move-b {
+    from { transform: translate(0%, 0%) scale(1); }
+    to   { transform: translate(-12%, 10%) scale(1.18); }
+  }
+
+  /* Morph: el gradiente se desplaza dentro del área grande → la forma
+     del blob se estira, encoge y deforma (como lava real), yendo y volviendo */
+  @keyframes hero-morph-a {
+    from { background-position: 0% 0%; }
+    to   { background-position: 100% 80%; }
+  }
+  @keyframes hero-morph-b {
+    from { background-position: 100% 100%; }
+    to   { background-position: 0% 40%; }
   }
   .hero-blobs {
     position: absolute;
     inset: 0;
-    z-index: 1;
+    z-index: 2;
+  }
     pointer-events: none;
   }
 
@@ -148,11 +171,11 @@ import HomeLogos from "./HomeLogos.astro";
   }
   :global(.hero-sub) {
     font-family: var(--font-body);
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 400;
     line-height: 1.7;
     text-align: center;
-    color: #ffffff;
+    color: rgba(255, 255, 255, 0.92);
     max-width: 720px;
     margin: 24px auto 0;
   }
@@ -283,3 +306,44 @@ import HomeLogos from "./HomeLogos.astro";
     .hero-line-pulse { animation: none; opacity: 1; }
   }
 </style>
+
+<script is:inline>
+  // Gradiente del hero: 2 focos independientes, paleta y FORMA al azar por carga.
+  (function () {
+    const massA = document.querySelector(".hero-glow-mass:not(.hero-glow-mass--b)");
+    const massB = document.querySelector(".hero-glow-mass--b");
+    if (!massA || !massB) return;
+    const palettes = [
+      ["rgb(255,200,80)", "rgb(0,190,255)"],
+      ["rgb(255,180,60)", "rgb(0,170,255)"],
+      ["rgb(255,220,100)", "rgb(0,200,240)"],
+      ["rgb(255,80,60)", "rgb(40,80,200)"],
+      ["rgb(255,50,70)", "rgb(60,60,220)"],
+      ["rgb(220,40,90)", "rgb(30,100,255)"],
+      ["rgb(255,70,50)", "rgb(20,60,220)"],
+      ["rgb(200,60,220)", "rgb(40,80,255)"],
+      ["rgb(150,50,255)", "rgb(0,140,255)"],
+    ];
+    // Formas orgánicas en PORCENTAJES (escalan al tamaño real) — blob irregular,
+    // ameba, hoja, cruz suave, estrella redonda, doble lóbulo.
+    const shapes = [
+      "polygon(28% 8%, 52% 2%, 76% 14%, 94% 38%, 90% 64%, 74% 92%, 44% 90%, 12% 78%, 6% 48%, 12% 22%)",
+      "polygon(18% 14%, 52% 0%, 82% 12%, 98% 42%, 92% 66%, 80% 90%, 50% 96%, 16% 84%, 8% 56%, 10% 30%)",
+      "polygon(38% 6%, 60% 10%, 74% 24%, 92% 42%, 84% 62%, 78% 88%, 52% 94%, 26% 96%, 12% 74%, 6% 44%)",
+      "polygon(24% 18%, 46% 2%, 70% 14%, 92% 32%, 88% 58%, 82% 86%, 54% 92%, 28% 94%, 12% 72%, 8% 42%)",
+      "polygon(50% 2%, 64% 22%, 84% 50%, 68% 58%, 72% 78%, 56% 92%, 44% 94%, 30% 78%, 16% 58%, 34% 42%)",
+      "polygon(22% 8%, 56% 0%, 84% 20%, 100% 44%, 92% 66%, 82% 90%, 52% 94%, 24% 96%, 12% 70%, 4% 44%)",
+    ];
+    // 2 formas distintas (no repetidas) para A y B
+    let ia = Math.floor(Math.random() * shapes.length);
+    let ib;
+    do { ib = Math.floor(Math.random() * shapes.length); } while (ib === ia);
+    const [a, b] = palettes[Math.floor(Math.random() * palettes.length)];
+    massA.style.background =
+      "radial-gradient(60% 55% at 40% 45%, " + a + ", rgba(0,0,0,0) 68%)";
+    massA.style.clipPath = shapes[ia];
+    massB.style.background =
+      "radial-gradient(55% 60% at 40% 45%, " + b + ", rgba(0,0,0,0) 68%)";
+    massB.style.clipPath = shapes[ib];
+  })();
+</script>

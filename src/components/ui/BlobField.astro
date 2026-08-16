@@ -30,10 +30,9 @@ const variants = {
   },
   hero: {
     blobs: [
-      { x: 40, y: 350, s: 1500, rx: 24, ry: 18, spd: 30, ph: 0.4 },
-      { x: 160, y: 260, s: 1000, rx: 22, ry: 18, spd: 36, ph: 2.0 },
-      { x: 300, y: 420, s: 1100, rx: 20, ry: 16, spd: 34, ph: 3.8 },
-      { x: 220, y: 520, s: 950, rx: 22, ry: 18, spd: 32, ph: 5.2 },
+      { x: 120, y: 350, s: 600, rx: 24, ry: 18, spd: 30, ph: 0.4 },
+      { x: 480, y: 260, s: 460, rx: 22, ry: 18, spd: 36, ph: 2.0 },
+      { x: 400, y: 520, s: 440, rx: 22, ry: 18, spd: 32, ph: 5.2 },
     ],
   },
   seo: {
@@ -108,11 +107,8 @@ const variants = {
 const cfg = variants[variant] || variants.blog;
 const blobs = cfg.blobs;
 const isBicolor = variant === "bicolor";
-// Hero: colores fijos = los del gradiente original del home (oro→coral→lila→cian)
-const fixedColors =
-  variant === "hero"
-    ? ["rgb(132,217,250)", "rgb(120,160,220)", "rgb(227,103,83)", "rgb(246,198,95)"]
-    : null;
+// Hero: sin paleta fija desde SSR — el script cliente elige una al azar por carga
+const fixedColors = null;
 ---
 
 <div class="blobfield" data-variant={variant} data-bicolor={isBicolor} data-nblobs={blobs.length} data-static={isStatic} data-colors={fixedColors ? fixedColors.join("|") : ""} style={`--bf-opacity:${opacity};--bf-blur:${blur}px;${extraStyle ? extraStyle : ""}`} aria-hidden="true">
@@ -172,7 +168,7 @@ const fixedColors =
     const variant = field.dataset.variant;
     const schemes = {
       blog:   [{x:60,y:560,s:1500},{x:320,y:520,s:1350}],
-      hero:   [{x:40,y:350,s:1500},{x:160,y:260,s:1000},{x:300,y:420,s:1100},{x:220,y:520,s:950}],
+      hero:   [{x:120,y:350,s:600},{x:480,y:260,s:460},{x:400,y:520,s:440}],
       home:   [{x:140,y:380,s:500},{x:720,y:200,s:460},{x:580,y:700,s:440},{x:300,y:80,s:420}],
       contacto:[{x:500,y:300,s:1000},{x:500,y:560,s:900}],
       servicios:[{x:220,y:240,s:480},{x:760,y:280,s:440},{x:400,y:680,s:460},{x:820,y:640,s:420}],
@@ -186,14 +182,31 @@ const fixedColors =
     const s = schemes[variant] || schemes.blog;
     const count = Math.min(nblobs, s.length);
 
+    // Paletas curadas del HERO (fintech): se elige UNA al azar en cada carga del
+    // navegador → los colores cambian al refrescar pero siempre armonizan.
+    const HERO_PALETTES = [
+      ["rgb(255,170,40)", "rgb(0,190,255)", "rgb(40,90,180)"],
+      ["rgb(255,190,60)", "rgb(0,180,240)", "rgb(60,120,220)"],
+      ["rgb(255,150,30)", "rgb(0,200,255)", "rgb(80,100,200)"],
+      ["rgb(255,180,80)", "rgb(0,210,240)", "rgb(100,130,230)"],
+    ];
+
     const blobs = [];
     // hue base compartido → todos los blobs son análogos (armonizan)
     const hBase = baseHue();
-    // colores fijos (variante hero = gradiente original del home)
+    // colores: hero usa paleta curada random; resto usa análogos de baseHue
     const fixed = field.dataset.colors ? field.dataset.colors.split("|") : null;
+    const heroPalette =
+      variant === "hero"
+        ? HERO_PALETTES[Math.floor(Math.random() * HERO_PALETTES.length)]
+        : null;
     for (let i = 0; i < count; i++) {
       const base = s[i];
-      const c1 = fixed ? fixed[i % fixed.length] : analogColor(hBase, i, i === 0);
+      const c1 = heroPalette
+        ? heroPalette[i % heroPalette.length]
+        : fixed
+          ? fixed[i % fixed.length]
+          : analogColor(hBase, i, i === 0);
       const c2 = isBicolor ? randomColor2(i * 40) : null;
 
       // gradiente por blob (relleno de su path)

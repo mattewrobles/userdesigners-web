@@ -1,16 +1,31 @@
 ---
-// PREVIEW TEMPORAL del home nativo (para verificación visual).
-// Se elimina cuando la migración del home esté completa.
+// Home nativo — Hero nuevo (aprobado por Mau) + secciones del ORIGINAL framer
+// inyectadas 1:1 desde src/html/home-native.html (clases ud-, imágenes locales).
+import fs from "fs";
 import Navbar from "../components/Navbar.astro";
 import Footer from "../components/Footer.astro";
 import HomeHero from "../components/home/HomeHero.astro";
-import ServiceTabs from "../components/home/ServiceTabs.astro";
-import Benefits from "../components/home/Benefits.astro";
-import Proyectos from "../components/home/Proyectos.astro";
-import Team from "../components/home/Team.astro";
-import Metricas from "../components/home/Metricas.astro";
 import BlogSection from "../components/home/BlogSection.astro";
-import CTASection from "../components/home/CTASection.astro";
+
+let html = fs.readFileSync("src/html/home-native.html", "utf-8");
+
+// Quitar styles inline (el CSS vive en public/home.css)
+html = html.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "");
+
+// Forzar visibilidad (estados que el player de Framer animaba) — NO tocar los
+// estilos de layout, solo los estados de opacidad/transform de "appear".
+html = html.replace(/opacity:\s*0\.001/gi, "opacity:1");
+html = html.replace(/opacity:\s*0;/gi, "opacity:1;");
+html = html.replace(/opacity:0(?!\d)/gi, "opacity:1");
+html = html.replace(/transform:\s*translateY\(-?\d+px\)/gi, "transform:none");
+html = html.replace(/transform:\s*perspective\([^)]*\)\s*translateY\([^)]*\)/gi, "transform:none");
+html = html.replace(/filter:\s*blur\(10px\)/gi, "filter:none");
+
+// Extraer las secciones del original (Product section → Bannner), excluyendo
+// el Blog estático (se reemplaza por BlogSection dinámico del CMS real).
+const body = html.replace(/<body[^>]*>|<\/body>/gi, "");
+const blogStart = body.indexOf('<section class="ud-o78dmu"');
+const secciones = blogStart > 0 ? body.slice(0, blogStart) : body;
 ---
 
 <html lang="es-EC">
@@ -18,7 +33,7 @@ import CTASection from "../components/home/CTASection.astro";
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex" />
-    <title>Preview Hero | UserDesigners</title>
+    <title>Home nativo | UserDesigners</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -26,21 +41,37 @@ import CTASection from "../components/home/CTASection.astro";
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/styles/tokens.css" />
-    <style>
-      html, body { background: #030303; margin: 0; }
-      body { min-height: 100vh; }
-    </style>
+    <link rel="stylesheet" href="/home.css" />
   </head>
   <body style="background:#030303;margin:0">
     <Navbar />
     <HomeHero />
-    <ServiceTabs />
-    <Benefits />
-    <Proyectos />
-    <Team />
-    <Metricas />
+    <Fragment set:html={secciones} />
     <BlogSection />
-    <CTASection />
     <Footer />
+
+    <script is:inline>
+      // Marquee de logos del hero del HTML (carrusel que el player animaba)
+      document.addEventListener("DOMContentLoaded", () => {
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        const logoWrap = document.querySelector(".ud-12n3d87-container");
+        if (logoWrap) {
+          const track = logoWrap.querySelector("section");
+          if (track && track.scrollWidth > logoWrap.clientWidth * 1.3) {
+            const clone = track.cloneNode(true);
+            track.appendChild(clone);
+            const distance = track.scrollWidth / 2;
+            let x = 0;
+            const step = () => {
+              x -= 0.8;
+              if (x <= -distance) x = 0;
+              track.style.transform = `translateX(${x}px)`;
+              requestAnimationFrame(step);
+            };
+            requestAnimationFrame(step);
+          }
+        }
+      });
+    </script>
   </body>
 </html>
