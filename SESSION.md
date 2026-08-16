@@ -733,3 +733,33 @@ Uso: `<BlobField variant="blog" count={5} opacity={0.85} speed={20} />`
 - **Testimonios**: padding-top 12→120px (el título quedaba bajo el navbar fixed). Marquee anima OK.
 
 **Lección repetida**: los selectores CSS del framework de Framer usan ancestros (`ud-pRmuk`, `ud-fzpBA`, `ud-GISSF`...) que el player añadía en runtime. Sin ellos, borders/colores de cards no aplican → agregar overrides con `!important` en el `<style is:inline>`.
+
+## Ago 16 (noche) — 4 rondas de revisión completadas
+
+**Verificado en 4 rondas (screenshots por sección + DOM):**
+
+**Servicios** (`/servicios-preview`):
+- Hero: título + teléfono + viñetas + marcas funcionales. Altura 2297px (carrusel de mockups estático, aceptado).
+- Viñetas: 4 legibles (activa blanca con texto oscuro).
+- Tarjetas Works: 4 uniformes (249px, gaps 249, sin superposición).
+- Footer: limpio.
+
+**Nosotros** (`/nosotros-preview`):
+- Hero: título + "Diseñamos Websites" alineados.
+- Experiencia: logo + texto.
+- Equipo: Cristian grande a color + mini tarjetas grises (carrusel estático).
+- Áreas: 4 pestañas + contenido.
+- CTA: título + botón sin cortar.
+- Footer: limpio.
+
+**Proyectos** (`/proyectos-preview`):
+- Hero: título + mockup.
+- Cards 2x2: borde gris (62,62,65) + logo + texto.
+- Testimonios: Marquee animado (6 testimonios de contacto con fotos).
+- Footer: limpio.
+
+**Home** (`/hero-preview`): confirmado OK (1 solo NUESTROS SERVICIOS, 5 secciones, sin cortes).
+
+**Sin errores de consola en ninguna página.**
+
+**Pendiente:** Mau valida visualmente las 4 páginas. Luego: swap de index.astro a nativo, limpiar páginas temporales (diag, diag-logos, diag-logos2), verificación 0 código Framer, agente crítico >95%.
