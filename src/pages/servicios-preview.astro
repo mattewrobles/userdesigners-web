@@ -67,18 +67,35 @@ const cssStyles = html.match(/<style[^>]*>[\s\S]*?<\/style>/gi) || [];
       }
       /* Sin el player, las slides del carrusel quedan superpuestas. En desktop
          se muestra la primera slide de cada grupo (los contenedores -container
-         con la misma posición). Se ocultan las slides duplicadas. */
-      .ud-72rtr7 .ud-1tww95g-container,
-      .ud-72rtr7 .ud-pclehy-container,
-      .ud-72rtr7 .ud-3ayvaa-container,
+         con la misma posición). Se ocultan las slides duplicadas del hero. */
       .ud-72rtr7 .ud-are2bs-container {
         display: none !important;
+      }
+      /* El carrusel de tarjetas de servicios es un Stack rotativo de Framer que
+         solo muestra 1 tarjeta a la vez. Sin el player se apilan verticalmente
+         para que las 4 sean visibles y ordenadas en la columna izquierda. */
+      .ud-72rtr7 .ud-1tww95g-container,
+      .ud-72rtr7 .ud-pclehy-container,
+      .ud-72rtr7 .ud-3ayvaa-container {
+        display: flex !important;
+        position: absolute !important;
+        left: 0 !important;
+        transform: none !important;
+      }
+      .ud-72rtr7 .ud-1tww95g-container {
+        top: 249px !important;
+      }
+      .ud-72rtr7 .ud-pclehy-container {
+        top: 498px !important;
+      }
+      .ud-72rtr7 .ud-3ayvaa-container {
+        top: 747px !important;
       }
     </style>
   </head>
   <body style="background:#030303;margin:0">
     <Navbar />
-    <div class="ud-tqfFO ud-72rtr7 ud-pRmuk" data-ud-root="" style="min-height:100vh;width:auto">
+    <div class="ud-tqfFO ud-72rtr7 ud-pRmuk" data-ud-root="" style="min-height:100vh;width:1440px">
       <Fragment set:html={heroSeccion} />
       <Fragment set:html={secciones} />
     </div>
@@ -93,20 +110,22 @@ const cssStyles = html.match(/<style[^>]*>[\s\S]*?<\/style>/gi) || [];
         const fix = (el) => {
           for (const child of Array.from(el.children)) {
             if (child.tagName === "STYLE") continue;
-            if (child.tagName === "SECTION" || child.tagName === "HEADER") {
+            const isBlock = child.tagName === "SECTION" || child.tagName === "HEADER";
+            const isCard = (child.className || "").toString().includes("-container") && child.querySelector(":scope > *");
+            if (isBlock || isCard) {
               const childRect = child.getBoundingClientRect();
               const currentH = childRect.height;
-              // el punto más bajo del contenido visible (ignora slides de
-              // carruseles horizontales fuera del ancho del contenedor)
-              let maxBottom = currentH;
-              for (const c of child.querySelectorAll("*")) {
-                const cr = c.getBoundingClientRect();
-                if (cr.left > childRect.right + 10 || cr.right < childRect.left - 10) continue;
-                const b = cr.bottom - childRect.top;
-                if (b > maxBottom) maxBottom = b;
-              }
-              if (maxBottom > currentH + 20) {
-                child.style.minHeight = Math.ceil(maxBottom) + "px";
+              if (isBlock || currentH < 100) {
+                let maxBottom = currentH;
+                for (const c of child.querySelectorAll("*")) {
+                  const cr = c.getBoundingClientRect();
+                  if (cr.left > childRect.right + 10 || cr.right < childRect.left - 10) continue;
+                  const b = cr.bottom - childRect.top;
+                  if (b > maxBottom) maxBottom = b;
+                }
+                if (maxBottom > currentH + 20) {
+                  child.style.minHeight = Math.ceil(maxBottom) + "px";
+                }
               }
             }
             fix(child);

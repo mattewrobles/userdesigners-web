@@ -19,6 +19,13 @@ html = html.replace(/opacity:\s*0;/gi, "opacity:1;");
 html = html.replace(/opacity:0(?!\d)/gi, "opacity:1");
 html = html.replace(/transform:\s*translateY\(-?\d+px\)/gi, "transform:none");
 html = html.replace(/transform:\s*perspective\([^)]*\)\s*translateY\([^)]*\)/gi, "transform:none");
+// Los estados de entrada del player usan translateX(±Npx) con opacity:0.
+// Sin player quedan congelados y desplazan el texto (se corta en overflow:hidden).
+// Solo limpiamos los que NO son layout (el centrado usa translateX(-50%)).
+html = html.replace(/opacity:1;\s*transform:\s*translateX\(-?\d+px\)/gi, "opacity:1;transform:none");
+html = html.replace(/will-change:transform;opacity:1;\s*transform:\s*translateX\(-?\d+px\)/gi, "will-change:transform;opacity:1;transform:none");
+html = html.replace(/transform:\s*translateX\(-?\d+px\)\s*rotate\([^)]*\)/gi, "transform:none");
+html = html.replace(/transform:\s*perspective\([^)]*\)\s*translateX\(-?\d+px\)\s*translateY\([^)]*\)\s*scale\([^)]*\)/gi, "transform:none");
 html = html.replace(/filter:\s*blur\(10px\)/gi, "filter:none");
 
 // Extraer las secciones del original (Product section → Bannner), excluyendo
@@ -64,7 +71,7 @@ const secciones = blogStart > 0 ? fromProduct.slice(0, blogStart - secStart) : f
     <HomeHero />
     {/* El root framer (ud-tqfFO) envuelve las secciones: los selectores de
         home.css dependen de ese ancestro (.ud-tqfFO .ud-5r60op, etc.) */}
-    <div class="ud-tqfFO ud-72rtr7" data-ud-root="" style="min-height:100vh;width:auto">
+    <div class="ud-tqfFO ud-72rtr7" data-ud-root="" style="min-height:100vh;width:1440px">
       <Fragment set:html={secciones} />
     </div>
     <BlogSection />
