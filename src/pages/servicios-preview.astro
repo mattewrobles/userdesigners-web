@@ -6,21 +6,31 @@ import Footer from "../components/Footer.astro";
 
 let html = fs.readFileSync("src/html/servicios-native.html", "utf-8");
 
-// Forzar visibilidad (estados del player) — los <style> se conservan (CSS nativo)
+// Forzar visibilidad (estados del player) — el hero usa opacity:0 + translateY
+// como estado inicial de entrada; sin player quedan invisibles. Los transforms
+// de layout (translateX(-50%), scale) NO se tocan.
 html = html.replace(/opacity:\s*0\.001/gi, "opacity:1");
 html = html.replace(/opacity:\s*0;/gi, "opacity:1;");
 html = html.replace(/opacity:0(?!\d)/gi, "opacity:1");
-html = html.replace(/transform:\s*translateY\(-?\d+px\)/gi, "transform:none");
 html = html.replace(/transform:\s*perspective\([^)]*\)\s*translateY\([^)]*\)/gi, "transform:none");
 html = html.replace(/filter:\s*blur\(10px\)/gi, "filter:none");
+// visibility:hidden son estados de entrada que el player animaba
+html = html.replace(/visibility:\s*hidden/gi, "visibility:visible");
 
-// Extraer el contenido (nav/footer/hero del home se reemplazan por DS y HomeHero)
+// Extraer el contenido (nav se reemplaza por Navbar DS; footer por Footer DS)
 const bodyMatch = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
 const body = bodyMatch ? bodyMatch[1] : html;
-// Empezar desde la primera sección de contenido (excluye hero global del home)
-const contentStart = body.indexOf('data-ud-name="How It Works"');
+// El Hero es un <header> sin cierre en el export → separarlo y cerrarlo bien.
+const heroStart = body.indexOf('data-ud-name="Hero"');
+const howStart = body.indexOf('data-ud-name="How It Works"');
 const footerStart = body.indexOf("<footer");
-const desde = contentStart > 0 ? body.lastIndexOf("<section", contentStart) : -1;
+const heroDesde = heroStart > 0 ? body.lastIndexOf("<header", heroStart) : -1;
+const heroHasta = howStart > 0 ? body.lastIndexOf("<section", howStart) : footerStart;
+const heroSeccion = heroDesde >= 0 && heroHasta > heroDesde
+  ? body.slice(heroDesde, heroHasta) + "</header>"
+  : "";
+// Las secciones de contenido (How It Works → Works) hasta antes del footer
+const desde = howStart > 0 ? body.lastIndexOf("<section", howStart) : -1;
 const hasta = footerStart > 0 ? footerStart : body.length;
 const secciones = desde >= 0 ? body.slice(desde, hasta) : body;
 // CSS de la página (los <style> del head renombrados) — necesario para el layout
@@ -40,10 +50,11 @@ const cssStyles = html.match(/<style[^>]*>[\s\S]*?<\/style>/gi) || [];
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/styles/tokens.css" />
+    <link rel="stylesheet" href="/home.css" />
     {cssStyles.map((s) => (
       <Fragment set:html={s} />
     ))}
-    <style>
+    <style is:inline>
       /* Los textos de la plantilla vienen en negro (0,0,0) porque el player de
          Framer les ponía color en runtime. Sobre fondo negro deben ser blancos. */
       .ud-tqfFO h1, .ud-tqfFO h2, .ud-tqfFO h3,
@@ -54,13 +65,57 @@ const cssStyles = html.match(/<style[^>]*>[\s\S]*?<\/style>/gi) || [];
       .ud-tqfFO .ud-text[style*="--ud-text-color"] {
         --ud-text-color: #fff !important;
       }
+      /* Sin el player, las slides del carrusel quedan superpuestas. En desktop
+         se muestra la primera slide de cada grupo (los contenedores -container
+         con la misma posición). Se ocultan las slides duplicadas. */
+      .ud-72rtr7 .ud-1tww95g-container,
+      .ud-72rtr7 .ud-pclehy-container,
+      .ud-72rtr7 .ud-3ayvaa-container,
+      .ud-72rtr7 .ud-are2bs-container {
+        display: none !important;
+      }
     </style>
   </head>
   <body style="background:#030303;margin:0">
     <Navbar />
-    <div class="ud-tqfFO" data-ud-root="" style="min-height:100vh;width:auto">
+    <div class="ud-tqfFO ud-72rtr7 ud-pRmuk" data-ud-root="" style="min-height:100vh;width:auto">
+      <Fragment set:html={heroSeccion} />
       <Fragment set:html={secciones} />
     </div>
     <Footer />
+    <script is:inline>
+      // El player de Framer calculaba alturas en runtime (height:min-content +
+      // hijos absolute colapsan sin él). Medimos el contenido real y fijamos
+      // min-height en los contenedores principales para revivir el layout.
+      const fixLayout = () => {
+        const root = document.querySelector(".ud-tqfFO");
+        if (!root) return;
+        const fix = (el) => {
+          for (const child of Array.from(el.children)) {
+            if (child.tagName === "STYLE") continue;
+            if (child.tagName === "SECTION" || child.tagName === "HEADER") {
+              const childRect = child.getBoundingClientRect();
+              const currentH = childRect.height;
+              // el punto más bajo del contenido visible (ignora slides de
+              // carruseles horizontales fuera del ancho del contenedor)
+              let maxBottom = currentH;
+              for (const c of child.querySelectorAll("*")) {
+                const cr = c.getBoundingClientRect();
+                if (cr.left > childRect.right + 10 || cr.right < childRect.left - 10) continue;
+                const b = cr.bottom - childRect.top;
+                if (b > maxBottom) maxBottom = b;
+              }
+              if (maxBottom > currentH + 20) {
+                child.style.minHeight = Math.ceil(maxBottom) + "px";
+              }
+            }
+            fix(child);
+          }
+        };
+        fix(root);
+      };
+      window.addEventListener("DOMContentLoaded", fixLayout);
+      window.addEventListener("load", () => setTimeout(fixLayout, 150));
+    </script>
   </body>
 </html>
