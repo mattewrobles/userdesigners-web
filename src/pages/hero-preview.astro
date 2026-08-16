@@ -22,11 +22,14 @@ html = html.replace(/transform:\s*perspective\([^)]*\)\s*translateY\([^)]*\)/gi,
 html = html.replace(/filter:\s*blur\(10px\)/gi, "filter:none");
 
 // Extraer las secciones del original (Product section → Bannner), excluyendo
-// el Blog estático (se reemplaza por BlogSection dinámico del CMS real).
+// TODO lo anterior (hero original + scripts de Framer) y el Blog estático.
 const body = html.replace(/<body[^>]*>|<\/body>/gi, "");
+const productStart = body.indexOf('data-ud-name="Product section"');
 const blogStart = body.indexOf('<section class="ud-o78dmu"');
-const secciones = blogStart > 0 ? body.slice(0, blogStart) : body;
----
+// retroceder al <section completo de la Product section
+const secStart = productStart > 0 ? body.lastIndexOf("<section", productStart) : -1;
+const fromProduct = secStart >= 0 ? body.slice(secStart) : body;
+const secciones = blogStart > 0 ? fromProduct.slice(0, blogStart - secStart) : fromProduct;---
 
 <html lang="es-EC">
   <head>
@@ -42,11 +45,28 @@ const secciones = blogStart > 0 ? body.slice(0, blogStart) : body;
     />
     <link rel="stylesheet" href="/styles/tokens.css" />
     <link rel="stylesheet" href="/home.css" />
+    <style>
+      /* Normalizar botones del HTML original al estilo del DS Button stroke */
+      .ud-tqfFO a[data-ud-name="Bottom"],
+      .ud-tqfFO a[data-ud-name="Button"],
+      .ud-tqfFO [data-ud-name="Bottom"] {
+        color: #fff !important;
+        font-family: var(--font-body) !important;
+        font-size: 14px !important;
+        font-weight: 500 !important;
+        letter-spacing: -0.01em !important;
+        text-decoration: none !important;
+      }
+    </style>
   </head>
   <body style="background:#030303;margin:0">
     <Navbar />
     <HomeHero />
-    <Fragment set:html={secciones} />
+    {/* El root framer (ud-tqfFO) envuelve las secciones: los selectores de
+        home.css dependen de ese ancestro (.ud-tqfFO .ud-5r60op, etc.) */}
+    <div class="ud-tqfFO" data-ud-root="" style="min-height:100vh;width:auto">
+      <Fragment set:html={secciones} />
+    </div>
     <BlogSection />
     <Footer />
 
