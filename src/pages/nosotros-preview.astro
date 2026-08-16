@@ -69,6 +69,19 @@ const cssStyles = html.match(/<style[^>]*>[\s\S]*?<\/style>/gi) || [];
       .ud-72rtr7 [class*="-container"] {
         display: block;
       }
+      /* Mobile: evitar que el hero (imagen de fondo 460px) desborde. */
+      @media (max-width: 809.98px) {
+        .ud-tqfFO .ud-11hemup-container,
+        .ud-tqfFO .ud-1bsp8da,
+        .ud-tqfFO .ud-17wmq3n {
+          max-width: 100vw !important;
+          overflow: hidden;
+        }
+        .ud-tqfFO section,
+        .ud-tqfFO header {
+          overflow-x: hidden;
+        }
+      }
       /* Hero: alinear "Diseñamos" y el carrusel de palabras (Websites/Apps/...)
          en la misma línea vertical (el display:contents del ssr-variant rompe
          el align-items:center del contenedor). */
@@ -165,6 +178,25 @@ const cssStyles = html.match(/<style[^>]*>[\s\S]*?<\/style>/gi) || [];
         });
       };
       window.addEventListener("DOMContentLoaded", initTeamHover);
+
+      // El player de Framer cambiaba la clase de variante (ud-v-*) según el
+      // breakpoint. Sin player, los elementos quedan con la clase desktop y el
+      // CSS mobile (selectores con ud-v-1rivokt) no aplica. Lo simulamos:
+      // en viewports < 810px se agrega la variante mobile al carrusel del team.
+      const applyBreakpoints = () => {
+        const mobile = window.innerWidth < 810;
+        const teamSlide = document.querySelector(".ud-3d2q6t");
+        if (teamSlide) {
+          const cls = teamSlide.className;
+          if (mobile && !cls.includes("ud-v-1rivokt")) {
+            teamSlide.classList.add("ud-v-1rivokt");
+          } else if (!mobile && cls.includes("ud-v-1rivokt")) {
+            teamSlide.classList.remove("ud-v-1rivokt");
+          }
+        }
+      };
+      window.addEventListener("DOMContentLoaded", applyBreakpoints);
+      window.addEventListener("resize", applyBreakpoints);
     </script>
   </body>
 </html>
