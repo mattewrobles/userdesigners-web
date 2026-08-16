@@ -13,6 +13,10 @@ html = html.replace(/opacity:\s*0\.001/gi, "opacity:1");
 html = html.replace(/opacity:\s*0;/gi, "opacity:1;");
 html = html.replace(/opacity:0(?!\d)/gi, "opacity:1");
 html = html.replace(/transform:\s*perspective\([^)]*\)\s*translateY\([^)]*\)/gi, "transform:none");
+// El dashboard del CTA final tiene un transform 3D de entrada del player
+// (perspective + translateX/Y + scale) que lo escala y desplaza fuera de su
+// contenedor. Se limpia para que quede en su posicion estatica.
+html = html.replace(/transform:\s*perspective\([^)]*\)\s*translateX\([^)]*\)\s*translateY\([^)]*\)\s*scale\([^)]*\)/gi, "transform:none");
 html = html.replace(/filter:\s*blur\(10px\)/gi, "filter:none");
 // visibility:hidden son estados de entrada que el player animaba
 html = html.replace(/visibility:\s*hidden/gi, "visibility:visible");
@@ -106,6 +110,19 @@ const cssStyles = html.match(/<style[^>]*>[\s\S]*?<\/style>/gi) || [];
       .ud-72rtr7 .ud-hTQx5 span,
       .ud-72rtr7 .ud-hTQx5 p {
         white-space: nowrap !important;
+      }
+      /* CTA final: la imagen del dashboard (1953px inline) desborda su contenedor
+         (1088px). Se ajusta al ancho del contenedor para quedar bien posicionada. */
+      .ud-17wmq3n img,
+      .ud-1bsp8da img {
+        width: 100% !important;
+        height: auto !important;
+        max-width: 100%;
+      }
+      .ud-1bsp8da {
+        width: 100% !important;
+        max-width: 1088px;
+        margin: 0 auto;
       }
     </style>
   </head>
