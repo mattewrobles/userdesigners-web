@@ -857,3 +857,22 @@ Mau: "borremos todo lo que sea framer ya no quiero nada de framer" — pero las 
 **Errores restantes (10):** 3 imágenes (el .png huérfano sigue en cache edge de Cloudflare — expira con TTL; el HTML ya usa webp), 8 aria-hidden (ya arreglados en código, pendiente propagar), 1 label-mismatch en blog (select categorías).
 
 **Performance (Lighthouse local):** SEO 92, Best Practices 96, A11y 87, LCP 1518ms, CLS 0, TTFB 1122ms (dev server; menor en prod).
+
+## Ago 16 (noche 4) — Generador de blogs adaptado a estructura Airpals + capa de verificación
+
+**Modelo de referencia:** Airpals (airpals.co/blog) — posts 2000+ palabras con TOC, tablas comparativas, checklist, key takeaways, FAQ, autor con bio.
+
+**Cambios en la automatización de blogs (n8n → GitHub Actions):**
+- `generate-blog-draft.js`: prompt reescrito con estructura Airpals (1800-2400 palabras, 3-4 imágenes, tablas, FAQ, 3-5 links internos + 1 externo autoridad). Modelo configurable `BLOG_MODEL` (default `deepseek/deepseek-v4-pro-0813`, max_tokens 8000). `markdownToNotionBlocks` ahora soporta tablas, blockquote, imágenes. Regla anti-meta-instrucción (el modelo no debe colar frases tipo "un buen post termina con FAQ").
+- `validate-blog-seo.mjs`: capa de verificación expandida — palabras ≥1500 (era 250), 4+ H2, anti-genérico (frases como "era digital"), anti-meta-instrucción, warnings de imágenes/links/FAQ/tablas/checklist.
+- `generate-blog.yml`: input `model` opcional, env `BLOG_MODEL`.
+- `_TEMPLATE.md`: fix del texto meta colado en la sección FAQ.
+
+**Costos de generación (precios reales TokenRouter):**
+- deepseek-v4-pro-0813: $0.005/blog (10 = $0.05) ← ELEGIDO
+- qwen3.8-max-free: $0 (gratis, puede rate-limit)
+- gemini-3.7-flash: $0.015/blog
+- claude-sonnet-5: $0.04/blog (máxima calidad)
+
+**Flujo:**
+Slack → n8n → generate-blog.yml (deepseek) → borrador Notion (Status=Draft) → revisión humana → Status=Ready → sync-blog.yml (valida SEO crítico + publica)

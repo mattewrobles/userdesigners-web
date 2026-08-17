@@ -47,7 +47,7 @@ Sitio web de [UserDesigners](https://www.userdesigners.com), agencia de diseño 
 > El sitio se migró de Framer a Astro. Estado actual del avance (actualizado: ago 2026):
 
 ### ✅ Migrado a Astro nativo
-- [x] **Blog** (lista + posts + paginación + categorías) — SIN framer.css (eliminado 12 ago)
+- [x] **Blog** (lista + posts + paginación + categorías) — SIN framer.css (eliminado 12 ago). Generador adaptado a estructura de alto valor (modelo Airpals): 2000+ palabras, TOC, tablas, FAQ, checklist, capa de verificación SEO anti-genérico en CI
 - [x] **SEO Doctores** (`/seo-doctores`)
 - [x] **Mantenimiento** (`/mantenimiento`)
 - [x] **Design System** (17 componentes + tokens)
