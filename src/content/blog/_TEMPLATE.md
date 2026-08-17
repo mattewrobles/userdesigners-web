@@ -123,8 +123,6 @@ Un design system muere si no llega al código. Asegúrate de:
 
 ## Preguntas frecuentes
 
-Un buen post de alto valor termina con FAQ — responde directamente para posicionar en featured snippets:
-
 **¿Cuánto tiempo toma un design system completo?**
 
 Entre 6 y 12 semanas para un sistema robusto con 30-50 componentes. Menos si ya tienes una base visual clara.

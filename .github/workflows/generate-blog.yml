@@ -10,6 +10,10 @@ on:
         description: "Categoría"
         required: false
         default: "UX Design"
+      model:
+        description: "Modelo de generación (default: deepseek-v4-pro-0813)"
+        required: false
+        default: "deepseek/deepseek-v4-pro-0813"
       slack_channel:
         description: "Slack channel ID para notificar"
         required: false
@@ -33,6 +37,7 @@ jobs:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_DB_ID: ${{ secrets.NOTION_DB_ID }}
           UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
+          BLOG_MODEL: ${{ github.event.inputs.model || 'deepseek/deepseek-v4-pro-0813' }}
         run: |
           set +e
           node scripts/generate-blog-draft.js "${{ github.event.inputs.topic }}" "${{ github.event.inputs.category }}" > /tmp/script-out.txt 2>&1

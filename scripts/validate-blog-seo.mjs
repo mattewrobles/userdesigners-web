@@ -79,8 +79,46 @@ for (const f of files) {
     console.log(`✗ CRÍTICO ${slug}: falta heroImage`);
     criticalFails++;
   }
-  if (words < 250) {
-    console.log(`✗ CRÍTICO ${slug}: contenido muy corto (${words} palabras, min 250)`);
+  // Longitud: posts competitivos 1500-2500 palabras (estándar Airpals/Backlinko)
+  if (words < 1500) {
+    console.log(`✗ CRÍTICO ${slug}: contenido demasiado corto (${words} palabras, min 1500). Un post competitivo requiere 1500-2500.`);
+    criticalFails++;
+  }
+  // Estructura de post largo (estándar Airpals)
+  if (!body.includes("## ")) {
+    console.log(`✗ CRÍTICO ${slug}: sin headings H2 — estructura para SEO`);
+    criticalFails++;
+  }
+  const h2Count = (body.match(/^## /gm) || []).length;
+  if (h2Count < 4) {
+    console.log(`✗ CRÍTICO ${slug}: solo ${h2Count} secciones H2 (mínimo 4-6 para post largo)`);
+    criticalFails++;
+  }
+  // Capa de verificación de calidad (anti-genérico)
+  const GENERIC_PHRASES = [
+    "en la era digital", "mundo competitivo", "soluciones innovadoras",
+    "potenciar", "impulsar", "en el mundo actual", "cada vez más",
+    "en este artículo", "exploraremos", "sumérgete", "revolucionar",
+    "sin duda", "es fundamental", "juego de palabras", "clave del éxito",
+  ];
+  const genericHits = GENERIC_PHRASES.filter(p => body.toLowerCase().includes(p));
+  if (genericHits.length > 0) {
+    console.log(`✗ CRÍTICO ${slug}: contenido genérico detectado — ${genericHits.join(", ")}`);
+    criticalFails++;
+  }
+  // Frases meta-instrucción que se cuelan del prompt (hablan de la estructura, no del tema)
+  const META_PHRASES = [
+    "un buen post", "en esta guía cubriremos", "aquí te explicaré", "a continuación te",
+    "el siguiente post", "este artículo te", "termina con faq", "te mostraré cómo",
+  ];
+  const metaHits = META_PHRASES.filter(p => body.toLowerCase().includes(p));
+  if (metaHits.length > 0) {
+    console.log(`✗ CRÍTICO ${slug}: frases meta-instrucción coladas del prompt — ${metaHits.join(", ")}`);
+    criticalFails++;
+  }
+  // placeholders reales: "lorem ipsum" o TODO/FIXME en mayúsculas (siglas de código)
+  if (/lorem ipsum/i.test(body) || /(?:^|[^a-záéíóúüñ])TODO(?:[^a-záéíóúüñ]|$)/.test(body) || /XXX:/.test(body)) {
+    console.log(`✗ CRÍTICO ${slug}: contiene lorem ipsum o placeholders`);
     criticalFails++;
   }
 
@@ -89,12 +127,13 @@ for (const f of files) {
     console.log(`  ⚠ ${slug}: usa 2+ tags (SEO)`);
     warnings++;
   }
-  if (!body.includes("## ")) {
-    console.log(`  ⚠ ${slug}: sin headings H2 — estructura para SEO`);
+  const imgCount = (body.match(/!\[/g) || []).length;
+  if (imgCount < 2) {
+    console.log(`  ⚠ ${slug}: solo ${imgCount} imagen(es). Un post largo necesita 2-4 imágenes con alt text`);
     warnings++;
   }
-  if (!/!\s*\[/.test(body)) {
-    console.log(`  ⚠ ${slug}: sin imágenes en el contenido`);
+  if (!/^!\[[^\]]{5,}\]/.test(body)) {
+    console.log(`  ⚠ ${slug}: imágenes sin alt text descriptivo`);
     warnings++;
   }
   // keywords de la categoría en el title/body
@@ -112,13 +151,30 @@ for (const f of files) {
     warnings++;
   }
   // links internos
-  if (!body.includes("/blog/")) {
-    console.log(`  ⚠ ${slug}: sin links internos a otros posts`);
+  const internalLinks = (body.match(/\/blog\//g) || []).length;
+  if (internalLinks < 2) {
+    console.log(`  ⚠ ${slug}: solo ${internalLinks} links internos (mínimo 2-3 para SEO)`);
     warnings++;
   }
-  // lorem ipsum / placeholders reales
-  if (/lorem ipsum|TODO|FIXME|XXX:/i.test(body)) {
-    console.log(`  ⚠ ${slug}: contiene lorem ipsum o placeholders`);
+  // link externo a fuente de autoridad (E-E-A-T)
+  if (!/https:\/\/(www\.)?(nngroup\.com|interaction-design\.org|usability\.gov|baymard\.com|smashingmagazine\.com|alistapart\.com)/.test(body)) {
+    console.log(`  ⚠ ${slug}: sin link externo a fuente de autoridad (nngroup, IxDF, etc.) — refuerza E-E-A-T`);
+    warnings++;
+  }
+  // FAQ para featured snippets
+  if (!/preguntas frecuentes|faq/i.test(body) && !/^##/m.test(body)) {
+    console.log(`  ⚠ ${slug}: sin sección de preguntas frecuentes (FAQ) — ayuda al featured snippet`);
+    warnings++;
+  }
+  // tablas para datos comparativos (estructura Airpals)
+  const tableCount = (body.match(/\|/g) || []).length;
+  if (tableCount < 10) {
+    console.log(`  ⚠ ${slug}: sin tablas markdown (estructura Airpals usa tablas comparativas)`);
+    warnings++;
+  }
+  // checklist accionable
+  if (!/checklist|puntos clave|lista de verificaci/i.test(body)) {
+    console.log(`  ⚠ ${slug}: sin bloque checklist/puntos clave accionable`);
     warnings++;
   }
 }
