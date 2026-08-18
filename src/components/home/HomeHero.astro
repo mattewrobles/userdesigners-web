@@ -2,7 +2,6 @@
 // Hero del home — réplica 1:1 del HTML Framer (src/html/index.html).
 // Secciones: Content(Top+SocialProof) + Gradient Blur + Line + Title.
 import Button from "../ui/Button.astro";
-import LetterReveal from "../ui/LetterReveal.astro";
 import Reveal from "../ui/Reveal.astro";
 import HomeLogos from "./HomeLogos.astro";
 ---
@@ -18,7 +17,7 @@ import HomeLogos from "./HomeLogos.astro";
   <div class="hero-content">
     <div class="hero-top">
       <div class="hero-text">
-        <LetterReveal as="h1" stagger={0.035} duration={0.5}>Agencia de UX/UI orientada a Fintechs</LetterReveal>
+        <h1>Agencia de UX/UI orientada a Fintechs</h1>
         <Reveal as="p" y={24} delay={0.15} blur={false} class="hero-sub">
           Desde la investigación hasta la escalabilidad: Somos una agencia de experiencias
           digitales guiada por datos ideal para Fintechs, Banks y Neo Banks.
