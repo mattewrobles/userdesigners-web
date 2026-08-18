@@ -38,9 +38,11 @@ jobs:
           NOTION_DB_ID: ${{ secrets.NOTION_DB_ID }}
           UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
           BLOG_MODEL: ${{ github.event.inputs.model || 'deepseek/deepseek-v4-pro-0813' }}
+          BLOG_TOPIC: ${{ github.event.inputs.topic }}
+          BLOG_CATEGORY: ${{ github.event.inputs.category }}
         run: |
           set +e
-          node scripts/generate-blog-draft.js "${{ github.event.inputs.topic }}" "${{ github.event.inputs.category }}" > /tmp/script-out.txt 2>&1
+          node scripts/generate-blog-draft.js "$BLOG_TOPIC" "$BLOG_CATEGORY" > /tmp/script-out.txt 2>&1
           EXIT=$?
           cat /tmp/script-out.txt
           set -e
