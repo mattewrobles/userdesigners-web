@@ -876,3 +876,29 @@ Mau: "borremos todo lo que sea framer ya no quiero nada de framer" — pero las 
 
 **Flujo:**
 Slack → n8n → generate-blog.yml (deepseek) → borrador Notion (Status=Draft) → revisión humana → Status=Ready → sync-blog.yml (valida SEO crítico + publica)
+
+## Ago 18 — Audit completo (SEO/GEO/AEO + perf + anti-slop + código) + fixes ejecutados
+
+**Audit con 4 subagentes en paralelo** sobre producción (userdesigners.com) + repo local. Hallazgos + fixes en `docs/superpowers/plans/2026-08-18-audit-fixes.md`.
+
+**Hallazgos críticos y ya corregidos:**
+- `/blog/_template/` estaba indexado en producción (post real de 1093 palabras bajo slug de template) — el glob loader de `src/content.config.ts` incluía `_TEMPLATE.md`. Fix: pattern `["**/*.md", "!_*.md"]`.
+- `/servicios` LCP 24.3s — los 2 webp "comprimidos" en la sesión del 16 ago (72KB/124KB en el repo) seguían serviéndose desde Cloudflare a 1.19MB/1.15MB (10 días de cache edge en la misma URL). Fix: renombrados a `-v2.webp`, fuerza URL nueva.
+- Home/nosotros LCP 6.3s/10.6s — el H1 del hero usaba `LetterReveal` (JS + motion.dev), retrasando el paint ~3.4s. Fix: H1 plano sin animación (el resto del hero sigue con `Reveal` normal).
+- Google Fonts bloqueaba el render (~1s) en las 11 páginas que cargan `fonts.googleapis.com` — ya había woff2 locales sin usar. Fix: patrón preload+swap (`media="print" onload`) en las 11.
+- FAQPage schema de blog era boilerplate genérico basado en el título, invisible en el HTML — Google puede rechazarlo. Fix: parser real que extrae Q&A de la sección "Preguntas frecuentes" del markdown; si no hay, no emite el script. (Bug propio detectado en la implementación: el regex con flag `/m` hacía que `$` matcheara en la primera línea vacía — corregido con split por líneas.)
+- 3 posts con la misma estadística "70%" inventada sin fuente (RULE-H) — reemplazada, una de ellas ahora cita el New Relic State of AI Coding Report 2026 (25% de código IA necesita reescritura significativa). Typo "sufrre" corregido.
+- 3 fichas de proyecto (kaito/novo/verificacion-biometrica, aún en Framer) repetían el molde "no era X, sino Y" — copy reescrito distinto en cada una. **No se migraron a Astro** — eso sigue en el backlog de migración completa.
+- `generate-blog.yml` interpolaba `topic`/`category` directo en `run:` (script injection técnica) — movido a `env:`.
+- Query de Notion sin paginar en el check de duplicados de blog — ahora sigue `has_more`/`next_cursor`.
+- Lógica de saneo de HTML de Framer triplicada en home/servicios/nosotros — extraída a `src/lib/framer-html.ts`.
+- **Bug de Sentry encontrado en vivo durante la sesión** (no estaba en el audit original): `ReferenceError: currentPage is not defined` en `/blog/page/2/` — un `<script>` de módulo en `src/pages/blog/page/[page].astro` referenciaba una variable de frontmatter de Astro, que no existe en el scope del browser (el mismo gotcha ya documentado en este CLAUDE.md). Fix: `data-current-page` en `<main>` + leer con `dataset` en el script.
+- Verificado: NO hay imágenes duplicadas entre posts de blog reales (el único "duplicado" era `_TEMPLATE.md`, ya excluido de la colección).
+
+**Fuera de alcance (decisión explícita, confirmada con Mau):**
+- Footer "© 2025 Cyberg" + copy de QA pegado en Utransfer + 24 tarjetas "Servicio" placeholder + H1 duplicado en /nosotros y /proyectos — viven en las 4 fichas de proyecto sin migrar o son de bajo riesgo; se resuelven con la migración completa a Astro.
+- `!important`/hex hardcodeado en servicios/nosotros (páginas ya migradas) — deuda real pero requiere reescritura con Grid/Flexbox + tokens, no un find-replace. Ticket separado.
+- Expandir los posts publicados por debajo de 1500 palabras (245-650 palabras reales) — el generador y `validate-blog-seo.mjs` ya gatean esto para posts NUEVOS desde el 16 ago; los viejos necesitan una reescritura de contenido real, no un script.
+- Nombrar competidores reales (Multiplica, IDA, Frog) en un ranking auto-servido — decisión editorial/reputacional para Mau/Ari, no un bug técnico.
+
+**Todo commiteado en `main`** (10 commits atómicos), build verificado limpio (34 páginas) después de cada bloque de cambios.
