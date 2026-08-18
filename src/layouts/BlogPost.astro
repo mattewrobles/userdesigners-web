@@ -22,6 +22,21 @@ const ogImgFinal = (ogImage || heroImage)
   ? new URL(ogImage || heroImage, Astro.site).href
   : "";
 const hasToc = headings && headings.length > 0;
+
+function extractFaqPairs(markdown: string | undefined) {
+  if (!markdown) return [];
+  const lines = markdown.split("\n");
+  const startIdx = lines.findIndex((l) => /^##\s+.*(preguntas frecuentes|faq)/i.test(l));
+  if (startIdx === -1) return [];
+  let endIdx = lines.findIndex((l, i) => i > startIdx && /^##\s/.test(l));
+  if (endIdx === -1) endIdx = lines.length;
+  const sectionText = lines.slice(startIdx + 1, endIdx).join("\n");
+  const pairs = [...sectionText.matchAll(/\*\*(.+?)\*\*\s*\n+([^\n][\s\S]*?)(?=\n\*\*|\s*$)/g)];
+  return pairs
+    .map(([, q, a]) => ({ q: q.trim(), a: a.trim().replace(/\s+/g, " ") }))
+    .filter((p) => p.q && p.a);
+}
+const faqPairs = extractFaqPairs(post.body);
 ---
 
 <!doctype html>
@@ -68,31 +83,25 @@ const hasToc = headings && headings.length > 0;
       { "@type": "ListItem", position: 3, name: title }
     ]
   })} />
-  {/* FAQPage — preguntas que el lector buscaría (AEO / position zero) */}
-  <script type="application/ld+json" set:html={JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: [
-      {
+  {/* FAQPage — solo cuando el post tiene una sección real de FAQ visible (AEO / position zero) */}
+  {faqPairs.length > 0 && (
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: faqPairs.map((p) => ({
         "@type": "Question",
-        name: `¿Qué es "${title}"?`,
-        acceptedAnswer: { "@type": "Answer", text: post.data.description || title }
-      },
-      {
-        "@type": "Question",
-        name: `¿Cómo ${title.toLowerCase().replace(/[?¿]/g, "")}?`,
-        acceptedAnswer: { "@type": "Answer", text: "En este artículo de UserDesigners te explicamos el proceso completo, con ejemplos prácticos y recomendaciones para aplicar en tu producto digital." }
-      },
-      {
-        "@type": "Question",
-        name: `¿${title} es importante para tu producto digital?`,
-        acceptedAnswer: { "@type": "Answer", text: "Sí. En UserDesigners lo abordamos desde la práctica real: aplicado a fintechs y startups de Latinoamérica, con resultados medibles." }
-      }
-    ]
-  })} />
+        name: p.q,
+        acceptedAnswer: { "@type": "Answer", text: p.a }
+      }))
+    })} />
+  )}
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600&family=DM+Sans:wght@400;500;600&display=swap" />
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600&family=DM+Sans:wght@400;500;600&display=swap" media="print" onload="this.media='all'" />
+
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600&family=DM+Sans:wght@400;500;600&display=swap" /></noscript>
   <link rel="stylesheet" href="/styles/tokens.css" />
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-PDZVJDG9Y5"></script>
