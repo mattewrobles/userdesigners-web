@@ -3,21 +3,18 @@
 import fs from "fs";
 import Navbar from "../../components/Navbar.astro";
 import Footer from "../../components/Footer.astro";
+import { sanitizeFramerHtml } from "../../lib/framer-html";
 
 let html = fs.readFileSync("src/html/nosotros-native.html", "utf-8");
 
 // Forzar visibilidad (estados del player) — el hero usa opacity:0 + translateY
 // como estado inicial de entrada; sin player quedan invisibles. Los transforms
 // de layout (translateX(-50%), scale) NO se tocan.
-html = html.replace(/opacity:\s*0\.001/gi, "opacity:1");
-html = html.replace(/opacity:\s*0;/gi, "opacity:1;");
-html = html.replace(/opacity:0(?!\d)/gi, "opacity:1");
-html = html.replace(/transform:\s*perspective\([^)]*\)\s*translateY\([^)]*\)/gi, "transform:none");
+html = sanitizeFramerHtml(html);
 // El dashboard del CTA final tiene un transform 3D de entrada del player
 // (perspective + translateX/Y + scale) que lo escala y desplaza fuera de su
 // contenedor. Se limpia para que quede en su posicion estatica.
 html = html.replace(/transform:\s*perspective\([^)]*\)\s*translateX\([^)]*\)\s*translateY\([^)]*\)\s*scale\([^)]*\)/gi, "transform:none");
-html = html.replace(/filter:\s*blur\(10px\)/gi, "filter:none");
 // visibility:hidden son estados de entrada que el player animaba
 html = html.replace(/visibility:\s*hidden/gi, "visibility:visible");
 
@@ -64,9 +61,17 @@ const schemas = html.match(/<script type="application\/ld\+json">[\s\S]*?<\/scri
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
+      rel="preload"
+      as="style"
       href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Familjen+Grotesk:wght@400;500;600&display=swap"
-      rel="stylesheet"
     />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Familjen+Grotesk:wght@400;500;600&display=swap"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Familjen+Grotesk:wght@400;500;600&display=swap" /></noscript>
     <link rel="stylesheet" href="/styles/tokens.css" />
     <link rel="stylesheet" href="/home.css" />
     {/* Schema.org del HTML original (Organization, LocalBusiness, FAQ...) */}

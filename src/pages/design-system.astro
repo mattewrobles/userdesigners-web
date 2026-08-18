@@ -29,7 +29,11 @@ import Logo from "../components/ui/Logo.astro";
   <link rel="icon" href="/assets/local/o5LtTMyVT0hoY6m1F1q3smw3kq4.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Familjen+Grotesk:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Familjen+Grotesk:wght@400;500;600&display=swap" />
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Familjen+Grotesk:wght@400;500;600&display=swap" media="print" onload="this.media='all'" />
+
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Familjen+Grotesk:wght@400;500;600&display=swap" /></noscript>
   <link rel="stylesheet" href="/styles/tokens.css" />
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }

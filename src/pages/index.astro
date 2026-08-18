@@ -6,6 +6,7 @@ import Navbar from "../components/Navbar.astro";
 import Footer from "../components/Footer.astro";
 import HomeHero from "../components/home/HomeHero.astro";
 import BlogSection from "../components/home/BlogSection.astro";
+import { sanitizeFramerHtml } from "../lib/framer-html";
 
 let html = fs.readFileSync("src/html/home-native.html", "utf-8");
 
@@ -14,11 +15,8 @@ html = html.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "");
 
 // Forzar visibilidad (estados que el player de Framer animaba) — NO tocar los
 // estilos de layout, solo los estados de opacidad/transform de "appear".
-html = html.replace(/opacity:\s*0\.001/gi, "opacity:1");
-html = html.replace(/opacity:\s*0;/gi, "opacity:1;");
-html = html.replace(/opacity:0(?!\d)/gi, "opacity:1");
+html = sanitizeFramerHtml(html);
 html = html.replace(/transform:\s*translateY\(-?\d+px\)/gi, "transform:none");
-html = html.replace(/transform:\s*perspective\([^)]*\)\s*translateY\([^)]*\)/gi, "transform:none");
 // Los estados de entrada del player usan translateX(±Npx) con opacity:0.
 // Sin player quedan congelados y desplazan el texto (se corta en overflow:hidden).
 // Solo limpiamos los que NO son layout (el centrado usa translateX(-50%)).
@@ -26,7 +24,6 @@ html = html.replace(/opacity:1;\s*transform:\s*translateX\(-?\d+px\)/gi, "opacit
 html = html.replace(/will-change:transform;opacity:1;\s*transform:\s*translateX\(-?\d+px\)/gi, "will-change:transform;opacity:1;transform:none");
 html = html.replace(/transform:\s*translateX\(-?\d+px\)\s*rotate\([^)]*\)/gi, "transform:none");
 html = html.replace(/transform:\s*perspective\([^)]*\)\s*translateX\(-?\d+px\)\s*translateY\([^)]*\)\s*scale\([^)]*\)/gi, "transform:none");
-html = html.replace(/filter:\s*blur\(10px\)/gi, "filter:none");
 
 // Eliminar variantes de breakpoint no-desktop del HTML (duplican contenido en
 // el HTML crudo que leen los crawlers: "Más de 12 años ×3", etc.). En desktop
@@ -99,9 +96,17 @@ const schemas = html.match(/<script type="application\/ld\+json">[\s\S]*?<\/scri
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
+      rel="preload"
+      as="style"
       href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Familjen+Grotesk:wght@400;500;600&display=swap"
-      rel="stylesheet"
     />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Familjen+Grotesk:wght@400;500;600&display=swap"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Familjen+Grotesk:wght@400;500;600&display=swap" /></noscript>
     <link rel="stylesheet" href="/styles/tokens.css" />
     <link rel="stylesheet" href="/home.css" />
     {/* Schema.org del HTML original (Organization, LocalBusiness, FAQ...) */}
