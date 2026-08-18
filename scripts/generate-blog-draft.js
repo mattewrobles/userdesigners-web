@@ -22,7 +22,7 @@ const UNSPLASH_KEY = process.env.UNSPLASH_ACCESS_KEY || null;
 const BLOG_MODEL = process.env.BLOG_MODEL || "deepseek/deepseek-v4-pro-0813";
 
 if (!OPENAI_KEY || !NOTION_TOKEN || !DB_ID) {
-  console.error("Missing env vars: OPENAI_API_KEY, NOTION_TOKEN, NOTION_DB_ID");
+  console.error("Missing env vars: TOKENROUTER_API_KEY (o OPENAI_API_KEY), NOTION_TOKEN, NOTION_DB_ID");
   process.exit(1);
 }
 
@@ -361,7 +361,15 @@ async function generate() {
   // Consultar Notion para slugs existentes (Published y Draft)
   let notionSlugs = [];
   try {
-    const res = await notion(`/v1/databases/${DB_ID}/query`, "POST", {});
+    let allResults = [];
+    let cursor;
+    do {
+      const body = cursor ? { start_cursor: cursor } : {};
+      const page = await notion(`/v1/databases/${DB_ID}/query`, "POST", body);
+      allResults = allResults.concat(page.results || []);
+      cursor = page.has_more ? page.next_cursor : undefined;
+    } while (cursor);
+    const res = { results: allResults };
     notionSlugs = (res.results || []).map(
       (p) => p.properties?.Slug?.rich_text?.[0]?.plain_text || ""
     );
