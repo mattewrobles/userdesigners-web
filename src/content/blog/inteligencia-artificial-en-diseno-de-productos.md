@@ -12,7 +12,7 @@ readTime: "3 min"
 
 # Inteligencia artificial en diseño de productos: Qué sirve y qué es humo para CTOs
 
-El 70% de las herramientas de IA generativa de UI fallan en integrarse a sistemas de diseño reales porque generan código basura e inconsistencias visuales. Si eres CTO, separar el marketing de la utilidad real en UX no es opcional: es cuestión de presupuesto.
+Al menos el 25% del código generado por IA necesita reescritura significativa antes de poder integrarse a un sistema real, según el [State of AI Coding Report 2026 de New Relic](https://newrelic.com/blog/ai/state-of-ai-coding-2026). En las herramientas de IA generativa de UI que probamos con clientes fintech, ese patrón se repite: generan componentes que no respetan tokens ni variantes, y el equipo termina reescribiéndolos a mano. Si eres CTO, separar el marketing de la utilidad real en UX no es opcional: es cuestión de presupuesto.
 
 ## ¿Qué es realmente la IA aplicada al diseño de productos?
 

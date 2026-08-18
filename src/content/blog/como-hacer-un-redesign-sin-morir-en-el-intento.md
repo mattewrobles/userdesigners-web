@@ -12,7 +12,7 @@ readTime: "2 min"
 
 # Cómo hacer un rediseño de producto digital sin perder usuarios en el intento
 
-El 70% de los rediseños de software fracasan no por falta de talento visual, sino porque destruyen la memoria muscular del usuario en nombre de la 'modernización'. Cambiar componentes sin datos previos genera una caída inmediata en la retención y colapsa el soporte técnico.
+Los rediseños de software que fracasan casi nunca fracasan por falta de talento visual: fracasan porque destruyen la memoria muscular del usuario en nombre de la "modernización". Cambiar componentes sin datos previos genera una caída inmediata en la retención y colapsa el soporte técnico.
 
 ## ¿Cuándo necesita tu producto digital un rediseño real?
 
