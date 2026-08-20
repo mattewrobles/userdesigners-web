@@ -125,6 +125,22 @@ jobs:
             export CANVA_BRAND_TEMPLATE_ID=$(doppler secrets get CANVA_BRAND_TEMPLATE_ID --plain --project user-designers --config prd)
             node scripts/post-to-linkedin.mjs
           fi
+      - name: Post to X (si hay posts nuevos y credenciales configuradas)
+        if: env.POST_COUNT != '0' && env.TARGET_BRANCH == 'main'
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_CHANNEL: ${{ env.SLACK_CHANNEL }}
+        run: |
+          export X_CLIENT_ID=$(doppler secrets get X_CLIENT_ID --plain --project user-designers --config prd 2>/dev/null || echo "")
+          export X_CLIENT_SECRET=$(doppler secrets get X_CLIENT_SECRET --plain --project user-designers --config prd 2>/dev/null || echo "")
+          export X_ACCOUNTS=$(doppler secrets get X_ACCOUNTS --plain --project user-designers --config prd 2>/dev/null || echo "")
+          export X_REFRESH_TOKEN=$(doppler secrets get X_REFRESH_TOKEN --plain --project user-designers --config prd 2>/dev/null || echo "")
+          if [ -z "$X_CLIENT_ID" ] || [ -z "$X_CLIENT_SECRET" ] || { [ -z "$X_ACCOUNTS" ] && [ -z "$X_REFRESH_TOKEN" ]; }; then
+            echo "X no configurado — omitiendo"
+          else
+            export TOKENROUTER_API_KEY=$(doppler secrets get TOKENROUTER_API_KEY --plain --project user-designers --config prd)
+            node scripts/post-to-x.mjs
+          fi
       - name: Notify Slack
         if: always()
         run: |
