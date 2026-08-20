@@ -33,6 +33,7 @@ Contacto: latam@userdesigners.com | WhatsApp: +593 0961026799 | Cuenca, Ecuador
 
 ## Blog
 
+- [Qué aprendimos investigando formularios de depósito en dólares para una fintech latinoamericana](https://www.userdesigners.com/blog/aprendimos-investigando-formularios-deposito/): Descubre los hallazgos clave sobre formularios de depósito en dólares para una fintech en Latinoamérica. Mejora la experiencia del usuario con lecciones prácticas.
 - [Rediseño de producto digital sin perder usuarios en el intento](https://www.userdesigners.com/blog/como-hacer-un-redesign-sin-morir-en-el-intento/): Guía técnica para CTOs y Product Managers sobre cómo ejecutar un rediseño de producto digital en Latam sin arruinar la retención de usuarios ni romper...
 - [Cuánto le cuesta a tu empresa NO tener un design system](https://www.userdesigners.com/blog/costo-oculto-deuda-ui-sin-design-system/): Descubre el costo oculto de no implementar un design system en tu empresa y cómo puede afectar el rendimiento y la cohesión de tus productos digitales.
 - [Design System: por qué tu empresa necesita uno ahora](https://www.userdesigners.com/blog/design-system-empresa/): Guía definitiva para CTOs y Product Managers sobre por qué tu empresa en Latam necesita un Design System ahora mismo, abordando deuda técnica visual y...

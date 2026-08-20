@@ -1,5 +1,6 @@
 {
   "byUnsplashId": {
+    "1568632234180-0e6c08735d01": "aprendimos-investigando-formularios-deposito.jpg",
     "1588600878108-578307a3cc9d": "auditoria-ux-producto-digital.jpg",
     "1587440871875-191322ee64b0": "usar-ai-diseno-sin-perder-toque-humano.jpg",
     "1581092580497-e0d23cbdf1dc": "design-system-empresa.jpg",
@@ -12,19 +13,19 @@
     "1499951360447-b19be8fe80f5": "wordpress-vs-webflow-vs-framer-pros-y-contras.jpg"
   },
   "byHash": {
+    "f310849810935290f18adb1336921fc9": "aprendimos-investigando-formularios-deposito.jpg",
     "27017fa2c949fe7838385007a401f82f": "auditoria-ux-producto-digital.jpg",
     "5d08c0cec0d023ce19915f5af0875620": "usar-ai-diseno-sin-perder-toque-humano.jpg",
-    "923d2e09d369ebfb09cbc6015e8820c1": "costo-oculto-deuda-ui-sin-design-system.jpg",
-    "34748fc20f598f517a4e20ccb6389466": "design-system-empresa.jpg",
+    "34748fc20f598f517a4e20ccb6389466": "costo-oculto-deuda-ui-sin-design-system.jpg",
+    "8938ff7100fbb680f29ea3a1e7aa5d5f": "design-system-empresa.jpg",
     "45e03e46c52fa4681f765c0b519bc0a0": "diseno-mobile-first.jpg",
-    "892778f71281cfa6ab6e1dc9600115aa": "errores-comunes-diseno-ux.jpg",
+    "3d42b845ddbcdcfa292b700b05f792d5": "errores-comunes-diseno-ux.jpg",
     "475546f34c659aa753d3106d30469489": "geo-optimizar-contenido-chatgpt-ai-overviews.jpg",
-    "83847474db3f7c14aa4915b4e26476e7": "importancia-pagina-web-generar-ingresos.jpg",
-    "3d42b845ddbcdcfa292b700b05f792d5": "notion-vs-airtable-design-system.jpg",
-    "7ea9394f3adc515dff1342e5f6f1ec50": "principios-jerarquia-visual-ui-design.jpg",
+    "83847474db3f7c14aa4915b4e26476e7": "senales-auditoria-web-posicionamiento.jpg",
+    "b36fbb29157e007d022b2e91918d6372": "notion-vs-airtable-design-system.jpg",
+    "374851098dd7da5820cc9b8c48530ce2": "principios-jerarquia-visual-ui-design.jpg",
     "7cf07577765053e1aa416d557519a8c4": "prototipado-rapido-valida-idea.jpg",
-    "d30b23919c12e8f89363c0d6aa913a08": "senales-auditoria-web-posicionamiento.jpg",
-    "53a340dee2bc4d97ba2377af8ff3de3d": "sistemas-de-diseno-para-fintechs-escalar-productos.jpg",
+    "47c66997cbaff878c48e490d504e10e3": "sistemas-de-diseno-para-fintechs-escalar-productos.jpg",
     "4d8b5c3a0f8a28e6bec546033efc3be4": "sitios-web-ia-senales-alerta-bot.jpg",
     "7332ea8738e398a9007f6e49912fa08d": "wordpress-vs-webflow-vs-framer-pros-y-contras.jpg"
   }
