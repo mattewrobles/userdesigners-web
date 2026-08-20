@@ -1,5 +1,36 @@
 # UserDesigners Web — Astro Migration
 
+## Ago 20 — Loop de auto-corrección de longitud + tolerancia de título (pedido explícito de Mau)
+Mau pidió: (a) que el gate de 1200 palabras no sea un tope duro que rechace por
+3-4 palabras, (b) que el propio pipeline corrija en vez de solo rechazar, (c)
+preocupación de que bajar el mínimo a 1000 hiciera que el modelo apunte más
+bajo (aclarado: NO, el target sigue en 1500-2200, ver entrada anterior).
+
+- **Título:** `seo-rules.mjs` ahora solo bloquea sobre 75 chars (antes 65 duro).
+  61-75 queda como warning no bloqueante ("Google puede truncarlo") en vez de
+  crítico. El prompt de generación sigue apuntando a ≤65 como objetivo.
+- **Loop de expansión real (vivo en n8n, `s2eM6QlvIuQqNjN6`):** agregados 4
+  nodos nuevos entre "Aplicar crítica + quality filter" y "Data Table:
+  Imágenes usadas": IF `Necesita expansión?` (wordCount<1200 Y
+  expandAttempts<2) → `Expandir contenido (Agent)` (prompt específico:
+  profundizar con ejemplos/pasos/matices reales, NUNCA relleno ni repetir con
+  otras palabras, NUNCA estadísticas inventadas) → `Aplicar expansión` (código,
+  incrementa `expandAttempts`, vuelve a chequear) → loop de vuelta al IF. Máx
+  2 rondas de expansión por post; si sigue corto después de eso, continúa
+  igual (evita loop infinito / rate limit de TokenRouter).
+- **Grounding real de la empresa:** agregado un bloque "CONTEXTO REAL DE
+  USERDESIGNERS" al system prompt de `Generar borrador (Agent)` y `Expandir
+  contenido (Agent)` — compilado de contenido YA existente en el sitio
+  (servicios reales: Diseño de Apps/Web/Branding/Research; 12+ años;
+  proyectos reales: Utransfer, Airpals, Kaito, verificación biométrica),
+  con instrucción explícita de NUNCA inventar métricas de resultado de
+  cliente. Esto es un primer paso liviano hacia lo que Mau pidió ("base de
+  datos de todo Users") — sin necesidad de vector DB, solo texto inyectado
+  en el prompt porque es corto. **Pendiente (requiere a Mau):** si quiere
+  citar resultados numéricos reales de clientes (ej. "aumentó conversión
+  X%") en los posts, esos números tienen que venir de él — no los voy a
+  inventar ni aunque estén en Notion, sino confirmados explícitamente.
+
 ## Ago 20 — 3 errores reales del pipeline n8n, reportados por Mau vía screenshots de Slack
 1. **Race condition en "Elegir imagen sin repetir"** — el nodo referenciaba
    `$('Data Table: Imágenes usadas')` pero ese Data Table corría en una rama

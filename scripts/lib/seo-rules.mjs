@@ -70,7 +70,8 @@ export function checkPost(slug, content) {
 
   // --- CRÍTICAS ---
   if (!title || title.trim().length < 30) critical.push(`${slug}: title muy corto o ausente (${title.trim().length} chars, min 30)`);
-  if (title.length > 65) critical.push(`${slug}: title muy largo (${title.length}, max 65)`);
+  if (title.length > 75) critical.push(`${slug}: title muy largo (${title.length}, max 75)`);
+  else if (title.length > 65) warnings.push(`${slug}: title pasa los 65 chars recomendados para SERP (${title.length}) — no bloquea, pero Google puede truncarlo`);
   if (!desc || desc.trim().length < 120) critical.push(`${slug}: meta description ausente o muy corta (${desc.trim().length}, min 120)`);
   if (desc.length > 160) critical.push(`${slug}: meta description muy larga (${desc.length}, max 160)`);
   if (!cat) critical.push(`${slug}: falta categoría`);
