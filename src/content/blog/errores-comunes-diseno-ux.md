@@ -74,3 +74,11 @@ UX abarca la estrategia integral, la arquitectura de la información, los flujos
 
 **¿Cómo impacta un sistema de diseño en la velocidad de los equipos de ingeniería?**
 Reduce drásticamente el tiempo de desarrollo frontend al eliminar la necesidad de crear componentes desde cero para cada nueva funcionalidad, permitiendo que los desarrolladores se concentren en la lógica de negocio y la integración de APIs en lugar de en decisiones de estilo visual.
+
+
+<!-- related-posts -->
+## Artículos relacionados
+
+- [Rediseño de producto digital sin perder usuarios en el intento](/blog/como-hacer-un-redesign-sin-morir-en-el-intento/)
+- [Por qué tu software en Latam fracasa pese al buen código](/blog/importancia-agencia-ux-ui-userdesigners/)
+- [IA en diseño de productos: qué sirve y qué es humo](/blog/inteligencia-artificial-en-diseno-de-productos/)

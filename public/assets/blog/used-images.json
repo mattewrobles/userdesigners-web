@@ -1,7 +1,30 @@
 {
-  "unsplashIds": [
-    "qC2n6RQU4Vw",
-    "o1SKqmgSDbg",
-    "sv8oOQaUb-o"
-  ]
+  "byUnsplashId": {
+    "1588600878108-578307a3cc9d": "auditoria-ux-producto-digital.jpg",
+    "1587440871875-191322ee64b0": "usar-ai-diseno-sin-perder-toque-humano.jpg",
+    "1581092580497-e0d23cbdf1dc": "design-system-empresa.jpg",
+    "1576595580361-90a855b84b20": "diseno-mobile-first.jpg",
+    "1674027326254-88c960d8e561": "geo-optimizar-contenido-chatgpt-ai-overviews.jpg",
+    "1560472354-b33ff0c44a43": "importancia-pagina-web-generar-ingresos.jpg",
+    "1572044162444-ad60f128bdea": "principios-jerarquia-visual-ui-design.jpg",
+    "1581291518633-83b4ebd1d83e": "prototipado-rapido-valida-idea.jpg",
+    "1460925895917-afdab827c52f": "sitios-web-ia-senales-alerta-bot.jpg",
+    "1499951360447-b19be8fe80f5": "wordpress-vs-webflow-vs-framer-pros-y-contras.jpg"
+  },
+  "byHash": {
+    "27017fa2c949fe7838385007a401f82f": "auditoria-ux-producto-digital.jpg",
+    "f4b9bc4c4b7787ed14a2403c50ebaefd": "usar-ai-diseno-sin-perder-toque-humano.jpg",
+    "2d7623f3774fb1f165b534008c7fb726": "costo-oculto-deuda-ui-sin-design-system.jpg",
+    "46be93457e3bc9e35be3b71066f9353f": "design-system-empresa.jpg",
+    "a06af3b54d25945c4371a45f200aa265": "diseno-mobile-first.jpg",
+    "4eb8f43ca22413ead5d3a2ce26d31d51": "notion-vs-airtable-design-system.jpg",
+    "475546f34c659aa753d3106d30469489": "geo-optimizar-contenido-chatgpt-ai-overviews.jpg",
+    "d30b23919c12e8f89363c0d6aa913a08": "importancia-pagina-web-generar-ingresos.jpg",
+    "0f0797620602567e05228651f7e318b0": "principios-jerarquia-visual-ui-design.jpg",
+    "7cf07577765053e1aa416d557519a8c4": "prototipado-rapido-valida-idea.jpg",
+    "53a5af46d0225c3dee4a678962c5dade": "senales-auditoria-web-posicionamiento.jpg",
+    "8a79401f72b328527e8abab5dd83e2b3": "sistemas-de-diseno-para-fintechs-escalar-productos.jpg",
+    "4d8b5c3a0f8a28e6bec546033efc3be4": "sitios-web-ia-senales-alerta-bot.jpg",
+    "7332ea8738e398a9007f6e49912fa08d": "wordpress-vs-webflow-vs-framer-pros-y-contras.jpg"
+  }
 }
