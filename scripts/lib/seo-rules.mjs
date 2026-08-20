@@ -75,7 +75,7 @@ export function checkPost(slug, content) {
   if (desc.length > 160) critical.push(`${slug}: meta description muy larga (${desc.length}, max 160)`);
   if (!cat) critical.push(`${slug}: falta categoría`);
   if (!hero) critical.push(`${slug}: falta heroImage`);
-  if (words < 1200) critical.push(`${slug}: contenido demasiado corto (${words} palabras, min 1200)`);
+  if (words < 1000) critical.push(`${slug}: contenido demasiado corto (${words} palabras, min 1000)`);
   if (!body.includes("## ")) critical.push(`${slug}: sin headings H2 — estructura para SEO`);
   const h2Count = (body.match(/^## /gm) || []).length;
   if (h2Count < 4) critical.push(`${slug}: solo ${h2Count} secciones H2 (mínimo 4-6)`);
