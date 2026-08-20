@@ -16,6 +16,8 @@ html = html.replace(/visibility:\s*hidden/gi, "visibility:visible");
 
 // LCP: las imagenes del hero necesitan prioridad de descarga (Lighthouse las
 // marcaba priorityHinted=false). Los 3 nombres son las imagenes hero conocidas.
+// Nota: el regex de abajo busca <img src="..."> como texto para inyectar
+// fetchpriority — no es markup real (ver .impeccable/config.json ignoreValues).
 for (const name of ["8gGuaBwL0C4BFlIObKpdcZLOCmA-v2.webp", "pkXs73A7T3I8wb8CTf0PPstI-v2.webp", "6dFtNSZSDeLcz7G7hfRg2XNiiE.webp"]) {
   html = html.replace(
     new RegExp(`<img([^>]*src="[^"]*${name}"[^>]*?)\\s*/?>`, "g"),

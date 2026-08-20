@@ -7,7 +7,19 @@
       "src/styles/tokens.css",
       "src/pages/design-system.astro"
     ],
-    "ignoreRules": ["marquee"],
-    "ignoreValues": []
+    "ignoreRules": [
+      "marquee"
+    ],
+    "ignoreValues": [
+      {
+        "rule": "broken-image",
+        "value": "*",
+        "files": [
+          "src/pages/servicios/index.astro"
+        ],
+        "createdAt": "2026-08-20T02:02:23.941Z",
+        "reason": "regex string pattern matching <img> for fetchpriority injection, not real rendered markup — false positive"
+      }
+    ]
   }
 }

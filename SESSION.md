@@ -1,5 +1,55 @@
 # UserDesigners Web — Astro Migration
 
+## Ago 20 — Auditoría + mejoras automatización de blog (rama `feat/blog-automation-improvements`, sin mergear)
+
+**Confirmado (no cambiado):** el bug de "Validate SEO" bloqueando el sync ya
+estaba resuelto por el commit `125d9b1` (19-ago 19:33). Los 3 runs fallidos
+previos eran anteriores a ese fix; el run de las 00:36 (posterior) ya pasó OK.
+
+**Nuevo — QA temprano de posts Ready:**
+- `scripts/lib/seo-rules.mjs` — reglas SEO/GEO críticas y de warning extraídas
+  de `validate-blog-seo.mjs` a un módulo compartido (DRY), ahora también usado
+  por el nuevo QA check.
+- `scripts/qa-check-ready-posts.mjs` + `.github/workflows/qa-check-ready.yml`
+  (cron diario 9am ET) — avisa a Slack SI un post en Notion Status=Ready tiene
+  problemas críticos, sin esperar al sync semanal (que además solo procesa 1
+  post por corrida).
+
+**Nuevo — GEO/AEO:**
+- `scripts/generate-llms-txt.mjs` — regenera `public/llms.txt` automático en
+  cada sync con TODOS los posts (antes era una lista manual desactualizada,
+  solo tenía 7 de 22 posts).
+- Reglas GEO nuevas en `seo-rules.mjs` (respuesta directa post-H2, señal de
+  frescura, preguntas FAQ en negrita) + reforzado el prompt de
+  `generate-blog-draft.js` con instrucciones GEO explícitas.
+- `docs/SEO-GEO-AEO-CHECKLIST.md` — referencia viva de qué está automatizado
+  y qué queda a criterio humano.
+
+**Anti-slop check — diagnóstico:**
+- 1 falso positivo real encontrado y arreglado (`broken-image` en
+  `servicios/index.astro` — era un regex de string, no markup real; ignorado
+  vía `.impeccable/config.json` con `hook-admin ignore-value`).
+- Los 4 warnings restantes (gradient-text en `seo-doctores`, flat-type-hierarchy
+  en `contacto`, layout-transition en `ServiceTabs`) son reales pero fuera del
+  scope de blog — el gate nunca fue verde históricamente por deuda acumulada
+  en todo el sitio. Necesita una sesión de diseño dedicada, no lo tapé.
+
+**Nuevo — forum listening (sin auto-post, Mau publica siempre manual):**
+- `scripts/n8n-forum-listening-workflow.json` — workflow n8n NUEVO (no toca
+  el protegido de blog) que lee alertas de F5Bot por Gmail y avisa a Slack.
+- `docs/FORUM-LISTENING.md` — setup manual (F5Bot signup, credenciales n8n) +
+  guías de participación orgánica.
+
+**Nuevo — distribución LinkedIn:**
+- `scripts/post-to-linkedin.mjs` + paso nuevo en `sync-blog.yml` (se salta
+  solo si faltan `LINKEDIN_ACCESS_TOKEN`/`LINKEDIN_ORG_URN`).
+- `docs/LINKEDIN-DISTRIBUTION.md` — setup manual (requiere OAuth de un admin
+  de la página, no automatizable).
+
+**Pendiente (requiere a Mau):** signup F5Bot + credenciales Gmail/Slack en
+n8n, app de LinkedIn + token, revisar los 4 warnings de anti-slop fuera de
+scope, decidir si mergear la rama a main.
+
 ## Ago 15 — Analytics completo: SA + Sentry full stack (deploy live)
 
 **Herramientas en producción (todas conviven):** GA4 (G-PDZVJDG9Y5) + Clarity (xytbbmamwh) + Mixpanel (nosotros/servicios) + SimpleAnalytics + Sentry.

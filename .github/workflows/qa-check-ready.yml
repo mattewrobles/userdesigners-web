@@ -1,0 +1,32 @@
+name: QA Check — Ready Posts
+
+# Revisa TODOS los posts en Notion con Status=Ready y avisa a Slack de inmediato
+# si alguno falla reglas SEO críticas. No espera al sync semanal (que además
+# solo procesa 1 post por corrida) — así el equipo corrige ANTES del lunes.
+# Solo lee Notion, nunca escribe ahí ni en el repo.
+
+on:
+  schedule:
+    - cron: "0 14 * * *" # diario 9am ET
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  qa-check:
+    runs-on: ubuntu-latest
+    env:
+      DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN_USER_DESIGNERS }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: dopplerhq/cli-action@v4
+      - name: QA de posts Ready contra Notion
+        run: |
+          export NOTION_TOKEN=$(doppler secrets get NOTION_TOKEN --plain --project user-designers --config prd)
+          export NOTION_DB_ID=$(doppler secrets get NOTION_DB_ID --plain --project user-designers --config prd)
+          export SLACK_BOT_TOKEN="${{ secrets.SLACK_BOT_TOKEN }}"
+          node scripts/qa-check-ready-posts.mjs

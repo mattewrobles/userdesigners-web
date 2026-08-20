@@ -95,6 +95,12 @@ ANTI-META-INSTRUCCIÓN (crítico):
 - La sección "Preguntas frecuentes" debe contener SOLO preguntas con sus respuestas directas. Sin párrafo introductorio antes de las preguntas.
 - "Tabla de contenidos" debe listar las secciones, no describirlas.
 
+GEO/AEO (crítico — para que ChatGPT, Perplexity y Google AI Overviews citen este post):
+- Justo debajo de CADA H2, la primera oración (máx 200 caracteres) debe responder la pregunta implícita del heading de forma directa y autocontenida — sin depender de contexto previo. Esa es la frase que un LLM extrae y cita.
+- Cada pregunta del FAQ debe ir en negrita como pregunta completa (**¿Qué es X?**) seguida de la respuesta en 1-2 frases directas antes de cualquier elaboración.
+- Menciona el año actual o "actualizado en 2026" al menos una vez — los motores generativos priorizan señales de frescura.
+- Usa números y datos concretos (con fuente) en vez de afirmaciones vagas — los LLM citan cifras, no adjetivos.
+
 SERVICIOS DE USERDESIGNERS (contexto para hacer el contenido relevante):
 - Auditorías UX de productos digitales
 - Design Systems para empresas
