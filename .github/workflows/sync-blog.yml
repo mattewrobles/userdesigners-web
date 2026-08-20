@@ -114,7 +114,8 @@ jobs:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
           SLACK_CHANNEL: ${{ env.SLACK_CHANNEL }}
         run: |
-          if [ -z "$LINKEDIN_ACCESS_TOKEN" ] || [ -z "$LINKEDIN_ORG_URN" ]; then
+          export LINKEDIN_ACCOUNTS=$(doppler secrets get LINKEDIN_ACCOUNTS --plain --project user-designers --config prd 2>/dev/null || echo "")
+          if { [ -z "$LINKEDIN_ACCESS_TOKEN" ] || [ -z "$LINKEDIN_ORG_URN" ]; } && [ -z "$LINKEDIN_ACCOUNTS" ]; then
             echo "LinkedIn no configurado (ver docs/LINKEDIN-DISTRIBUTION.md) — omitiendo"
           else
             export TOKENROUTER_API_KEY=$(doppler secrets get TOKENROUTER_API_KEY --plain --project user-designers --config prd)

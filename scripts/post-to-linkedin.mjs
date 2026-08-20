@@ -19,8 +19,25 @@ import https from "https";
 import { execSync } from "child_process";
 import { GENERIC_PHRASES } from "./lib/seo-rules.mjs";
 
-const TOKEN = process.env.LINKEDIN_ACCESS_TOKEN;
-const ORG_URN = process.env.LINKEDIN_ORG_URN; // ej: "urn:li:organization:12345678"
+// Múltiples cuentas: LINKEDIN_ACCOUNTS (JSON, prioridad) o LINKEDIN_ACCESS_TOKEN/
+// LINKEDIN_ORG_URN (una sola cuenta, retrocompatible). Cada cuenta necesita su
+// propio login OAuth — no hay forma de "compartir" un token entre cuentas.
+// Formato de LINKEDIN_ACCOUNTS: [{"label":"Mauricio","token":"...","urn":"urn:li:person:..."}]
+function loadAccounts() {
+  if (process.env.LINKEDIN_ACCOUNTS) {
+    try {
+      const parsed = JSON.parse(process.env.LINKEDIN_ACCOUNTS);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    } catch (e) {
+      console.error(`LINKEDIN_ACCOUNTS mal formado (${e.message}) — cae a cuenta única`);
+    }
+  }
+  if (process.env.LINKEDIN_ACCESS_TOKEN && process.env.LINKEDIN_ORG_URN) {
+    return [{ label: "default", token: process.env.LINKEDIN_ACCESS_TOKEN, urn: process.env.LINKEDIN_ORG_URN }];
+  }
+  return [];
+}
+const ACCOUNTS = loadAccounts();
 const TOKENROUTER_KEY = process.env.TOKENROUTER_API_KEY;
 const CANVA_CLIENT_ID = process.env.CANVA_CLIENT_ID;
 const CANVA_CLIENT_SECRET = process.env.CANVA_CLIENT_SECRET;
@@ -59,8 +76,8 @@ const BLOG_DIR = "src/content/blog";
 // se reporta como omitido (nunca silencioso).
 const MAX_LINKEDIN_POSTS_PER_RUN = 3;
 
-if (!TOKEN || !ORG_URN) {
-  console.log("Faltan LINKEDIN_ACCESS_TOKEN o LINKEDIN_ORG_URN — nada que hacer");
+if (ACCOUNTS.length === 0) {
+  console.log("Faltan LINKEDIN_ACCOUNTS o LINKEDIN_ACCESS_TOKEN/LINKEDIN_ORG_URN — nada que hacer");
   process.exit(0);
 }
 
@@ -302,12 +319,12 @@ async function generateCanvaCard(title, description, heroImageUrl) {
   return exportJob.urls[0];
 }
 
-async function uploadImage(imageUrl) {
+async function uploadImage(imageUrl, token, orgUrn) {
   // 1. Registrar el upload
   const registerBody = JSON.stringify({
     registerUploadRequest: {
       recipes: ["urn:li:digitalmediaRecipe:feedshare-image"],
-      owner: ORG_URN,
+      owner: orgUrn,
       serviceRelationships: [{ relationshipType: "OWNER", identifier: "urn:li:userGeneratedContent" }],
     },
   });
@@ -316,7 +333,7 @@ async function uploadImage(imageUrl) {
     path: "/v2/assets?action=registerUpload",
     method: "POST",
     headers: {
-      Authorization: `Bearer ${TOKEN}`,
+      Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
       "X-Restli-Protocol-Version": "2.0.0",
       "Content-Length": Buffer.byteLength(registerBody),
@@ -343,7 +360,7 @@ async function uploadImage(imageUrl) {
     path: uploadHost.pathname + uploadHost.search,
     method: "PUT",
     headers: {
-      Authorization: `Bearer ${TOKEN}`,
+      Authorization: `Bearer ${token}`,
       "Content-Length": imageBuffer.length,
     },
   }, imageBuffer);
@@ -351,9 +368,9 @@ async function uploadImage(imageUrl) {
   return asset;
 }
 
-function linkedinPost(text, asset) {
+function linkedinPost(text, asset, token, orgUrn) {
   const body = JSON.stringify({
-    author: ORG_URN,
+    author: orgUrn,
     lifecycleState: "PUBLISHED",
     specificContent: {
       "com.linkedin.ugc.ShareContent": {
@@ -369,7 +386,7 @@ function linkedinPost(text, asset) {
     path: "/v2/ugcPosts",
     method: "POST",
     headers: {
-      Authorization: `Bearer ${TOKEN}`,
+      Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
       "X-Restli-Protocol-Version": "2.0.0",
       "Content-Length": Buffer.byteLength(body),
@@ -394,47 +411,61 @@ async function main() {
     const content = fs.readFileSync(path, "utf-8");
     const meta = parseFrontmatter(content);
     const url = `${SITE}/blog/${slug}/`;
+
+    // Copy + card se generan UNA vez por post (no por cuenta) — el mismo
+    // contenido se publica en todas las cuentas configuradas.
+    let postHook, cardLine, imageUrl;
     try {
-      const { postHook, cardLine } = await generateLinkedInCopy(meta.title, stripFrontmatter(content));
-      const text = `${postHook}\n\nLee más en nuestro blog: ${url}`;
-      if (meta.heroImage) {
-        const heroUrl = meta.heroImage.startsWith("http") ? meta.heroImage : `${SITE}${meta.heroImage}`;
-        let imageUrl = heroUrl;
+      ({ postHook, cardLine } = await generateLinkedInCopy(meta.title, stripFrontmatter(content)));
+      imageUrl = meta.heroImage ? (meta.heroImage.startsWith("http") ? meta.heroImage : `${SITE}${meta.heroImage}`) : null;
+      if (imageUrl) {
         try {
-          const cardUrl = await generateCanvaCard(meta.title, cardLine, heroUrl);
+          const cardUrl = await generateCanvaCard(meta.title, cardLine, imageUrl);
           if (cardUrl) imageUrl = cardUrl;
         } catch (e) {
           await notifySlack(`⚠️ *Canva card* falló para \`${slug}\` (${e.message}) — publicando con foto plana en vez de la card con marca.`);
         }
-        const asset = await uploadImage(imageUrl);
-        await linkedinPost(text, asset);
-      } else {
-        // sin imagen: cae a share tipo ARTICLE (LinkedIn scrapea el OG tag de la página)
-        await httpJson({
-          hostname: "api.linkedin.com",
-          path: "/v2/ugcPosts",
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${TOKEN}`,
-            "Content-Type": "application/json",
-            "X-Restli-Protocol-Version": "2.0.0",
-          },
-        }, JSON.stringify({
-          author: ORG_URN,
-          lifecycleState: "PUBLISHED",
-          specificContent: {
-            "com.linkedin.ugc.ShareContent": {
-              shareCommentary: { text },
-              shareMediaCategory: "ARTICLE",
-              media: [{ status: "READY", originalUrl: url }],
-            },
-          },
-          visibility: { "com.linkedin.ugc.MemberNetworkVisibility": "PUBLIC" },
-        }));
       }
-      console.log(`✓ Publicado en LinkedIn: ${slug}`);
     } catch (e) {
-      await notifySlack(`❌ *LinkedIn* — error publicando \`${slug}\`: ${e.message}`);
+      await notifySlack(`❌ *LinkedIn* — error preparando copy/imagen para \`${slug}\`: ${e.message}`);
+      continue;
+    }
+    const text = `${postHook}\n\nLee más en nuestro blog: ${url}`;
+
+    for (const account of ACCOUNTS) {
+      const { label, token, urn } = account;
+      try {
+        if (imageUrl) {
+          const asset = await uploadImage(imageUrl, token, urn);
+          await linkedinPost(text, asset, token, urn);
+        } else {
+          // sin imagen: cae a share tipo ARTICLE (LinkedIn scrapea el OG tag de la página)
+          await httpJson({
+            hostname: "api.linkedin.com",
+            path: "/v2/ugcPosts",
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+              "X-Restli-Protocol-Version": "2.0.0",
+            },
+          }, JSON.stringify({
+            author: urn,
+            lifecycleState: "PUBLISHED",
+            specificContent: {
+              "com.linkedin.ugc.ShareContent": {
+                shareCommentary: { text },
+                shareMediaCategory: "ARTICLE",
+                media: [{ status: "READY", originalUrl: url }],
+              },
+            },
+            visibility: { "com.linkedin.ugc.MemberNetworkVisibility": "PUBLIC" },
+          }));
+        }
+        console.log(`✓ Publicado en LinkedIn (${label}): ${slug}`);
+      } catch (e) {
+        await notifySlack(`❌ *LinkedIn* (${label}) — error publicando \`${slug}\`: ${e.message}`);
+      }
     }
   }
 }
