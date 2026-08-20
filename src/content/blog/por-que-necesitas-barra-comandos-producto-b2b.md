@@ -125,3 +125,11 @@ No. La barra de comandos complementa al menú lateral. El menú sirve para que l
 **¿Qué pasa si mi producto B2B tiene una base de datos muy grande con miles de entidades?**
 
 Debes implementar búsqueda del lado del servidor (server-side search) con paginación o carga diferida (debounce) para evitar que el rendimiento del navegador colapse al intentar filtrar miles de registros en tiempo real.
+
+
+<!-- related-posts -->
+## Artículos relacionados
+
+- [Rediseño de producto digital sin perder usuarios en el intento](/blog/como-hacer-un-redesign-sin-morir-en-el-intento/)
+- [Por qué tu software en Latam fracasa pese al buen código](/blog/importancia-agencia-ux-ui-userdesigners/)
+- [IA en diseño de productos: qué sirve y qué es humo](/blog/inteligencia-artificial-en-diseno-de-productos/)

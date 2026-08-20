@@ -99,3 +99,11 @@ Para una startup o empresa en etapa de crecimiento acelerado, una versión inici
 **¿Cómo lograr convencer a los desarrolladores más escépticos de adoptar el sistema de diseño?**
 
 Involucrándolos desde el primer día en la definición de la nomenclatura técnica y demostrándoles empíricamente que el sistema elimina por completo la necesidad de tomar decisiones arbitrarias sobre espaciados y estilos visuales en cada nuevo ticket asignado.
+
+
+<!-- related-posts -->
+## Artículos relacionados
+
+- [Rediseño de producto digital sin perder usuarios en el intento](/blog/como-hacer-un-redesign-sin-morir-en-el-intento/)
+- [Por qué tu software en Latam fracasa pese al buen código](/blog/importancia-agencia-ux-ui-userdesigners/)
+- [IA en diseño de productos: qué sirve y qué es humo](/blog/inteligencia-artificial-en-diseno-de-productos/)

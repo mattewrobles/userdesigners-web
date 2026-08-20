@@ -129,3 +129,9 @@ No. Herramientas actuales como Figma permiten conectar pantallas, añadir estado
 **¿Cuántos usuarios necesito para validar un prototipo de interfaz?**
 Con realizar pruebas con 5 usuarios que coincidan estrictamente con tu perfil de cliente ideal es suficiente para identificar el 85% de los errores críticos de usabilidad y fricción en el flujo.
 
+
+
+<!-- related-posts -->
+## Artículos relacionados
+
+- [Diseño mobile-first: no es una tendencia, es una necesidad](/blog/diseno-mobile-first/)

@@ -136,3 +136,10 @@ Si tu empresa en Ecuador o el resto de Latam necesita escalar sus plataformas di
 
 **¿Qué herramientas se recomiendan para conectar diseño y desarrollo?** 
 > Figma es el estándar de la industria para diseño visual y gestión de tokens mediante plugins como Tokens Studio, mientras que en código se integra directamente con frameworks modernos como React, Vue o Svelte a través de arquitecturas como Tailwind CSS o Styled Components.
+
+
+<!-- related-posts -->
+## Artículos relacionados
+
+- [Cómo hacer un Design System para fintechs (guía 2026)](/blog/_TEMPLATE/)
+- [Cuánto le cuesta a tu empresa NO tener un design system](/blog/costo-oculto-deuda-ui-sin-design-system/)

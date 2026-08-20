@@ -92,3 +92,11 @@ Lo ideal es implementarlo desde las primeras etapas del producto, pero resulta i
 **¿Qué impacto tiene el diseño UX deficiente en la conversión de productos financieros?**
 
 La falta de claridad en flujos críticos como el registro, la validación de identidad o las transferencias genera desconfianza directa en el usuario, provocando el abandono definitivo de la plataforma.
+
+
+<!-- related-posts -->
+## Artículos relacionados
+
+- [Rediseño de producto digital sin perder usuarios en el intento](/blog/como-hacer-un-redesign-sin-morir-en-el-intento/)
+- [Por qué tu software en Latam fracasa pese al buen código](/blog/importancia-agencia-ux-ui-userdesigners/)
+- [IA en diseño de productos: qué sirve y qué es humo](/blog/inteligencia-artificial-en-diseno-de-productos/)

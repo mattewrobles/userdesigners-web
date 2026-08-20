@@ -130,3 +130,9 @@ Herramientas de mapas de calor (*heatmaps*) y grabación de sesiones como Hotjar
 ## Diseña para el comportamiento real de tus usuarios
 
 Deja de diseñar interfaces esperando que tus usuarios lean cada instrucción con atención plena. Acepta que tu software se escanea, se navega por impulsos y se evalúa en segundos. Ajusta la jerarquía tipográfica, libera espacio en blanco y guía la mirada hacia las acciones que generan valor para tu negocio.
+
+
+<!-- related-posts -->
+## Artículos relacionados
+
+- [Auto Layout en Figma: de la frustración a la fluidez](/blog/auto-layout-figma-frustracion-a-fluidez/)

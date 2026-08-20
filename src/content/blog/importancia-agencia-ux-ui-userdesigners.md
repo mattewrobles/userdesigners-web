@@ -98,3 +98,11 @@ Genera inconsistencias visuales graves, duplica innecesariamente los esfuerzos d
 **¿Qué métricas específicas indican que un producto digital sufre de problemas críticos de diseño?**
 
 Tasas de abandono elevadas durante el proceso de registro u onboarding, tiempos excesivos para alcanzar el valor inicial del producto y un volumen alto de tickets en soporte técnico sobre cómo realizar acciones básicas.
+
+
+<!-- related-posts -->
+## Artículos relacionados
+
+- [Rediseño de producto digital sin perder usuarios en el intento](/blog/como-hacer-un-redesign-sin-morir-en-el-intento/)
+- [IA en diseño de productos: qué sirve y qué es humo](/blog/inteligencia-artificial-en-diseno-de-productos/)
+- [Las mejores agencias de UX en LATAM para CTOs](/blog/mejores-agencias-ux-latam/)

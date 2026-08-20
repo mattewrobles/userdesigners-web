@@ -108,3 +108,11 @@ La propiedad intelectual, la curaduría visual y la experiencia de usuario recae
 **¿Es necesario usar librerías de terceros como Material Design o construir un design system propio desde cero?**
 
 Depende fundamentalmente de tu propuesta de valor y estrategia de marca. Si necesitas una experiencia totalmente diferenciada, segura y con identidad propia en el sector financiero, construir un sistema personalizado sobre Figma es la mejor opción a mediano y largo plazo.
+
+
+<!-- related-posts -->
+## Artículos relacionados
+
+- [Rediseño de producto digital sin perder usuarios en el intento](/blog/como-hacer-un-redesign-sin-morir-en-el-intento/)
+- [Por qué tu software en Latam fracasa pese al buen código](/blog/importancia-agencia-ux-ui-userdesigners/)
+- [IA en diseño de productos: qué sirve y qué es humo](/blog/inteligencia-artificial-en-diseno-de-productos/)

@@ -100,3 +100,11 @@ Implementando un sistema de diseño propio, definiendo directrices de marca estr
 **¿Qué herramientas de IA son seguras para usar en procesos de diseño confidenciales?**
 
 Debes seleccionar plataformas empresariales que garanticen que los datos de tus prototipos y la información de tus usuarios no se utilicen para entrenar modelos públicos.
+
+
+<!-- related-posts -->
+## Artículos relacionados
+
+- [Rediseño de producto digital sin perder usuarios en el intento](/blog/como-hacer-un-redesign-sin-morir-en-el-intento/)
+- [Por qué tu software en Latam fracasa pese al buen código](/blog/importancia-agencia-ux-ui-userdesigners/)
+- [IA en diseño de productos: qué sirve y qué es humo](/blog/inteligencia-artificial-en-diseno-de-productos/)

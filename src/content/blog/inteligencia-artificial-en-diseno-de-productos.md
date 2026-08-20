@@ -104,3 +104,11 @@ El principal riesgo es la filtración de propiedad intelectual y datos confidenc
 **¿Cómo afecta la IA a la relación entre los equipos de diseño y desarrollo?**
 
 Bien utilizada, reduce la fricción al estandarizar la entrega de especificaciones. Mal utilizada, genera una carga adicional de refactorización y deuda técnica visual cuando los ingenieros reciben componentes desconectados de un sistema coherente.
+
+
+<!-- related-posts -->
+## Artículos relacionados
+
+- [Rediseño de producto digital sin perder usuarios en el intento](/blog/como-hacer-un-redesign-sin-morir-en-el-intento/)
+- [Por qué tu software en Latam fracasa pese al buen código](/blog/importancia-agencia-ux-ui-userdesigners/)
+- [Las mejores agencias de UX en LATAM para CTOs](/blog/mejores-agencias-ux-latam/)

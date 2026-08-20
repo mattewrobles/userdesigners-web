@@ -106,3 +106,9 @@ Un uso excesivo y desordenado de capas anidadas puede afectar el rendimiento gen
 **¿Es necesario que los desarrolladores sepan usar Figma para aprovechar Auto Layout?**
 
 No es obligatorio que diseñen, pero entender cómo funciona la lógica de Auto Layout les permite leer con precisión el panel de inspección y traducir los diseños a código front-end mucho más rápido y sin ambigüedades.
+
+
+<!-- related-posts -->
+## Artículos relacionados
+
+- [Tus usuarios no leen tu interfaz, la escanean](/blog/principios-jerarquia-visual-ui-design/)
