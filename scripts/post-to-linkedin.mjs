@@ -23,7 +23,12 @@ const TOKENROUTER_KEY = process.env.TOKENROUTER_API_KEY;
 const CANVA_CLIENT_ID = process.env.CANVA_CLIENT_ID;
 const CANVA_CLIENT_SECRET = process.env.CANVA_CLIENT_SECRET;
 const CANVA_REFRESH_TOKEN = process.env.CANVA_REFRESH_TOKEN;
-const CANVA_BRAND_TEMPLATE_ID = process.env.CANVA_BRAND_TEMPLATE_ID;
+// Lista separada por comas — se elige uno al azar por post para variar el look
+// (light, dark original, dark v2) en vez de repetir siempre el mismo template.
+const CANVA_BRAND_TEMPLATE_IDS = (process.env.CANVA_BRAND_TEMPLATE_ID || "")
+  .split(",")
+  .map((s) => s.trim())
+  .filter(Boolean);
 const SITE = "https://www.userdesigners.com";
 const BLOG_DIR = "src/content/blog";
 // Tope de seguridad: si un sync/regeneración masiva libera muchos posts de
@@ -179,13 +184,15 @@ async function uploadCanvaAsset(accessToken, imageUrl) {
 }
 
 async function generateCanvaCard(title, description, heroImageUrl) {
-  if (!CANVA_CLIENT_ID || !CANVA_CLIENT_SECRET || !CANVA_REFRESH_TOKEN || !CANVA_BRAND_TEMPLATE_ID) return null;
+  if (!CANVA_CLIENT_ID || !CANVA_CLIENT_SECRET || !CANVA_REFRESH_TOKEN || CANVA_BRAND_TEMPLATE_IDS.length === 0) return null;
 
+  const brandTemplateId = CANVA_BRAND_TEMPLATE_IDS[Math.floor(Math.random() * CANVA_BRAND_TEMPLATE_IDS.length)];
+  console.log(`Card Canva: usando template ${brandTemplateId}`);
   const accessToken = await getCanvaAccessToken();
   const assetId = await uploadCanvaAsset(accessToken, heroImageUrl);
 
   const autofillBody = JSON.stringify({
-    brand_template_id: CANVA_BRAND_TEMPLATE_ID,
+    brand_template_id: brandTemplateId,
     data: {
       title: { type: "text", text: title },
       description: { type: "text", text: description },
