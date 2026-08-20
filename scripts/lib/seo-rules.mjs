@@ -81,8 +81,12 @@ export function checkPost(slug, content) {
   const h2Count = (body.match(/^## /gm) || []).length;
   if (h2Count < 4) critical.push(`${slug}: solo ${h2Count} secciones H2 (mínimo 4-6)`);
 
+  // Una sola frase genérica en un post largo puede ser natural (ej. "es fundamental"
+  // una vez en 1700 palabras no es lo mismo que un patrón repetido de IA) — solo
+  // bloquea si aparecen 2+ frases distintas, señal real de escritura genérica.
   const genericHits = GENERIC_PHRASES.filter((p) => body.toLowerCase().includes(p));
-  if (genericHits.length > 0) critical.push(`${slug}: contenido genérico detectado — ${genericHits.join(", ")}`);
+  if (genericHits.length >= 2) critical.push(`${slug}: contenido genérico detectado — ${genericHits.join(", ")}`);
+  else if (genericHits.length === 1) warnings.push(`${slug}: 1 frase genérica ("${genericHits[0]}") — no bloquea sola, revisar si se repite en el resto del post`);
 
   const metaHits = META_PHRASES.filter((p) => body.toLowerCase().includes(p));
   if (metaHits.length > 0) critical.push(`${slug}: frases meta-instrucción coladas del prompt — ${metaHits.join(", ")}`);
