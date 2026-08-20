@@ -82,9 +82,9 @@ for (const f of files) {
     console.log(`✗ CRÍTICO ${slug}: falta heroImage`);
     criticalFails++;
   }
-  // Longitud: posts competitivos 1500-2500 palabras (estándar Airpals/Backlinko)
-  if (words < 1500) {
-    console.log(`✗ CRÍTICO ${slug}: contenido demasiado corto (${words} palabras, min 1500). Un post competitivo requiere 1500-2500.`);
+  // Longitud: posts competitivos 1200-2500 palabras (mismo piso que usa el pipeline de generación)
+  if (words < 1200) {
+    console.log(`✗ CRÍTICO ${slug}: contenido demasiado corto (${words} palabras, min 1200). Un post competitivo requiere 1200-2500.`);
     criticalFails++;
   }
   // Estructura de post largo (estándar Airpals)
