@@ -4,9 +4,11 @@
 // validate-blog-seo.mjs). Si faltan credenciales (LinkedIn o TokenRouter), el
 // paso se salta solo — nunca rompe el sync.
 //
-// Flujo por post: LLM escribe una descripción corta a la medida del tema
-// (no copia el meta description, que está optimizado para SEO no para feed
-// social) + CTA fija "Lee más en nuestro blog: <url>". La imagen es una card
+// Flujo por post: un LLM escribe DOS textos con una sola llamada — un post
+// nativo de LinkedIn (gancho + mini-historia, 2-4 líneas) y una línea corta
+// separada para la card de Canva (que no crece con el texto). El post no
+// copia el meta description, que está optimizado para SEO no para feed
+// social + CTA fija "Lee más en nuestro blog: <url>". La imagen es una card
 // generada con el Autofill API de Canva (Brand Template con campos title/
 // description/image) usando el heroImage del post como foto de fondo — si
 // Canva no está configurado o falla, cae al heroImage plano sin la card.
@@ -72,16 +74,41 @@ function httpJson(options, body) {
   });
 }
 
-async function generateDescription(title, body) {
-  if (!TOKENROUTER_KEY) {
-    return `Nuevo artículo en el blog: ${title}.`;
+// Genera dos textos distintos con UNA sola llamada al LLM:
+// - postHook: el post nativo de LinkedIn (gancho + historia corta), va ANTES del CTA fijo
+// - cardLine: una sola línea corta para la card de Canva (espacio limitado, no crece con el texto)
+function stripGeneric(text, fallback) {
+  const lower = text.toLowerCase();
+  const hit = GENERIC_PHRASES.find((p) => lower.includes(p));
+  if (hit) {
+    console.log(`⚠ Texto LinkedIn con frase genérica ("${hit}") — usando fallback`);
+    return fallback;
   }
-  const prompt = `Escribe UNA sola oración corta (máximo 110 caracteres) para una card de LinkedIn, en español, tono profesional pero cercano, anunciando este artículo de blog de una agencia de diseño UX/UI. NO repitas el título literal. Enfócate en el problema o insight que resuelve. Sin hashtags, sin punto final.
+  return text;
+}
 
-Título: ${title}
-Contenido (primeros párrafos): ${body.slice(0, 1500)}
+async function generateLinkedInCopy(title, body) {
+  const fallbackHook = `Nuevo artículo en el blog.`;
+  const fallbackCard = `Nuevo artículo: ${title}`.slice(0, 130);
+  if (!TOKENROUTER_KEY) return { postHook: fallbackHook, cardLine: fallbackCard };
 
-Responde solo con esa oración, nada más.`;
+  const prompt = `Eres un copywriter senior de redes sociales especializado en SEO/social writing para agencias B2B de UX/UI Design. Escribe el copy para publicar este artículo de blog en LinkedIn.
+
+REGLAS PARA "post_hook" (el cuerpo del post, va justo ANTES de un link fijo que ya viene aparte — no lo repitas ni escribas "lee más"):
+- Abre con un gancho que describe una situación real y reconocible del lector (una frustración, un error común, una pregunta directa) — NUNCA "Descubre cómo...", NUNCA resume el título literal, NUNCA "En este artículo".
+- 2-4 líneas cortas, cada una en su propio párrafo (así se lee un post nativo de LinkedIn, no un anuncio).
+- Cuenta una mini-historia o tensión concreta ANTES de insinuar la solución — la propuesta de valor tiene que sentirse, no solo mencionarse.
+- Tono profesional pero conversacional, primera persona plural ocasional ("en nuestra experiencia..."), sin jerga corporativa, sin emojis, sin hashtags, sin punto final en la última línea.
+- Prohibido: "en la era digital", "revolucionario", "cabe destacar", "sin duda", "por supuesto", cualquier frase que suene a post genérico escrito por IA.
+
+REGLAS PARA "card_line" (una sola oración, máximo 110 caracteres, para una card visual — el espacio NO crece, así que tiene que ser corta y con gancho):
+- Enfócate en el problema o insight central, no en el título literal.
+- Sin hashtags, sin punto final.
+
+Título del artículo: ${title}
+Extracto del artículo: ${body.slice(0, 1500)}
+
+Responde SOLO con JSON: { "post_hook": "...", "card_line": "..." }`;
 
   const res = await httpJson({
     hostname: "api.tokenrouter.com",
@@ -94,18 +121,17 @@ Responde solo con esa oración, nada más.`;
   }, JSON.stringify({
     model: "openai/gpt-4o-mini",
     messages: [{ role: "user", content: prompt }],
-    max_tokens: 300,
+    max_tokens: 500,
+    response_format: { type: "json_object" },
   }));
   const parsed = JSON.parse(res);
-  let description = parsed.choices?.[0]?.message?.content?.trim() || `Nuevo artículo en el blog: ${title}.`;
-  if (description.length > 130) description = description.slice(0, 127).trim() + "...";
-  const lower = description.toLowerCase();
-  const genericHit = GENERIC_PHRASES.find((p) => lower.includes(p));
-  if (genericHit) {
-    console.log(`⚠ Descripción LinkedIn con frase genérica ("${genericHit}") — usando fallback`);
-    return `Nuevo artículo en el blog: ${title}.`;
-  }
-  return description;
+  let raw = { post_hook: fallbackHook, card_line: fallbackCard };
+  try { raw = JSON.parse(parsed.choices?.[0]?.message?.content || "{}"); } catch { /* usar fallback */ }
+
+  let postHook = stripGeneric((raw.post_hook || "").trim() || fallbackHook, fallbackHook);
+  let cardLine = stripGeneric((raw.card_line || "").trim() || fallbackCard, fallbackCard);
+  if (cardLine.length > 130) cardLine = cardLine.slice(0, 127).trim() + "...";
+  return { postHook, cardLine };
 }
 
 function downloadBuffer(url) {
@@ -344,13 +370,13 @@ async function main() {
     const meta = parseFrontmatter(content);
     const url = `${SITE}/blog/${slug}/`;
     try {
-      const description = await generateDescription(meta.title, stripFrontmatter(content));
-      const text = `${description}\n\nLee más en nuestro blog: ${url}`;
+      const { postHook, cardLine } = await generateLinkedInCopy(meta.title, stripFrontmatter(content));
+      const text = `${postHook}\n\nLee más en nuestro blog: ${url}`;
       if (meta.heroImage) {
         const heroUrl = meta.heroImage.startsWith("http") ? meta.heroImage : `${SITE}${meta.heroImage}`;
         let imageUrl = heroUrl;
         try {
-          const cardUrl = await generateCanvaCard(meta.title, description, heroUrl);
+          const cardUrl = await generateCanvaCard(meta.title, cardLine, heroUrl);
           if (cardUrl) imageUrl = cardUrl;
         } catch (e) {
           console.log(`⚠ Canva card falló (${e.message}) — uso heroImage plano`);
