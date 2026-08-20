@@ -52,6 +52,7 @@ jobs:
         run: node scripts/generate-llms-txt.mjs
       - name: Validate SEO (reglas críticas)
         run: |
+          export NOTION_TOKEN=$(doppler secrets get NOTION_TOKEN --plain --project user-designers --config prd)
           node scripts/validate-blog-seo.mjs
         if: env.TARGET_BRANCH == 'main'
       - name: Commit and push
@@ -59,11 +60,21 @@ jobs:
           git config user.name "blog-bot"
           git config user.email "bot@userdesigners.com"
           git add -A src/content/blog/ public/assets/blog/ public/llms.txt
+          # POST_COUNT = posts NUEVOS realmente publicados (los que pasaron el gate),
+          # no archivos tocados en total (internal-links backfill toca posts viejos).
+          # En preview no corre Validate SEO (es main-only), así que ahí se usa
+          # new-posts.txt (lo recién sincronizado, sin gate) en vez de published-posts.txt.
+          if [ -f /tmp/published-posts.txt ]; then
+            POST_COUNT=$(grep -c . /tmp/published-posts.txt || echo 0)
+          elif [ -f /tmp/new-posts.txt ]; then
+            POST_COUNT=$(grep -c . /tmp/new-posts.txt || echo 0)
+          else
+            POST_COUNT=0
+          fi
           if git diff --staged --quiet && git diff --quiet; then
             echo "No changes"
             echo "POST_COUNT=0" >> $GITHUB_ENV
           else
-            POST_COUNT=$(git diff --staged --name-only | grep "src/content/blog/" | wc -l | tr -d ' ')
             git commit -m "Sync blog from Notion → $TARGET_BRANCH"
             git push origin $TARGET_BRANCH
             echo "POST_COUNT=$POST_COUNT" >> $GITHUB_ENV
@@ -111,22 +122,33 @@ jobs:
         if: always()
         run: |
           SKIPPED=""
-          if [ -f /tmp/skipped-posts.txt ]; then
-            SKIPPED="\n⚠️ Excluidos por no cumplir SEO crítico: $(cat /tmp/skipped-posts.txt | tr '\n' ',' | sed 's/,/, /g' | sed 's/, $//')"
+          SKIPPED_COUNT=0
+          if [ -f /tmp/skipped-posts.txt ] && [ -s /tmp/skipped-posts.txt ]; then
+            SKIPPED_COUNT=$(grep -c . /tmp/skipped-posts.txt || echo 0)
+            SKIPPED="\n❌ *${SKIPPED_COUNT} excluido(s) por no pasar SEO/anti-slop crítico:*\n$(cat /tmp/skipped-posts.txt | sed 's/^/  • /' | sed 's/$/\\n/' | tr -d '\n')"
           fi
+          POST_COUNT="${POST_COUNT:-0}"
           if [ "$TARGET_BRANCH" = "main" ]; then
             URL="https://www.userdesigners.com/blog"
-            if [ "$POST_COUNT" = "0" ] || [ -z "$POST_COUNT" ]; then
-              MSG="📝 *Blog UserDesigners:* no hay posts en estado *Ready* para publicar.$SKIPPED"
+            if [ "$POST_COUNT" = "0" ]; then
+              if [ "$SKIPPED_COUNT" != "0" ]; then
+                MSG="❌ *Blog UserDesigners:* 0 posts nuevos publicados — todo lo que llegó fue excluido.$SKIPPED"
+              else
+                MSG="📝 *Blog UserDesigners:* no hay posts en estado *Ready* para publicar."
+              fi
             else
-              MSG="✅ *Blog UserDesigners:* ${{ env.POST_COUNT }} post(s) publicados en producción → $URL$SKIPPED"
+              MSG="✅ *Blog UserDesigners:* ${POST_COUNT} post(s) NUEVO(S) publicados en producción → $URL$SKIPPED"
             fi
           else
             URL="https://preview.userdesigners-web.pages.dev/blog"
-            if [ "$POST_COUNT" = "0" ] || [ -z "$POST_COUNT" ]; then
-              MSG="📝 *Blog Preview:* no hay posts en estado *Ready* para publicar.$SKIPPED"
+            if [ "$POST_COUNT" = "0" ]; then
+              if [ "$SKIPPED_COUNT" != "0" ]; then
+                MSG="❌ *Blog Preview:* 0 posts nuevos — todo lo que llegó fue excluido.$SKIPPED"
+              else
+                MSG="📝 *Blog Preview:* no hay posts en estado *Ready* para publicar."
+              fi
             else
-              MSG="👀 *Blog Preview:* ${{ env.POST_COUNT }} post(s) en preview para revisión → $URL\nAproba con: merge \`preview\` → \`main\`$SKIPPED"
+              MSG="👀 *Blog Preview:* ${POST_COUNT} post(s) NUEVO(S) en preview para revisión → $URL\nAproba con: merge \`preview\` → \`main\`$SKIPPED"
             fi
           fi
           curl -s -X POST https://slack.com/api/chat.postMessage \

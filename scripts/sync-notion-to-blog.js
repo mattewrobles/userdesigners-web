@@ -164,6 +164,7 @@ heroImage: "${imgPath || ""}"
 heroImageSource: "${imgSource.replace(/"/g, '\\"')}"
 date: "${date}"
 readTime: "${readTime}"
+notionId: "${page.id}"
 ---
 
 ${content}
@@ -176,10 +177,11 @@ ${content}
   fs.appendFileSync("/tmp/new-posts.txt", `${slug}\n`);
   count++;
 
-    // Mark as synced
+    // NO marcar Published acá — el archivo local todavía puede ser excluido
+    // por validate-blog-seo.mjs más adelante en el pipeline. Ese script es
+    // quien decide el Status final (Published si pasa, Ready si no).
     await notion(`/v1/pages/${page.id}`, "PATCH", {
       properties: {
-        Status: { select: { name: "Published" } },
         "Last Synced": { date: { start: today } },
       },
     });
