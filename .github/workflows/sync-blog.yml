@@ -101,6 +101,10 @@ jobs:
             echo "LinkedIn no configurado (ver docs/LINKEDIN-DISTRIBUTION.md) — omitiendo"
           else
             export TOKENROUTER_API_KEY=$(doppler secrets get TOKENROUTER_API_KEY --plain --project user-designers --config prd)
+            export CANVA_CLIENT_ID=$(doppler secrets get CANVA_CLIENT_ID --plain --project user-designers --config prd)
+            export CANVA_CLIENT_SECRET=$(doppler secrets get CANVA_CLIENT_SECRET --plain --project user-designers --config prd)
+            export CANVA_REFRESH_TOKEN=$(doppler secrets get CANVA_REFRESH_TOKEN --plain --project user-designers --config prd)
+            export CANVA_BRAND_TEMPLATE_ID=$(doppler secrets get CANVA_BRAND_TEMPLATE_ID --plain --project user-designers --config prd)
             node scripts/post-to-linkedin.mjs
           fi
       - name: Notify Slack

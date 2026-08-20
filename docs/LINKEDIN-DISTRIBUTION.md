@@ -42,24 +42,37 @@ existe) + CTA fija "Lee más en nuestro blog: <url>". La imagen se sube como
 asset nativo de LinkedIn (`shareMediaCategory: IMAGE`) en vez de depender del
 scraping de OG tags — hoy usa el `heroImage` del post (Unsplash).
 
-### Upgrade a card diseñada en Canva (pendiente, requiere setup manual)
+### Card diseñada en Canva (LIVE desde Ago 20 2026)
 
-Ya existe un template base generado en Canva (4 variantes, dark minimalista,
-sin brand kit — pedir a Mau el link si se perdió). Para que el pipeline
-suba esa card en vez del heroImage:
+`post-to-linkedin.mjs` genera la card vía Canva Autofill API antes de subirla
+a LinkedIn: título + descripción + el heroImage del post (real, varía por
+post, no es una imagen fija) rellenan el Brand Template `EAHSzCLIu-E`
+(diseñado por Mau en Canva, campos `title`/`description`/`image` marcados
+para autofill). Si Canva falla por cualquier motivo, cae al heroImage plano
+sin la card — nunca rompe el sync.
 
-1. Elegir/editar una de las 4 variantes en Canva, guardarla como Brand Template
-   con campos autofill (título, quizás categoría).
-2. Crear una app en [Canva Developer Portal](https://www.canva.com/developers/)
-   → Connect API, generar Client ID/Secret.
-3. Hacer el consentimiento OAuth una vez (requiere login de Mau) para obtener
-   un refresh token de larga duración.
-4. Guardar en Doppler: `CANVA_CLIENT_ID`, `CANVA_CLIENT_SECRET`,
-   `CANVA_REFRESH_TOKEN`, `CANVA_BRAND_TEMPLATE_ID`.
-5. En `post-to-linkedin.mjs`, reemplazar la línea que arma `imageUrl` (hoy
-   `meta.heroImage`) por una llamada al Autofill API de Canva pasando el
-   título del post, esperar el export, y usar esa URL — el resto del flujo
-   (`uploadImage` → `linkedinPost`) no cambia.
+Credenciales en Doppler (`project user-designers`, config `prd`):
+`CANVA_CLIENT_ID`, `CANVA_CLIENT_SECRET`, `CANVA_REFRESH_TOKEN`,
+`CANVA_BRAND_TEMPLATE_ID`.
 
-No se automatizó ahora porque el paso 3 (OAuth) requiere login humano de Mau,
-igual que el token de LinkedIn.
+**Gotcha crítico — el refresh_token de Canva ROTA en cada uso.** Cada
+llamada a `/oauth/token` con `grant_type=refresh_token` devuelve un
+refresh_token NUEVO e invalida el anterior. Si no se persiste el nuevo,
+el siguiente run falla con `"Refresh token used twice"` (le pasó a esta
+sesión probando dos veces seguidas). `getCanvaAccessToken()` ya lo maneja:
+detecta que vino un refresh_token distinto y lo guarda solo en Doppler vía
+`doppler secrets set --no-interactive` (necesita que `DOPPLER_TOKEN_USER_DESIGNERS`,
+el secret de GitHub Actions, tenga permiso de ESCRITURA en Doppler, no solo
+lectura — verificar esto si el paso empieza a fallar).
+
+**Variedad de templates:** si se quieren 2-4 diseños distintos rotando (no
+siempre la misma card), armar más Brand Templates en Canva con el mismo
+schema de campos (`title`/`description`/`image`) y guardar sus IDs — el
+código elegiría uno al azar entre `CANVA_BRAND_TEMPLATE_ID` (convertir a
+lista). No implementado todavía, es la siguiente mejora obvia si Mau la pide.
+
+**Límite de layout:** la descripción se cortó a ~110-130 caracteres a
+propósito — el cuadro de highlight detrás del texto NO crece automático vía
+Autofill API (solo se ajusta a mano en el editor de Canva), así que un texto
+más largo se desborda del cuadro. Si se necesita más texto, hay que agrandar
+el cuadro en el template o aceptar el límite de caracteres.
