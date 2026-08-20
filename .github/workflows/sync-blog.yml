@@ -47,6 +47,9 @@ jobs:
         run: node scripts/build-image-registry.mjs
       - name: Add internal links (related posts)
         run: node scripts/add-internal-links.mjs
+      - name: Regenerate llms.txt (GEO/AEO — crawlers de LLM)
+        if: env.TARGET_BRANCH == 'main'
+        run: node scripts/generate-llms-txt.mjs
       - name: Validate SEO (reglas críticas)
         run: |
           node scripts/validate-blog-seo.mjs
@@ -55,7 +58,7 @@ jobs:
         run: |
           git config user.name "blog-bot"
           git config user.email "bot@userdesigners.com"
-          git add -A src/content/blog/ public/assets/blog/
+          git add -A src/content/blog/ public/assets/blog/ public/llms.txt
           if git diff --staged --quiet && git diff --quiet; then
             echo "No changes"
             echo "POST_COUNT=0" >> $GITHUB_ENV
@@ -87,6 +90,17 @@ jobs:
               -d "{\"host\":\"www.userdesigners.com\",\"key\":\"$INDEXNOW_KEY\",\"keyLocation\":\"https://www.userdesigners.com/indexnow.txt\",\"urlList\":$URLS}"
           else
             echo "INDEXNOW_KEY no configurada, omitiendo IndexNow"
+          fi
+      - name: Post to LinkedIn (si hay posts nuevos y credenciales configuradas)
+        if: env.POST_COUNT != '0' && env.TARGET_BRANCH == 'main'
+        env:
+          LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
+          LINKEDIN_ORG_URN: ${{ secrets.LINKEDIN_ORG_URN }}
+        run: |
+          if [ -z "$LINKEDIN_ACCESS_TOKEN" ] || [ -z "$LINKEDIN_ORG_URN" ]; then
+            echo "LinkedIn no configurado (ver docs/LINKEDIN-DISTRIBUTION.md) — omitiendo"
+          else
+            node scripts/post-to-linkedin.mjs
           fi
       - name: Notify Slack
         if: always()

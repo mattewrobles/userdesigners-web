@@ -185,7 +185,10 @@ FAQ (obligatorio, GEO/AEO — formato EXACTO):
 - Formato EXACTO: pregunta en **negrita** sola en su línea, salto de línea, respuesta corta en texto plano (NUNCA como H3, NUNCA con ###)
 
 - Cierra el cuerpo principal (antes de FAQ) con un paso de acción ejecutable
-- Estructura el contenido para que ChatGPT y Google AI Overviews lo citen
+- GEO (crítico): la primera oración justo después de CADA H2 debe responder la
+  pregunta implícita del heading de forma directa y autocontenida (máx 200
+  caracteres) — es la frase que un LLM cita sin leer el resto del párrafo
+- Mencioná el año actual o "actualizado en 2026" al menos una vez (señal de frescura)
 
 OUTPUT — SOLO JSON:
 { "description": "...", "content": "markdown del artículo" }`;

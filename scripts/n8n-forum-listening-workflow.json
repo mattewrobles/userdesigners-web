@@ -1,0 +1,72 @@
+{
+  "name": "UserDesigners — Forum Listening (F5Bot → Slack)",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": { "item": [{ "mode": "everyX", "value": 6, "unit": "hours" }] },
+        "simple": false,
+        "filters": {
+          "sender": "f5bot@f5bot.com",
+          "readStatus": "unread"
+        },
+        "options": {}
+      },
+      "id": "gmail-trigger",
+      "name": "Gmail — Alertas F5Bot",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 300],
+      "credentials": {
+        "gmailOAuth2": { "id": "REPLACE_WITH_GMAIL_CREDENTIAL_ID", "name": "Gmail — UserDesigners" }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// F5Bot manda un email por keyword con enlaces a Reddit/HN/Lobsters que la mencionan.\n// Formato típico del cuerpo: título + URL por línea, agrupado por keyword.\nconst items = [];\nfor (const item of $input.all()) {\n  const subject = item.json.subject || '';\n  const bodyText = item.json.textPlain || item.json.text || '';\n  // Extrae pares (título, url) — F5Bot pone la URL en la misma línea o la siguiente\n  const urlRe = /(https?:\\/\\/(?:www\\.)?(?:reddit\\.com|news\\.ycombinator\\.com|lobste\\.rs)\\S+)/g;\n  const matches = [...bodyText.matchAll(urlRe)];\n  const keywordMatch = subject.match(/F5Bot:\\s*(.+)/i);\n  const keyword = keywordMatch ? keywordMatch[1].trim() : subject;\n  for (const m of matches) {\n    items.push({ json: { keyword, url: m[1], rawSubject: subject } });\n  }\n}\nreturn items;"
+      },
+      "id": "parse-f5bot",
+      "name": "Parsear alertas F5Bot",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "post",
+        "select": "channel",
+        "channelId": { "value": "C0BN01LMC3F", "mode": "id" },
+        "text": "=🔎 *Oportunidad de foro* — keyword: `{{ $json.keyword }}`\n{{ $json.url }}\n\n_Solo aviso, nadie postea automático. Si aplica, entra tú a comentar mencionando el blog cuando sume valor real a la conversación._",
+        "otherOptions": {}
+      },
+      "id": "slack-notify",
+      "name": "Avisar a Slack (nunca auto-postea)",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [680, 300],
+      "credentials": {
+        "slackApi": { "id": "REPLACE_WITH_SLACK_CREDENTIAL_ID", "name": "Slack — UserDesigners" }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "markAsRead",
+        "messageId": "={{ $('Gmail — Alertas F5Bot').item.json.id }}"
+      },
+      "id": "gmail-mark-read",
+      "name": "Marcar email como leído",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [900, 300],
+      "credentials": {
+        "gmailOAuth2": { "id": "REPLACE_WITH_GMAIL_CREDENTIAL_ID", "name": "Gmail — UserDesigners" }
+      }
+    }
+  ],
+  "connections": {
+    "Gmail — Alertas F5Bot": { "main": [[{ "node": "Parsear alertas F5Bot", "type": "main", "index": 0 }]] },
+    "Parsear alertas F5Bot": { "main": [[{ "node": "Avisar a Slack (nunca auto-postea)", "type": "main", "index": 0 }]] },
+    "Avisar a Slack (nunca auto-postea)": { "main": [[{ "node": "Marcar email como leído", "type": "main", "index": 0 }]] }
+  },
+  "_note": "Workflow NUEVO, independiente del workflow protegido de blog (s2eM6QlvIuQqNjN6). Este solo LEE alertas F5Bot y avisa a Slack — no publica nada en ningún lado. Importar manualmente en n8n y reemplazar los REPLACE_WITH_* con credenciales reales."
+}
