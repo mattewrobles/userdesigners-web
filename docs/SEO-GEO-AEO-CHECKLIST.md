@@ -28,6 +28,23 @@ Referencia viva. Todo lo de acá ya está automatizado en el pipeline
 - Ejemplos reales de proyectos propios (Utransfer, Kaito, Airpals) en vez de casos hipotéticos.
 - Cero estadísticas inventadas con números redondos "perfectos".
 
+## ⚠️ Importante — dónde vive el prompt REAL de generación
+
+`scripts/generate-blog-draft.js` y `scripts/regenerate-published-posts.mjs`
+están en el repo pero **la generación de posts nuevos día a día vive en el
+AI Agent node del workflow n8n `s2eM6QlvIuQqNjN6`** (protegido, no tocar).
+Los cambios de prompt en estos dos scripts SÍ mejoran la regeneración masiva
+y cualquier uso manual de esos scripts, pero NO cambian lo que genera el
+workflow real de Slack `/blog` hasta que alguien pegue esto a mano en el
+system prompt del Agent node en n8n:
+
+```
+GEO (crítico): la primera oración justo después de CADA H2 debe responder la
+pregunta implícita del heading de forma directa y autocontenida (máx 200
+caracteres) — es la frase que un LLM cita sin leer el resto del párrafo.
+Mencioná el año actual o "actualizado en 2026" al menos una vez.
+```
+
 ## Pendiente / no automatizado (decisión humana)
 - Person schema por autor individual — hoy todo el blog usa autor "UserDesigners" (Organization). Solo vale la pena si se empieza a firmar posts con nombre propio.
 - Distribución a newsletters de nicho (Sidebar.io, etc.) — manual, no hay pipeline.
