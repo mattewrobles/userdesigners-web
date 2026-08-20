@@ -1,5 +1,70 @@
 # UserDesigners Web — Astro Migration
 
+## Ago 20 — LinkedIn copy + incidente Canva + alertas Slack + DB Notion (bloqueada)
+
+**Copy de LinkedIn reescrito** (`scripts/post-to-linkedin.mjs`): antes era una
+sola oración genérica ("Descubre cómo elegir..."). Ahora una sola llamada al
+LLM devuelve dos textos — `post_hook` (2-4 párrafos cortos, gancho con
+situación real del lector + mini-tensión antes de insinuar la solución, va
+antes del CTA fijo) y `card_line` (una oración corta para la card de Canva,
+que no crece con el texto). Pedido explícito de Mau: "un agente experto en
+SEO writing para redes sociales", no un anuncio genérico.
+
+**Incidente Canva (mi error, ya recuperado):** al diagnosticar por qué un
+post salió con foto plana en vez de la card de Canva, probé el refresh token
+(de un solo uso) dos veces seguidas para testear — la segunda llamada
+falló y terminé escribiendo el string literal `"undefined"` sobre el valor
+real en Doppler. Recuperado rehaciendo el flujo OAuth completo con Mau
+(link de auth con PKCE → código → intercambio → token nuevo persistido UNA
+sola vez, sin volver a probarlo). **Lección: nunca volver a llamar el
+refresh endpoint de Canva manualmente para "solo verificar" — es de un solo
+uso, cualquier prueba manual lo rota y puede dejar Doppler desincronizado.**
+
+**Alertas Slack en fallos de Canva/LinkedIn (vivo):** antes los fallos solo
+se logueaban en la consola de GitHub Actions, que nadie mira. Ahora
+`post-to-linkedin.mjs` avisa a Slack directo si: (1) falla persistir la
+rotación del refresh token de Canva en Doppler — el caso más crítico, deja
+todos los runs futuros rotos en silencio hasta que alguien note la card
+plana; (2) falla la generación de la card de Canva (cae a foto plana, pero
+ahora avisa); (3) falla el post a LinkedIn en sí. `sync-blog.yml` ahora pasa
+`SLACK_BOT_TOKEN`/`SLACK_CHANNEL` al step.
+
+**Decisión tomada — NO mover LinkedIn/Canva a n8n:** Mau preguntó si convenía
+moverlo. Antes de escribir un plan, verifiqué algo técnico: el Code node de
+n8n en esta instancia SÍ soporta HTTP saliente (`this.helpers.httpRequest`,
+confirmado en otro workflow existente), pero NO encontré ningún precedente
+de `setTimeout`/espera dentro de un Code node en los 22 workflows de la
+cuenta — y Canva necesita esperar entre 3 pasos async (subir imagen,
+autofill, exportar). Sin eso, replicarlo requeriría ~15-20 nodos nuevos
+(IF+Wait+loop) sin poder probarlos visualmente antes de desplegar, tocando
+otra vez el mismo refresh token que ya se rompió hoy. Presenté el riesgo a
+Mau con la info nueva y decidió quedarse con el script actual + alertas
+Slack (arriba) en vez del rewrite a n8n.
+
+**Pendiente (decisiones de Mau, no técnicas):**
+- Múltiples cuentas de LinkedIn publicando: técnicamente posible (cada cuenta
+  hace su propio login OAuth una vez, se guarda su token en Doppler, el
+  script hace loop). Nadie lo pidió en firme todavía.
+- Página de empresa de LinkedIn (no perfil personal): requiere que Mau pida
+  el producto "Community Management API" en developer.linkedin.com para la
+  app "Cleo" — revisión manual de LinkedIn, no soy yo quien lo activa. El
+  artículo de versionado de API que Mau encontró no tiene relación con esto.
+
+**Base de Conocimiento — UserDesigners (Notion, bloqueada por permisos):**
+creada en Notion (https://app.notion.com/p/509c96cb2c284396bddf57bb005b6e29)
+para consolidar research/casuísticas/benchmarks de todos los proyectos de
+Mau (Utransfer, Kaito, Carsync, Sassi, Iden2ty, etc.) en 1 tabla con columnas
+Proyecto/Tipo/Resumen/Fuente/Tags/Fecha — recomendado sobre 2 tablas
+separadas porque un agente se confunde menos con una sola fuente de
+esquema consistente. **Barrido en 0 filas**: el conector de Notion conectado
+a esta sesión de Claude solo ve un puñado de páginas sueltas (blog,
+Airpals), no tiene acceso a ninguno de los espacios de equipo reales.
+Pendiente que Mau: (1) confirme si "Users" es un workspace de Notion
+DISTINTO al que aparece como "Latam Userdesigners's Workspace HQ", y (2)
+comparta acceso (`···` → "Connect to" → conexión de Claude) en Utransfer,
+Kaito, Ux Research, Eclipsoft, Ticketera, Carsync, Sassi, Iden2ty como
+mínimo. Cuando esté hecho, relanzar el barrido.
+
 ## Ago 20 — Loop de auto-corrección de longitud + tolerancia de título (pedido explícito de Mau)
 Mau pidió: (a) que el gate de 1200 palabras no sea un tope duro que rechace por
 3-4 palabras, (b) que el propio pipeline corrija en vez de solo rechazar, (c)
