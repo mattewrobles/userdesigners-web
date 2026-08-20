@@ -22,3 +22,9 @@ Es una librería centralizada de componentes visuales, reglas de uso, tipografí
 Si tu empresa tiene más de un diseñador, más de un desarrollador, o más de un producto — ya lo necesitas. El costo de no tenerlo crece exponencialmente con el equipo.
 ## El primer paso
 No necesitas construir todo de golpe. Empieza con los 10 componentes más usados: botones, inputs, tipografía, colores, espaciado. Sobre eso construyes el resto.
+
+
+<!-- related-posts -->
+## Artículos relacionados
+
+- [Cómo hacer un Design System para fintechs (guía 2026)](/blog/_TEMPLATE/)

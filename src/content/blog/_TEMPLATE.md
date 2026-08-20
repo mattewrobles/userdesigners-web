@@ -144,3 +144,9 @@ Empieza pequeño: define los tokens, construye los 5 componentes críticos, y do
 **¿Quieres que diseñemos el design system de tu fintech?** [Hablemos de tu proyecto →](https://www.userdesigners.com/contacto)
 
 *Nota: las imágenes de este post son ilustrativas. Los casos citados corresponden a proyectos reales de UserDesigners.*
+
+
+<!-- related-posts -->
+## Artículos relacionados
+
+- [Design System: por qué tu empresa necesita uno ahora](/blog/design-system-empresa/)
