@@ -119,9 +119,11 @@ async function refreshXToken(account) {
   return parsed.access_token;
 }
 
+const SOCIAL_BANNED_PHRASES = [...GENERIC_PHRASES, "descubre cómo", "no te pierdas", "aquí te contamos", "te contamos cómo"];
+
 function stripGeneric(text, fallback) {
   const lower = text.toLowerCase();
-  const hit = GENERIC_PHRASES.find((p) => lower.includes(p));
+  const hit = SOCIAL_BANNED_PHRASES.find((p) => lower.includes(p));
   if (hit) {
     console.log(`⚠ Texto X con frase genérica ("${hit}") — usando fallback`);
     return fallback;
@@ -129,16 +131,30 @@ function stripGeneric(text, fallback) {
   return text;
 }
 
+// Mismos estilos de apertura que LinkedIn (post-to-linkedin.mjs) — se elige
+// uno al azar por post para que la FORMA de contar varíe, no solo las palabras.
+const HOOK_STYLES = [
+  "Pregunta directa que interpela al lector sobre su propia situación (nunca retórica genérica tipo '¿sabías que...?').",
+  "Estadística o dato concreto del artículo como primera línea, sin introducción — directo al número.",
+  "Mini-anécdota o situación específica de un caso real, contada en 1-2 líneas antes de conectar con el tema.",
+  "Afirmación contraintuitiva que desafía una creencia común del lector sobre el tema.",
+  "El error más común que la mayoría comete en este tema, nombrado sin rodeos en la primera línea.",
+  "Contraste antes/después: cómo se ve el problema sin resolver vs. qué cambia cuando se resuelve bien.",
+];
+function pickHookStyle() { return HOOK_STYLES[Math.floor(Math.random() * HOOK_STYLES.length)]; }
+
 // Un solo tweet corto (máximo real ~250 caracteres de texto, el resto lo
 // ocupa el link que X acorta con t.co) — tono más directo/casual que LinkedIn.
 async function generateXCopy(title, body) {
   const fallback = `Nuevo en el blog: ${title}`.slice(0, 200);
   if (!TOKENROUTER_KEY) return fallback;
 
+  const hookStyle = pickHookStyle();
   const prompt = `Eres un copywriter de redes sociales para una agencia B2B de UX/UI Design. Escribe UN tweet corto (máximo 220 caracteres, deja espacio para un link al final) anunciando este artículo.
 
 REGLAS:
-- Gancho directo, un problema o insight concreto — NUNCA "Descubre cómo...", NUNCA el título literal.
+- Estilo de apertura para ESTE tweet específicamente: ${hookStyle}
+- NUNCA "Descubre cómo...", NUNCA el título literal.
 - Tono directo y conversacional, sin hashtags, sin emojis, sin punto final.
 - Prohibido: "en la era digital", "revolucionario", "cabe destacar", frases genéricas de post de LinkedIn/redes escrito por IA.
 

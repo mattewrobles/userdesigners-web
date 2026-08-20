@@ -115,9 +115,14 @@ function httpJson(options, body) {
 // Genera dos textos distintos con UNA sola llamada al LLM:
 // - postHook: el post nativo de LinkedIn (gancho + historia corta), va ANTES del CTA fijo
 // - cardLine: una sola línea corta para la card de Canva (espacio limitado, no crece con el texto)
+// Frases prohibidas específicas de copy social (más estrictas que el gate del
+// blog — "descubre cómo" es un tell de post-de-anuncio aunque sea aceptable
+// en el cuerpo de un artículo largo).
+const SOCIAL_BANNED_PHRASES = [...GENERIC_PHRASES, "descubre cómo", "no te pierdas", "aquí te contamos", "te contamos cómo"];
+
 function stripGeneric(text, fallback) {
   const lower = text.toLowerCase();
-  const hit = GENERIC_PHRASES.find((p) => lower.includes(p));
+  const hit = SOCIAL_BANNED_PHRASES.find((p) => lower.includes(p));
   if (hit) {
     console.log(`⚠ Texto LinkedIn con frase genérica ("${hit}") — usando fallback`);
     return fallback;
@@ -125,17 +130,32 @@ function stripGeneric(text, fallback) {
   return text;
 }
 
+// Estilos de apertura distintos — se elige uno al azar por post para que la
+// FORMA de contar varíe entre publicaciones, no solo las palabras. Sin esto,
+// todos los posts terminan con la misma estructura "gancho + historia".
+const HOOK_STYLES = [
+  "Pregunta directa que interpela al lector sobre su propia situación (nunca retórica genérica tipo '¿sabías que...?').",
+  "Estadística o dato concreto del artículo como primera línea, sin introducción — directo al número.",
+  "Mini-anécdota o situación específica de un caso real (sin nombrar cliente si es confidencial), contada en 2-3 líneas antes de conectar con el tema.",
+  "Afirmación contraintuitiva que desafía una creencia común del lector sobre el tema — algo que lo haga detenerse a leer.",
+  "El error más común que la mayoría comete en este tema, nombrado sin rodeos en la primera línea.",
+  "Contraste antes/después: cómo se ve el problema sin resolver vs. qué cambia cuando se resuelve bien.",
+];
+function pickHookStyle() { return HOOK_STYLES[Math.floor(Math.random() * HOOK_STYLES.length)]; }
+
 async function generateLinkedInCopy(title, body) {
   const fallbackHook = `Nuevo artículo en el blog.`;
   const fallbackCard = `Nuevo artículo: ${title}`.slice(0, 130);
   if (!TOKENROUTER_KEY) return { postHook: fallbackHook, cardLine: fallbackCard };
 
+  const hookStyle = pickHookStyle();
   const prompt = `Eres un copywriter senior de redes sociales especializado en SEO/social writing para agencias B2B de UX/UI Design. Escribe el copy para publicar este artículo de blog en LinkedIn.
 
 REGLAS PARA "post_hook" (el cuerpo del post, va justo ANTES de un link fijo que ya viene aparte — no lo repitas ni escribas "lee más"):
-- Abre con un gancho que describe una situación real y reconocible del lector (una frustración, un error común, una pregunta directa) — NUNCA "Descubre cómo...", NUNCA resume el título literal, NUNCA "En este artículo".
+- Estilo de apertura para ESTE post específicamente: ${hookStyle}
+- NUNCA "Descubre cómo...", NUNCA resume el título literal, NUNCA "En este artículo".
 - 2-4 líneas cortas, cada una en su propio párrafo (así se lee un post nativo de LinkedIn, no un anuncio).
-- Cuenta una mini-historia o tensión concreta ANTES de insinuar la solución — la propuesta de valor tiene que sentirse, no solo mencionarse.
+- La propuesta de valor tiene que sentirse, no solo mencionarse.
 - Tono profesional pero conversacional, primera persona plural ocasional ("en nuestra experiencia..."), sin jerga corporativa, sin emojis, sin hashtags, sin punto final en la última línea.
 - Prohibido: "en la era digital", "revolucionario", "cabe destacar", "sin duda", "por supuesto", cualquier frase que suene a post genérico escrito por IA.
 
