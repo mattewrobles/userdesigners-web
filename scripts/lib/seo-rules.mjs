@@ -3,7 +3,7 @@
 // y qa-check-ready-posts.mjs (aviso temprano sobre posts en Notion).
 // Una sola fuente de verdad: si cambia una regla, cambia en los dos flujos.
 
-const GENERIC_PHRASES = [
+export const GENERIC_PHRASES = [
   "en la era digital", "mundo competitivo", "soluciones innovadoras",
   "potenciar", "impulsar", "en el mundo actual", "cada vez más",
   "en este artículo", "exploraremos", "sumérgete", "revolucionar",

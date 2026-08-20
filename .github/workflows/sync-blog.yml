@@ -100,6 +100,7 @@ jobs:
           if [ -z "$LINKEDIN_ACCESS_TOKEN" ] || [ -z "$LINKEDIN_ORG_URN" ]; then
             echo "LinkedIn no configurado (ver docs/LINKEDIN-DISTRIBUTION.md) — omitiendo"
           else
+            export TOKENROUTER_API_KEY=$(doppler secrets get TOKENROUTER_API_KEY --plain --project user-designers --config prd)
             node scripts/post-to-linkedin.mjs
           fi
       - name: Notify Slack
