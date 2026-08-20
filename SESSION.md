@@ -1,5 +1,48 @@
 # UserDesigners Web — Astro Migration
 
+## Ago 20 — 3 errores reales del pipeline n8n, reportados por Mau vía screenshots de Slack
+1. **Race condition en "Elegir imagen sin repetir"** — el nodo referenciaba
+   `$('Data Table: Imágenes usadas')` pero ese Data Table corría en una rama
+   PARALELA (sin Merge) a `Unsplash: Buscar imagen`, no como ancestro real →
+   "hasn't been executed" intermitente. Fix aplicado vía PUT directo a la API
+   de n8n (`s2eM6QlvIuQqNjN6`): reconectado en serie
+   (`Aplicar crítica → Data Table: Imágenes usadas → Unsplash: Buscar imagen
+   → Elegir imagen sin repetir`) para que el Data Table sea ancestro real.
+2. **"Parsear borrador" rompía con JSON malformado del LLM** (comillas sin
+   escapar dentro de un string, "after property name in JSON"). Fix: agregado
+   fallback `extractFieldsFallback()` con regex directo sobre `description`/
+   `content` cuando `safeParse` falla — mismo nodo, aplicado vía la misma PUT.
+3. **Gate de palabras mínimas muy estricto** — 1200 rechazaba posts buenos por
+   poco (`notion-vs-airtable-design-system` a 1166 palabras). Bajado a 1000 en
+   `scripts/lib/seo-rules.mjs` (única fuente de verdad validate+QA). **El
+   target de generación NO cambió** — sigue en 1500-2200 tanto en el prompt
+   del AI Agent de n8n como en cualquier script nuevo; 1000 es piso de
+   seguridad, no lo que se le pide al modelo (aclarado explícitamente porque
+   Mau preguntó si esto haría que el modelo apunte más bajo — no es el caso).
+
+Regenerado `errores-comunes-diseno-ux` (título >65 chars + frase genérica
+"en este artículo") con `scripts/fix-ready-drafts.mjs` (nuevo, reutilizable
+para posts Ready — a diferencia de `regenerate-published-posts.mjs` SÍ puede
+cambiar el título porque el post no está indexado todavía). Pasa el gate
+crítico (0 issues), quedan solo warnings no bloqueantes (links internos/
+autoridad — el mini-prompt del script no los genera, a diferencia del de
+posts Published).
+
+`senales-auditoria-web-posicionamiento` (el otro post excluido en los logs
+de Slack) **ya no existe en Notion** — ninguna página con ese slug en toda
+la base, ni archivo local. Se perdió en los 2 intentos fallidos de
+regenerar el mismo tema (09:25-09:27, antes de estos fixes). Con los 3 bugs
+arreglados, un `/blog` nuevo sobre ese tema debería generar limpio.
+
+## Ago 20 — Fix concurrency sync-blog.yml
+3 disparos manuales seguidos de `sync-blog.yml` (14:24-14:29) pisaron el
+`git push origin main` entre sí → job marcó failure aunque 2 de 3 sí
+commitearon. Fix: agregado `concurrency: group: sync-blog-<branch>` +
+`cancel-in-progress: false` (encola en vez de cancelar, para no abortar un
+push a medias). Push directo a main: commit `0ac2659`.
+Pendiente: no verificable desde GitHub — estado de Reddit 403 y cola de
+`blog_idea_queue` hay que chequearlos en el panel n8n directo.
+
 ## Ago 20 — Auditoría + mejoras automatización de blog (rama `feat/blog-automation-improvements`, sin mergear)
 
 **Confirmado (no cambiado):** el bug de "Validate SEO" bloqueando el sync ya
