@@ -26,6 +26,10 @@ const CANVA_REFRESH_TOKEN = process.env.CANVA_REFRESH_TOKEN;
 const CANVA_BRAND_TEMPLATE_ID = process.env.CANVA_BRAND_TEMPLATE_ID;
 const SITE = "https://www.userdesigners.com";
 const BLOG_DIR = "src/content/blog";
+// Tope de seguridad: si un sync/regeneración masiva libera muchos posts de
+// golpe, nunca spamear LinkedIn — solo los primeros N se postean, el resto
+// se reporta como omitido (nunca silencioso).
+const MAX_LINKEDIN_POSTS_PER_RUN = 3;
 
 if (!TOKEN || !ORG_URN) {
   console.log("Faltan LINKEDIN_ACCESS_TOKEN o LINKEDIN_ORG_URN — nada que hacer");
@@ -320,7 +324,11 @@ async function main() {
     console.log("No hay /tmp/new-posts.txt — nada nuevo que anunciar");
     return;
   }
-  const slugs = fs.readFileSync("/tmp/new-posts.txt", "utf-8").split("\n").map((s) => s.trim()).filter(Boolean);
+  const allSlugs = fs.readFileSync("/tmp/new-posts.txt", "utf-8").split("\n").map((s) => s.trim()).filter(Boolean);
+  const slugs = allSlugs.slice(0, MAX_LINKEDIN_POSTS_PER_RUN);
+  if (allSlugs.length > MAX_LINKEDIN_POSTS_PER_RUN) {
+    console.log(`⚠ ${allSlugs.length} posts nuevos, tope de ${MAX_LINKEDIN_POSTS_PER_RUN}/run — omitidos sin postear: ${allSlugs.slice(MAX_LINKEDIN_POSTS_PER_RUN).join(", ")}`);
+  }
 
   for (const slug of slugs) {
     const path = `${BLOG_DIR}/${slug}.md`;
