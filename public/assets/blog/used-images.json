@@ -1,31 +1,7 @@
 {
-  "byUnsplashId": {
-    "1588600878108-578307a3cc9d": "auditoria-ux-producto-digital.jpg",
-    "1587440871875-191322ee64b0": "usar-ai-diseno-sin-perder-toque-humano.jpg",
-    "1581092580497-e0d23cbdf1dc": "design-system-empresa.jpg",
-    "1576595580361-90a855b84b20": "diseno-mobile-first.jpg",
-    "1674027326254-88c960d8e561": "geo-optimizar-contenido-chatgpt-ai-overviews.jpg",
-    "1560472354-b33ff0c44a43": "importancia-pagina-web-generar-ingresos.jpg",
-    "1572044162444-ad60f128bdea": "principios-jerarquia-visual-ui-design.jpg",
-    "1581291518633-83b4ebd1d83e": "prototipado-rapido-valida-idea.jpg",
-    "1460925895917-afdab827c52f": "sitios-web-ia-senales-alerta-bot.jpg",
-    "1499951360447-b19be8fe80f5": "wordpress-vs-webflow-vs-framer-pros-y-contras.jpg"
-  },
-  "byHash": {
-    "524c38f22f163d2955e271ece54d7dca": "auditoria-ux-producto-digital.jpg",
-    "96f7fc655dedd289ec4156ca73511c24": "usar-ai-diseno-sin-perder-toque-humano.jpg",
-    "e22801333414d1bf13c7fedddb70baed": "costo-oculto-deuda-ui-sin-design-system.jpg",
-    "2d7623f3774fb1f165b534008c7fb726": "design-system-empresa.jpg",
-    "d904162d844c3d424a22e79e57a8da34": "diseno-mobile-first.jpg",
-    "892778f71281cfa6ab6e1dc9600115aa": "errores-comunes-diseno-ux.jpg",
-    "475546f34c659aa753d3106d30469489": "geo-optimizar-contenido-chatgpt-ai-overviews.jpg",
-    "93d0cc9c5409c71f0f4dcfed083fc192": "importancia-pagina-web-generar-ingresos.jpg",
-    "4eb8f43ca22413ead5d3a2ce26d31d51": "notion-vs-airtable-design-system.jpg",
-    "36447533fdd4581887502ebf092451f2": "principios-jerarquia-visual-ui-design.jpg",
-    "a3df77212db0f9f41f582c4b5c8ca44c": "prototipado-rapido-valida-idea.jpg",
-    "e2c0d774ef475e18279d7bd75af56c57": "senales-auditoria-web-posicionamiento.jpg",
-    "9fa6f7db2505827ae5c9a0ba8d04aa1f": "sistemas-de-diseno-para-fintechs-escalar-productos.jpg",
-    "d41d0da2cfaa82c56f2d5702417ba769": "sitios-web-ia-senales-alerta-bot.jpg",
-    "7332ea8738e398a9007f6e49912fa08d": "wordpress-vs-webflow-vs-framer-pros-y-contras.jpg"
-  }
+  "unsplashIds": [
+    "qC2n6RQU4Vw",
+    "o1SKqmgSDbg",
+    "sv8oOQaUb-o"
+  ]
 }
