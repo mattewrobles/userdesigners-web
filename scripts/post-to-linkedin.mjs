@@ -25,6 +25,27 @@ const TOKENROUTER_KEY = process.env.TOKENROUTER_API_KEY;
 const CANVA_CLIENT_ID = process.env.CANVA_CLIENT_ID;
 const CANVA_CLIENT_SECRET = process.env.CANVA_CLIENT_SECRET;
 const CANVA_REFRESH_TOKEN = process.env.CANVA_REFRESH_TOKEN;
+const SLACK_BOT_TOKEN = process.env.SLACK_BOT_TOKEN;
+const SLACK_CHANNEL = process.env.SLACK_CHANNEL || "C0BN01LMC3F";
+
+// Nunca dejar un fallo de Canva/LinkedIn en silencio — si Slack no está
+// configurado, cae a console.error (nunca rompe el flujo por un aviso).
+async function notifySlack(text) {
+  if (!SLACK_BOT_TOKEN) { console.error(`(sin Slack configurado) ${text}`); return; }
+  try {
+    await httpJson({
+      hostname: "slack.com",
+      path: "/api/chat.postMessage",
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${SLACK_BOT_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+    }, JSON.stringify({ channel: SLACK_CHANNEL, text }));
+  } catch (e) {
+    console.error(`No se pudo avisar a Slack (${e.message}): ${text}`);
+  }
+}
 // Lista separada por comas — se elige uno al azar por post para variar el look
 // (light, dark original, dark v2) en vez de repetir siempre el mismo template.
 const CANVA_BRAND_TEMPLATE_IDS = (process.env.CANVA_BRAND_TEMPLATE_ID || "")
@@ -173,7 +194,11 @@ async function getCanvaAccessToken() {
         env: { ...process.env },
       });
     } catch (e) {
-      console.log(`⚠ No se pudo persistir el nuevo CANVA_REFRESH_TOKEN en Doppler: ${e.message}`);
+      // Crítico: el refresh token de Canva es de un solo uso — si esto falla,
+      // el token guardado en Doppler queda inválido y TODOS los runs
+      // siguientes van a fallar al pedir uno nuevo, hasta rehacer el login
+      // OAuth manualmente. Nunca dejarlo en un console.log que nadie ve.
+      await notifySlack(`🚨 *Canva refresh token* — no se pudo guardar la rotación en Doppler (${e.message}). El próximo post de LinkedIn puede fallar sin card hasta rehacer el login OAuth de Canva.`);
     }
   }
   return parsed.access_token;
@@ -379,7 +404,7 @@ async function main() {
           const cardUrl = await generateCanvaCard(meta.title, cardLine, heroUrl);
           if (cardUrl) imageUrl = cardUrl;
         } catch (e) {
-          console.log(`⚠ Canva card falló (${e.message}) — uso heroImage plano`);
+          await notifySlack(`⚠️ *Canva card* falló para \`${slug}\` (${e.message}) — publicando con foto plana en vez de la card con marca.`);
         }
         const asset = await uploadImage(imageUrl);
         await linkedinPost(text, asset);
@@ -409,7 +434,7 @@ async function main() {
       }
       console.log(`✓ Publicado en LinkedIn: ${slug}`);
     } catch (e) {
-      console.log(`✗ Error publicando ${slug} en LinkedIn: ${e.message}`);
+      await notifySlack(`❌ *LinkedIn* — error publicando \`${slug}\`: ${e.message}`);
     }
   }
 }
