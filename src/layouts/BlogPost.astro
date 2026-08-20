@@ -31,7 +31,9 @@ function extractFaqPairs(markdown: string | undefined) {
   let endIdx = lines.findIndex((l, i) => i > startIdx && /^##\s/.test(l));
   if (endIdx === -1) endIdx = lines.length;
   const sectionText = lines.slice(startIdx + 1, endIdx).join("\n");
-  const pairs = [...sectionText.matchAll(/\*\*(.+?)\*\*\s*\n+([^\n][\s\S]*?)(?=\n\*\*|\s*$)/g)];
+  const h3Pairs = [...sectionText.matchAll(/^###\s+(.+?)\s*\n+([^\n#][\s\S]*?)(?=\n###\s|\s*$)/gm)];
+  const boldPairs = [...sectionText.matchAll(/\*\*(.+?)\*\*\s*\n+([^\n][\s\S]*?)(?=\n\*\*|\s*$)/g)];
+  const pairs = h3Pairs.length > 0 ? h3Pairs : boldPairs;
   return pairs
     .map(([, q, a]) => ({ q: q.trim(), a: a.trim().replace(/\s+/g, " ") }))
     .filter((p) => p.q && p.a);

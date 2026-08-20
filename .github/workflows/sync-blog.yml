@@ -89,20 +89,25 @@ jobs:
             echo "INDEXNOW_KEY no configurada, omitiendo IndexNow"
           fi
       - name: Notify Slack
+        if: always()
         run: |
+          SKIPPED=""
+          if [ -f /tmp/skipped-posts.txt ]; then
+            SKIPPED="\n⚠️ Excluidos por no cumplir SEO crítico: $(cat /tmp/skipped-posts.txt | tr '\n' ',' | sed 's/,/, /g' | sed 's/, $//')"
+          fi
           if [ "$TARGET_BRANCH" = "main" ]; then
             URL="https://www.userdesigners.com/blog"
             if [ "$POST_COUNT" = "0" ] || [ -z "$POST_COUNT" ]; then
-              MSG="📝 *Blog UserDesigners:* no hay posts en estado *Ready* para publicar."
+              MSG="📝 *Blog UserDesigners:* no hay posts en estado *Ready* para publicar.$SKIPPED"
             else
-              MSG="✅ *Blog UserDesigners:* ${{ env.POST_COUNT }} post(s) publicados en producción → $URL"
+              MSG="✅ *Blog UserDesigners:* ${{ env.POST_COUNT }} post(s) publicados en producción → $URL$SKIPPED"
             fi
           else
             URL="https://preview.userdesigners-web.pages.dev/blog"
             if [ "$POST_COUNT" = "0" ] || [ -z "$POST_COUNT" ]; then
-              MSG="📝 *Blog Preview:* no hay posts en estado *Ready* para publicar."
+              MSG="📝 *Blog Preview:* no hay posts en estado *Ready* para publicar.$SKIPPED"
             else
-              MSG="👀 *Blog Preview:* ${{ env.POST_COUNT }} post(s) en preview para revisión → $URL\nAproba con: merge \`preview\` → \`main\`"
+              MSG="👀 *Blog Preview:* ${{ env.POST_COUNT }} post(s) en preview para revisión → $URL\nAproba con: merge \`preview\` → \`main\`$SKIPPED"
             fi
           fi
           curl -s -X POST https://slack.com/api/chat.postMessage \

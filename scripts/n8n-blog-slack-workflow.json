@@ -17,7 +17,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Parse Slack slash command payload\n// Slack sends: token=...&text=tema+del+blog&command=%2Fblog&...\nconst body = $input.first().json.body || $input.first().json;\n\n// Slash command sends form-encoded body\nconst text = body.text || '';\nconst userId = body.user_id || body.user_name || 'unknown';\nconst channelId = body.channel_id || 'C0BN01LMC3F';\nconst responseUrl = body.response_url || '';\n\n// Format: /blog tema del post | Categoria\n// Category is optional, separated by |\nconst parts = text.split('|').map(s => s.trim());\nconst topic = parts[0] || text;\nconst category = parts[1] || 'UX Design';\n\nif (!topic) {\n  return [{ json: { error: 'Falta el tema. Uso: /blog tema del post | Categoria' } }];\n}\n\nreturn [{ json: { topic, category, userId, channelId, responseUrl } }];"
+        "jsCode": "// Parse Slack slash command payload\n// Slack sends: token=...&text=tema+del+blog&command=%2Fblog&...\nconst body = $input.first().json.body || $input.first().json;\n\n// Ignora eventos que no son el slash command (mensajes del bot, retries de Slack, etc)\nif (body.bot_id || body.subtype === 'bot_message' || body.command !== '/blog') {\n  return [];\n}\n\n// Slash command sends form-encoded body\nconst text = body.text || '';\nconst userId = body.user_id || body.user_name || 'unknown';\nconst channelId = body.channel_id || 'C0BN01LMC3F';\nconst responseUrl = body.response_url || '';\n\n// Format: /blog tema del post | Categoria\n// Category is optional, separated by |\nconst parts = text.split('|').map(s => s.trim());\nconst topic = parts[0] || text;\nconst category = parts[1] || 'UX Design';\n\nif (!topic) {\n  return [{ json: { error: 'Falta el tema. Uso: /blog tema del post | Categoria' } }];\n}\n\nreturn [{ json: { topic, category, userId, channelId, responseUrl } }];"
       },
       "id": "parse-slack",
       "name": "Parsear comando Slack",
@@ -57,12 +57,8 @@
           ]
         },
         "sendBody": true,
-        "bodyParameters": {
-          "parameters": [
-            { "name": "ref", "value": "main" },
-            { "name": "inputs", "value": "={{ JSON.stringify({ topic: $json.topic, category: $json.category, slack_channel: $json.channelId }) }}" }
-          ]
-        },
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ ref: 'main', inputs: { topic: $json.topic, category: $json.category, slack_channel: $json.channelId } }) }}",
         "options": {}
       },
       "id": "github-dispatch",

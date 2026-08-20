@@ -4,6 +4,7 @@
 // Uso: node scripts/validate-blog-seo.mjs [slug1] [slug2] ... (si no, valida todos los posts nuevos)
 import fs from "fs";
 import path from "path";
+import { execSync } from "child_process";
 
 const BLOG_DIR = "src/content/blog";
 const CRITICAL = 1; // exit 1 = bloquear
@@ -33,8 +34,10 @@ const files = targets
 
 let criticalFails = 0;
 let warnings = 0;
+const skipped = [];
 
 for (const f of files) {
+  const critBefore = criticalFails;
   const content = fs.readFileSync(f, "utf-8");
   const fm = content.match(/^---\n([\s\S]*?)\n---/);
   if (!fm) { console.log(`✗ ${f}: no frontmatter`); criticalFails++; continue; }
@@ -122,6 +125,17 @@ for (const f of files) {
     criticalFails++;
   }
 
+  // Si este post falló alguna regla crítica, excluirlo del commit (revertir o borrar)
+  // en vez de bloquear el sync de TODOS los demás posts.
+  if (criticalFails > critBefore) {
+    skipped.push(slug);
+    try {
+      execSync(`git checkout HEAD -- "${f}"`, { stdio: "ignore" });
+    } catch {
+      fs.unlinkSync(f);
+    }
+  }
+
   // --- REGLAS SEO (warning, no bloquean) ---
   if (!tags.includes(",")) {
     console.log(`  ⚠ ${slug}: usa 2+ tags (SEO)`);
@@ -179,5 +193,10 @@ for (const f of files) {
   }
 }
 
-console.log(`\nValidados ${files.length} post(s) — ${criticalFails} crítico(s), ${warnings} warning(s)`);
-process.exit(criticalFails > 0 ? 1 : 0);
+if (skipped.length > 0) {
+  fs.writeFileSync("/tmp/skipped-posts.txt", skipped.join("\n"));
+}
+console.log(`\nValidados ${files.length} post(s) — ${criticalFails} crítico(s) (excluidos del sync: ${skipped.join(", ") || "ninguno"}), ${warnings} warning(s)`);
+// Nunca bloquea el workflow: los posts que fallan reglas críticas se excluyen del commit
+// (revertidos o eliminados arriba), pero el resto de posts válidos sigue publicándose.
+process.exit(0);
