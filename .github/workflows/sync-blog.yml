@@ -17,6 +17,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: sync-blog-${{ github.event.inputs.target_branch || 'main' }}
+  cancel-in-progress: false
+
 jobs:
   sync:
     runs-on: ubuntu-latest
