@@ -6,18 +6,17 @@
 //
 // Flujo por post: un LLM escribe DOS textos con una sola llamada — un post
 // nativo de LinkedIn (gancho + mini-historia, 2-4 líneas) y una línea corta
-// separada para la card de Canva (que no crece con el texto). El post no
+// separada para la card visual (que no crece con el texto). El post no
 // copia el meta description, que está optimizado para SEO no para feed
 // social + CTA fija "Lee más en nuestro blog: <url>". La imagen es una card
-// generada con el Autofill API de Canva (Brand Template con campos title/
-// description/image) usando el heroImage del post como foto de fondo — si
-// Canva no está configurado o falla, cae al heroImage plano sin la card.
-// La imagen final se sube como asset nativo de LinkedIn (shareMediaCategory
-// IMAGE) en vez de depender del scraping de OG tags — control total del visual.
+// generada en código (scripts/lib/social-card.mjs, satori + resvg) con el
+// heroImage del post como foto — si algo falla, cae al heroImage plano sin
+// la card. La imagen final se sube como asset nativo de LinkedIn
+// (shareMediaCategory IMAGE) en vez de depender del scraping de OG tags.
 import fs from "fs";
 import https from "https";
-import { execSync } from "child_process";
 import { GENERIC_PHRASES } from "./lib/seo-rules.mjs";
+import { generateCardImage } from "./lib/social-card.mjs";
 
 // Múltiples cuentas: LINKEDIN_ACCOUNTS (JSON, prioridad) o LINKEDIN_ACCESS_TOKEN/
 // LINKEDIN_ORG_URN (una sola cuenta, retrocompatible). Cada cuenta necesita su
@@ -39,9 +38,6 @@ function loadAccounts() {
 }
 const ACCOUNTS = loadAccounts();
 const TOKENROUTER_KEY = process.env.TOKENROUTER_API_KEY;
-const CANVA_CLIENT_ID = process.env.CANVA_CLIENT_ID;
-const CANVA_CLIENT_SECRET = process.env.CANVA_CLIENT_SECRET;
-const CANVA_REFRESH_TOKEN = process.env.CANVA_REFRESH_TOKEN;
 const SLACK_BOT_TOKEN = process.env.SLACK_BOT_TOKEN;
 const SLACK_CHANNEL = process.env.SLACK_CHANNEL || "C0BN01LMC3F";
 
@@ -63,12 +59,6 @@ async function notifySlack(text) {
     console.error(`No se pudo avisar a Slack (${e.message}): ${text}`);
   }
 }
-// Lista separada por comas — se elige uno al azar por post para variar el look
-// (light, dark original, dark v2) en vez de repetir siempre el mismo template.
-const CANVA_BRAND_TEMPLATE_IDS = (process.env.CANVA_BRAND_TEMPLATE_ID || "")
-  .split(",")
-  .map((s) => s.trim())
-  .filter(Boolean);
 const SITE = "https://www.userdesigners.com";
 const BLOG_DIR = "src/content/blog";
 // Tope de seguridad: si un sync/regeneración masiva libera muchos posts de
@@ -192,154 +182,7 @@ Responde SOLO con JSON: { "post_hook": "...", "card_line": "..." }`;
   return { postHook, cardLine };
 }
 
-function downloadBuffer(url) {
-  return new Promise((resolve, reject) => {
-    https.get(url, (res) => {
-      const chunks = [];
-      res.on("data", (c) => chunks.push(c));
-      res.on("end", () => resolve(Buffer.concat(chunks)));
-      res.on("error", reject);
-    }).on("error", reject);
-  });
-}
-
-async function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-async function getCanvaAccessToken() {
-  // El refresh_token de Canva ROTA en cada uso: la respuesta trae uno nuevo y
-  // el anterior queda inválido. Hay que persistir el nuevo en Doppler en cada
-  // llamada o el siguiente run se rompe con "Refresh token used twice".
-  const basicAuth = Buffer.from(`${CANVA_CLIENT_ID}:${CANVA_CLIENT_SECRET}`).toString("base64");
-  const body = new URLSearchParams({ grant_type: "refresh_token", refresh_token: CANVA_REFRESH_TOKEN }).toString();
-  const res = await httpJson({
-    hostname: "api.canva.com",
-    path: "/rest/v1/oauth/token",
-    method: "POST",
-    headers: {
-      Authorization: `Basic ${basicAuth}`,
-      "Content-Type": "application/x-www-form-urlencoded",
-      "Content-Length": Buffer.byteLength(body),
-    },
-  }, body);
-  const parsed = JSON.parse(res);
-  if (parsed.refresh_token && parsed.refresh_token !== CANVA_REFRESH_TOKEN) {
-    try {
-      execSync("doppler secrets set CANVA_REFRESH_TOKEN --no-interactive --project user-designers --config prd", {
-        input: parsed.refresh_token,
-        env: { ...process.env },
-      });
-    } catch (e) {
-      // Crítico: el refresh token de Canva es de un solo uso — si esto falla,
-      // el token guardado en Doppler queda inválido y TODOS los runs
-      // siguientes van a fallar al pedir uno nuevo, hasta rehacer el login
-      // OAuth manualmente. Nunca dejarlo en un console.log que nadie ve.
-      await notifySlack(`🚨 *Canva refresh token* — no se pudo guardar la rotación en Doppler (${e.message}). El próximo post de LinkedIn puede fallar sin card hasta rehacer el login OAuth de Canva.`);
-    }
-  }
-  return parsed.access_token;
-}
-
-async function uploadCanvaAsset(accessToken, imageUrl) {
-  const imageBuffer = await downloadBuffer(imageUrl);
-  const metadata = JSON.stringify({ name_base64: Buffer.from("hero.jpg").toString("base64") });
-  const registerRes = JSON.parse(await httpJson({
-    hostname: "api.canva.com",
-    path: "/rest/v1/asset-uploads",
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/octet-stream",
-      "Asset-Upload-Metadata": metadata,
-      "Content-Length": imageBuffer.length,
-    },
-  }, imageBuffer));
-
-  let job = registerRes.job;
-  for (let i = 0; i < 15 && job.status === "in_progress"; i++) {
-    await sleep(2000);
-    const pollRes = JSON.parse(await httpJson({
-      hostname: "api.canva.com",
-      path: `/rest/v1/asset-uploads/${job.id}`,
-      method: "GET",
-      headers: { Authorization: `Bearer ${accessToken}` },
-    }));
-    job = pollRes.job;
-  }
-  if (job.status !== "success") throw new Error(`Canva asset upload no terminó: ${job.status}`);
-  return job.asset.id;
-}
-
-async function generateCanvaCard(title, description, heroImageUrl) {
-  if (!CANVA_CLIENT_ID || !CANVA_CLIENT_SECRET || !CANVA_REFRESH_TOKEN || CANVA_BRAND_TEMPLATE_IDS.length === 0) return null;
-
-  const brandTemplateId = CANVA_BRAND_TEMPLATE_IDS[Math.floor(Math.random() * CANVA_BRAND_TEMPLATE_IDS.length)];
-  console.log(`Card Canva: usando template ${brandTemplateId}`);
-  const accessToken = await getCanvaAccessToken();
-  const assetId = await uploadCanvaAsset(accessToken, heroImageUrl);
-
-  const autofillBody = JSON.stringify({
-    brand_template_id: brandTemplateId,
-    data: {
-      title: { type: "text", text: title },
-      description: { type: "text", text: description },
-      image: { type: "image", asset_id: assetId },
-    },
-  });
-  const autofillRes = JSON.parse(await httpJson({
-    hostname: "api.canva.com",
-    path: "/rest/v1/autofills",
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/json",
-      "Content-Length": Buffer.byteLength(autofillBody),
-    },
-  }, autofillBody));
-
-  let job = autofillRes.job;
-  for (let i = 0; i < 15 && job.status === "in_progress"; i++) {
-    await sleep(2000);
-    const pollRes = JSON.parse(await httpJson({
-      hostname: "api.canva.com",
-      path: `/rest/v1/autofills/${job.id}`,
-      method: "GET",
-      headers: { Authorization: `Bearer ${accessToken}` },
-    }));
-    job = pollRes.job;
-  }
-  if (job.status !== "success") throw new Error(`Canva autofill no terminó: ${job.status}`);
-  const designId = job.result.design.id;
-
-  const exportBody = JSON.stringify({ design_id: designId, format: { type: "png" } });
-  const exportRes = JSON.parse(await httpJson({
-    hostname: "api.canva.com",
-    path: "/rest/v1/exports",
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/json",
-      "Content-Length": Buffer.byteLength(exportBody),
-    },
-  }, exportBody));
-
-  let exportJob = exportRes.job;
-  for (let i = 0; i < 15 && exportJob.status === "in_progress"; i++) {
-    await sleep(2000);
-    const pollRes = JSON.parse(await httpJson({
-      hostname: "api.canva.com",
-      path: `/rest/v1/exports/${exportJob.id}`,
-      method: "GET",
-      headers: { Authorization: `Bearer ${accessToken}` },
-    }));
-    exportJob = pollRes.job;
-  }
-  if (exportJob.status !== "success") throw new Error(`Canva export no terminó: ${exportJob.status}`);
-  return exportJob.urls[0];
-}
-
-async function uploadImage(imageUrl, token, orgUrn) {
+async function uploadImage(imageUrlOrBuffer, token, orgUrn) {
   // 1. Registrar el upload
   const registerBody = JSON.stringify({
     registerUploadRequest: {
@@ -363,15 +206,18 @@ async function uploadImage(imageUrl, token, orgUrn) {
   const uploadUrl = registerRes.value.uploadMechanism["com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest"].uploadUrl;
   const asset = registerRes.value.asset;
 
-  // 2. Descargar la imagen origen
-  const imageBuffer = await new Promise((resolve, reject) => {
-    https.get(imageUrl, (res) => {
-      const chunks = [];
-      res.on("data", (c) => chunks.push(c));
-      res.on("end", () => resolve(Buffer.concat(chunks)));
-      res.on("error", reject);
-    }).on("error", reject);
-  });
+  // 2. La imagen ya puede venir generada en memoria (card propia) o como URL
+  // (heroImage plano de fallback) — solo descargar en el segundo caso.
+  const imageBuffer = Buffer.isBuffer(imageUrlOrBuffer)
+    ? imageUrlOrBuffer
+    : await new Promise((resolve, reject) => {
+        https.get(imageUrlOrBuffer, (res) => {
+          const chunks = [];
+          res.on("data", (c) => chunks.push(c));
+          res.on("end", () => resolve(Buffer.concat(chunks)));
+          res.on("error", reject);
+        }).on("error", reject);
+      });
 
   // 3. Subir el binario al uploadUrl que dio LinkedIn
   const uploadHost = new URL(uploadUrl);
@@ -434,16 +280,16 @@ async function main() {
 
     // Copy + card se generan UNA vez por post (no por cuenta) — el mismo
     // contenido se publica en todas las cuentas configuradas.
-    let postHook, cardLine, imageUrl;
+    let postHook, cardLine, imagePayload;
     try {
       ({ postHook, cardLine } = await generateLinkedInCopy(meta.title, stripFrontmatter(content)));
-      imageUrl = meta.heroImage ? (meta.heroImage.startsWith("http") ? meta.heroImage : `${SITE}${meta.heroImage}`) : null;
-      if (imageUrl) {
+      const heroUrl = meta.heroImage ? (meta.heroImage.startsWith("http") ? meta.heroImage : `${SITE}${meta.heroImage}`) : null;
+      imagePayload = heroUrl;
+      if (heroUrl) {
         try {
-          const cardUrl = await generateCanvaCard(meta.title, cardLine, imageUrl);
-          if (cardUrl) imageUrl = cardUrl;
+          imagePayload = await generateCardImage({ title: meta.title, description: cardLine, heroImageUrl: heroUrl });
         } catch (e) {
-          await notifySlack(`⚠️ *Canva card* falló para \`${slug}\` (${e.message}) — publicando con foto plana en vez de la card con marca.`);
+          await notifySlack(`⚠️ *Card social* falló para \`${slug}\` (${e.message}) — publicando con foto plana en vez de la card con marca.`);
         }
       }
     } catch (e) {
@@ -455,8 +301,8 @@ async function main() {
     for (const account of ACCOUNTS) {
       const { label, token, urn } = account;
       try {
-        if (imageUrl) {
-          const asset = await uploadImage(imageUrl, token, urn);
+        if (imagePayload) {
+          const asset = await uploadImage(imagePayload, token, urn);
           await linkedinPost(text, asset, token, urn);
         } else {
           // sin imagen: cae a share tipo ARTICLE (LinkedIn scrapea el OG tag de la página)
