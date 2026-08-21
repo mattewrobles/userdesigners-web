@@ -109,10 +109,10 @@
     // Hover effects on footer links
     footer.querySelectorAll(".f-col-sub a, .f-contact, .f-bottom a").forEach(link => {
       link.addEventListener("mouseenter", () => {
-        animate(link, { color: ["rgb(206,206,206)", "#fff"] }, { type: spring, stiffness: 300, damping: 25 });
+        animate(link, { color: ["var(--text-tertiary)", "#fff"] }, { type: spring, stiffness: 300, damping: 25 });
       });
       link.addEventListener("mouseleave", () => {
-        animate(link, { color: ["#fff", "rgb(206,206,206)"] }, { type: spring, stiffness: 300, damping: 25 });
+        animate(link, { color: ["#fff", "var(--text-tertiary)"] }, { type: spring, stiffness: 300, damping: 25 });
       });
     });
   }
@@ -171,7 +171,7 @@
   .f-blur-1-inner {
     width: 100%; height: 100%;
     border-radius: 50%;
-    background: conic-gradient(from 0deg, rgb(208, 69, 255), rgb(153, 141, 208), rgb(0, 68, 255), rgb(255, 191, 0), rgb(208, 69, 255));
+    background: var(--glow-1);
     opacity: 0.64;
   }
   .f-blur-2 {
@@ -183,7 +183,7 @@
   .f-blur-2-inner {
     width: 100%; height: 100%;
     border-radius: 50%;
-    background: conic-gradient(from 0deg, rgb(246, 198, 95), rgb(26, 36, 59), rgb(11, 25, 59));
+    background: var(--glow-2);
     opacity: 1;
   }
   .f-blur-3 {
@@ -196,7 +196,7 @@
   .f-blur-3-inner {
     width: 100%; height: 100%;
     border-radius: 50%;
-    background: conic-gradient(from 0deg, rgb(132, 217, 250), rgb(18, 61, 255), rgb(74, 222, 255));
+    background: var(--glow-3);
     opacity: 1;
   }
 
@@ -224,8 +224,8 @@
     flex: 1 0 0;
     width: 1px;
     height: 100%;
-    border-left: 1px solid rgba(101, 103, 113, 0.5);
-    border-right: 1px solid rgba(101, 103, 113, 0.5);
+    border-left: 1px solid color-mix(in srgb, var(--ud-gray-500) 50%, transparent);
+    border-right: 1px solid color-mix(in srgb, var(--ud-gray-500) 50%, transparent);
   }
 
   .f-content-wrap {
@@ -301,7 +301,7 @@
   .f-copy {
     font-size: 14px;
     line-height: 1.4;
-    color: rgb(206, 206, 206);
+    color: var(--text-tertiary);
     width: 100%;
   }
 
@@ -339,13 +339,13 @@
     width: 100%;
   }
   .f-col-sub li {
-    color: rgb(206, 206, 206);
+    color: var(--text-tertiary);
     font-size: 14px;
     line-height: 1.4;
     width: 100%;
   }
   .f-col-sub a {
-    color: rgb(206, 206, 206);
+    color: var(--text-tertiary);
     text-decoration: none;
     transition: color 0.2s;
   }

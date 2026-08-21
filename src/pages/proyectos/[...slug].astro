@@ -12,5 +12,16 @@ export function getStaticPaths() {
 
 const { slug } = Astro.params;
 const html = fs.readFileSync(`src/html/proyectos/${slug}.html`, "utf-8");
-return new Response(html, { headers: { "content-type": "text/html; charset=utf-8" } });
+return new Response(html, {
+  headers: {
+    "content-type": "text/html; charset=utf-8",
+    "X-Frame-Options": "DENY",
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+    "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+    "Document-Policy": "js-profiling",
+    "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+    "Content-Security-Policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://scripts.simpleanalyticscdn.com https://js.sentry-cdn.com https://events.framer.com https://cdn.mxpnl.com https://www.clarity.ms https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data: blob: https: https://images.unsplash.com; font-src 'self' https://fonts.gstatic.com https://framerusercontent.com; connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://*.sentry.io https://*.ingest.us.sentry.io https://api.mixpanel.com https://events.framer.com https://fonts.googleapis.com https://fonts.gstatic.com https://www.clarity.ms wss:; frame-src 'self' https://www.youtube.com; object-src 'none'; base-uri 'self'; form-action 'self' https://wa.me"
+  }
+});
 ---

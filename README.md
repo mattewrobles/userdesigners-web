@@ -46,7 +46,7 @@ Sitio web de [UserDesigners](https://www.userdesigners.com), agencia de diseño 
 
 > El sitio se migró de Framer a Astro. Estado actual del avance (actualizado: ago 2026):
 
-### ✅ Migrado a Astro nativo
+### ✅ Migrado a Astro nativo (100% DS, 0 Framer)
 - [x] **Blog** (lista + posts + paginación + categorías) — SIN framer.css (eliminado 12 ago). Generador adaptado a estructura de alto valor (modelo Airpals): 2000+ palabras, TOC, tablas, FAQ, checklist, capa de verificación SEO anti-genérico en CI
 - [x] **SEO Doctores** (`/seo-doctores`)
 - [x] **Mantenimiento** (`/mantenimiento`)
@@ -55,10 +55,16 @@ Sitio web de [UserDesigners](https://www.userdesigners.com), agencia de diseño 
 - [x] **Navbar y Footer como componentes** (`Navbar.astro` / `Footer.astro`) — usados en todas las páginas
 - [x] **CI anti-slop** en push/PR
 - [x] **Contacto** (`/contacto`) — reconstruido 100% nativo con DS (BlobField, Marquee testimonios, form por WhatsApp, schema ContactPage+Organization, fotos reales de clientes). `src/html/contacto.html` ELIMINADO.
-- [x] **Home** (`/`) — Hero nuevo aprobado (HomeHero.astro con glow cian/rojo) + secciones 1:1 desde `home-native.html` + BlogSection dinámico del CMS
-- [x] **Servicios** (`/servicios`) — HTML framer renombrado (ud-) con Navbar/Footer DS, tarjetas de servicios, viñetas del hero corregidas
-- [x] **Nosotros** (`/nosotros`) — hero + experiencia + team (hover accordion) + áreas + CTA con dashboard ajustado
-- [x] **Proyectos** (`/proyectos`) — hero + cards 2x2 + testimonios animados (Marquee de contacto)
+
+### 🔄 En progreso (Fase 1 — Home nativo sección por sección)
+- [ ] **Home** (`/`) — Hero aprobado (HomeHero.astro) + secciones en migración: HeroTop → SocialProof → BlobField → HeroLine → ServiceTabs → Benefits → Proyectos → Team → Blog → CTA. Ver REFACTOR-PLAN.md.
+
+### 📋 Pendientes (Fases 2-6)
+- [ ] **Fase 2 — Nosotros** (`/nosotros`) — `src/html/nosotros-native.html` como fuente
+- [ ] **Fase 3 — Servicios** (`/servicios`) — `src/html/servicios-native.html` (109 imágenes)
+- [ ] **Fase 4 — Proyectos** (`/proyectos`) — landing + template interno (Content Collection) + automatización Notion
+- [ ] **Fase 5 — Eliminar dependencia Framer** (scripts, imágenes, CSS, fuentes remotas)
+- [ ] **Fase 6 — SEO + Performance final** (lazy loading, edge cache, internal linking, breadcrumbs)
 
 ### ✅ Framer eliminado de las páginas migradas
 - HTML framer originales (`index.html`, `servicios.html`, `nosotros.html`, `proyectos.html`) ELIMINADOS
@@ -66,15 +72,7 @@ Sitio web de [UserDesigners](https://www.userdesigners.com), agencia de diseño 
 - `framer-home.css`, `old-framer.css`, páginas temporales diag, previews ELIMINADOS
 - **0 código Framer en el render de `/`, `/servicios`, `/nosotros`, `/proyectos`** (verificado en build)
 
-### 🔄 En progreso
-- [ ] **Proyectos individuales** (`/proyectos/:slug` — kaito, novo, utransfer, verificacion-biometrica) — AÚN EN FRAMER (no migradas)
-- [ ] **Limpieza de assets** (200+ assets sin organizar en `/assets/local`)
-
-### ⏳ Pendiente
-- [ ] **Eliminar dependencia de Framer en proyectos individuales** (las 4 internas siguen sirviendo HTML Framer)
-- [ ] **Etapa 6 — SEO + Performance final**
-
-**Progreso estimado:** ~90% del sitio en Astro nativo. 15 de 19 rutas · solo las 4 internas de proyectos siguen en Framer.
+**Progreso estimado:** ~60% del sitio en Astro nativo puro. 13 de 19 rutas (blog + estáticas + contacto + seo-doctores + mantenimiento + design-system + 404). Home/servicios/nosotros/proyectos aún usan HTML Framer heredado en `src/html/*.html` como respaldo mientras se migran sección por sección.
 
 ---
 

@@ -187,14 +187,14 @@ const currentPath = Astro.url.pathname;
 
   /* AL SCROLL: el menú se comprime (padding lateral) y aparece la pill con vidrio
      esmerilado fuerte (fondo más opaco + blur alto, como el navbar del home). */
-  .nav-inner.scrolled {
+.nav-inner.scrolled {
     width: 790px;
-    padding: 8px 20px; /* contenido se comprime un poco */
-    border-radius: 60px;
+    padding: 8px 20px;
+    border-radius: var(--radius-pill);
     background: rgba(10, 10, 12, 0.78);
     backdrop-filter: blur(90px) saturate(2);
     -webkit-backdrop-filter: blur(90px) saturate(2);
-    border-color: rgba(130, 130, 130, 0.14);
+    border-color: var(--border-strong);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   }
 
@@ -249,7 +249,7 @@ const currentPath = Astro.url.pathname;
     color: rgba(255, 255, 255, 0.5);
     white-space: nowrap;
     padding: 6px 10px;
-    border-radius: 40px;
+    border-radius: var(--radius-pill);
   }
   .nav-link:hover .nav-link-text {
     color: #fff;
@@ -271,9 +271,9 @@ const currentPath = Astro.url.pathname;
     justify-content: center;
     height: 48px;
     padding: 0 24px;
-    border-radius: 16px;
+    border-radius: var(--radius-lg);
     background: rgba(255, 255, 255, 0.08);
-    border: 2px solid rgba(130, 130, 130, 0.15);
+    border: 2px solid var(--border-strong);
     text-decoration: none;
     transition: background 0.15s;
     flex-shrink: 0;
@@ -330,7 +330,7 @@ const currentPath = Astro.url.pathname;
     width: 20px;
     height: 2px;
     background: rgba(255, 255, 255, 0.6);
-    border-radius: 2px;
+    border-radius: var(--radius-sm);
     transition: all 0.3s ease;
   }
   .nav-hamburger.open span:nth-child(1) {
@@ -379,7 +379,7 @@ const currentPath = Astro.url.pathname;
     text-decoration: none;
     padding: 8px 20px;
     transition: color 0.2s, background 0.2s;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     opacity: 0;
   }
   .mobile-link.active {
@@ -395,8 +395,8 @@ const currentPath = Astro.url.pathname;
     font-weight: 500;
     color: #fff;
     background: rgba(255, 255, 255, 0.08);
-    border: 2px solid rgba(130, 130, 130, 0.15);
-    border-radius: 16px;
+    border: 2px solid var(--border-strong);
+    border-radius: var(--radius-lg);
     padding: 12px 32px;
     text-decoration: none;
     margin-top: 16px;

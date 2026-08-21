@@ -1,5 +1,127 @@
 # UserDesigners Web — Astro Migration
 
+## Ago 21 (sesión Cleo) — Fix bug rgba(), branches viejas borradas, Forum Listening activado
+
+**Bug fix real:** `Footer.astro` tenía `rgba(var(--ud-gray-500), 0.5)` — CSS inválido porque
+`--ud-gray-500` ya es `rgb(101,103,113)` completo, no un triplete. El navegador descartaba
+la regla y el borde del grid del footer desaparecía. Fix: `color-mix(in srgb, var(--ud-gray-500) 50%, transparent)`.
+También corregida indentación perdida en `BlogList.astro` (línea del grid de posts).
+
+**Confirmado:** `feat/blog-automation-improvements` y `refactor/test-fase1` ya estaban
+100% mergeadas en `main` (0 commits propios) — todo lo de QA temprano, GEO/AEO, forum
+listening y LinkedIn ya vivía en main. Ramas borradas (local + remoto) por estar obsoletas.
+
+**Anti-slop CI diagnosticado (no es regresión):** `anti-slop.yml` corre
+`impeccable detect src --ci` sin threshold, así que falla si hay CUALQUIER anti-pattern.
+Con 100 warnings de deuda acumulada en el sitio (gradient-text seo-doctores,
+flat-type-hierarchy contacto, radius sueltos proyectos/index), este gate nunca ha
+pasado en verde. Pendiente: agregar threshold/baseline real o resolver la deuda.
+
+**Forum Listening — activado end-to-end:**
+- Mau creó Gmail dedicado para alertas (no depende del dominio @userdesigners.com,
+  que aún no tiene Workspace — otra persona lo maneja).
+- F5Bot configurado con 5 keywords (tope free tier), sin sesgo a Ecuador — genéricas:
+  `necesito diseñador UX`, `design system`, `rediseño de mi web`,
+  `necesito rediseñar mi página`, `buscamos diseñador de producto` — todas con
+  "Whole words only".
+- Workflow `scripts/n8n-forum-listening-workflow.json` importado en n8n, credenciales
+  Gmail OAuth2 + Slack conectadas, activado. Corre cada 6h, cero auto-post — solo avisa
+  a Slack (canal `C0BN01LMC3F`), Mau participa siempre manual.
+- Si se necesitan keywords en inglés o más de 5 → requiere upgrade pago de F5Bot.
+
+**Corrección importante — el listening YA vivía en el workflow protegido, mejor que F5Bot:**
+Al revisar `s2eM6QlvIuQqNjN6` por API (Doppler `user-designers/prd` tiene `N8N_API_KEY` +
+`N8N_BASE_URL`, no hace falta pedirle credenciales nuevas a Mau) encontré que el workflow
+YA tenía su propio listening nativo: `Listening: Schedule diario 9 AM Ecuador` → busca
+Reddit + HN directo (sin F5Bot, sin límite de 5 keywords) → clasifica con LLM
+(TokenRouter) → dedup vía Data Table `listening_seen_posts` → encola idea en
+`blog_idea_queue` → avisa a Slack. El setup de F5Bot + Gmail de hoy quedó redundante
+(F5Bot no se llegó a importar en n8n, no hay nada que desactivar ahí — el Gmail nuevo
+queda sin usar, se puede borrar o dejar dormido).
+
+**Bug real encontrado y arreglado en ese listening nativo (por qué "no avanzaba"):**
+1. `Webhook Test Listening` escribía en la MISMA Data Table de producción
+   (`listening_seen_posts`) que usa el cron real — cada prueba marcaba posts reales de
+   Reddit/HN como "ya vistos", así que el cron real nunca encontraba nada nuevo.
+   Fix: nodo borrado (era solo para testing, no se necesita en producción).
+2. Cron decía `0 14 * * *` con timezone `America/Guayaquil` — disparaba a las 2pm
+   Ecuador, no 9am como decía el nombre del nodo. Fix: `0 9 * * *`.
+3. Data Table `listening_seen_posts` confirmada en 0 filas tras el fix — arranca limpia.
+
+Cambios aplicados vía `PUT /api/v1/workflows/s2eM6QlvIuQqNjN6` (API pública de n8n),
+sin tocar los otros 56 nodos del pipeline de blog. La API forzó a quitar 2 settings no
+soportados por su schema (`callerPolicy`, `availableInMCP`) — reactivables desde la UI
+si hacían falta, no afectan la lógica del workflow.
+
+Pendiente: confirmar mañana que el cron 9am dispara y llega una idea real a Slack.
+Si Mau quiere ampliar las keywords del listening nativo (hoy: `necesito diseñador figma`,
+`rediseño web ecuador`, `busco diseñador ux`, `quiero rediseñar mi web`,
+`freelance figma designer`, `hire ux designer`) se edita el nodo `Preparar keywords`.
+
+**Bugs de conexión encontrados y arreglados (root cause real del "no avanza")**
+Auditoría por API confirmó 3 nodos de código de una sola salida cableados como si
+tuvieran 2 salidas (`Preparar keywords`, `Filtrar ya vistos`) — la segunda rama nunca
+se ejecutaba en n8n real. Fix: fan-out correcto (un solo array de salida con ambos
+destinos). Probado end-to-end con webhook temporal: llegó hasta Slack con `ok:true`
+en las 3 pruebas reales (incluida después del fix de Reddit).
+
+**Keywords ampliadas a 17** (pedido de Mau, sin sesgo a Ecuador): se agregaron
+`fintech design`, `design system`, `figma plugin`, `diseño de producto`, `diseño web`,
+`seo geo aeo`, `posicionamiento web`, `analisis de metricas seo`, más 3 validadas con
+data real de HN (60 días): `hire a designer` (565 menciones), `looking for a designer`
+(222), `seo audit` (126) — mejor señal que frases genéricas de un término suelto.
+
+**Reddit arreglado de verdad — bloqueo 403 resuelto con Apify:**
+Reddit bloquea el scraping directo desde IPs de datacenter/VPS (no es cosa de headers).
+Intentamos crear una app OAuth nativa en reddit.com/prefs/apps — el captcha del
+formulario legacy de Reddit está roto (falla igual en Chrome/Helium/otro navegador,
+no depende del browser). En vez de seguir peleando con eso: cuenta en Apify
+(apify.com, $5 USD gratis/mes), actor `harshmaur/reddit-scraper` (Data API vía
+scraping legal, sin login ni API key de Reddit). API key guardada en Doppler
+(`user-designers/prd/APIFY_API_KEY`) + credencial `httpHeaderAuth` creada en n8n
+("Apify - UserDesigners"). Nodo `Reddit: Buscar keyword` reapuntado a
+`POST api.apify.com/v2/acts/harshmaur~reddit-scraper/run-sync-get-dataset-items`,
+`Parsear resultados de búsqueda` actualizado para leer el shape de Apify
+(`id`, `title`, `postUrl`, `communityName`) en vez del JSON crudo de reddit.com.
+Probado real: 170 resultados de Reddit en una corrida, 3 ideas nuevas a Slack.
+
+**Alerta de uso de Apify — vive en el MISMO workflow del blog** (Mau insistió en no
+separar nada — todo en un solo lugar). Nodos nuevos, bloque propio con sticky note:
+`Apify: Schedule lunes y viernes 8am` → `Apify: Obtener uso mensual`
+(`GET /v2/users/me/limits`) → `Apify: Calcular % de uso` → `Apify: ¿Pasa 80%?` →
+`Apify: Avisar límite a Slack` (canal `#pruebas-mau`, id `C0B2X9UQVU2` — hubo que
+invitar al bot al canal, no aparecía en `conversations.list` hasta entonces).
+Frecuencia bajada a lunes/viernes para no gastar crédito en vano. Hoy arrancó el
+ciclo de facturación de Apify: $0.80 de $5 usados (de las pruebas de esta sesión).
+
+**Cron del listening bajado a 3 días/semana** (pedido de Mau, ahorrar crédito Apify):
+`0 9 * * 1,3,5` (lunes/miércoles/viernes), antes diario. Nota para la próxima sesión:
+el campo `timezone` del cron se perdió sola vez en medio de varias reactivaciones
+seguidas del workflow — quedó reforzado ahora, pero si se vuelve a perder, revisar
+con una lectura fresca del servidor (`GET /workflows/{id}`) antes de asumir que el
+cron real coincide con lo último que se guardó localmente.
+
+---
+
+## Ago 20 (sesión Cleo) — Fix anti-slop core + security headers + LinkedIn cards test
+
+**Anti-slop (CI 132→100):** Tokenizados hardcoded values en componentes core:
+- `BlogList.astro`: 7 radius (20/16/12/10/8px) → `var(--radius-*)`
+- `Footer.astro`: 3 glow conic-gradients → `var(--glow-1/2/3)`; 8 colores → `var(--text-tertiary)`, `var(--ud-gray-500)`
+- `Navbar.astro`: 4 radius (60/40/16/2px) → tokens; 3 colores → `var(--border-strong)`
+- `TestimonialCard.astro`: border + radius → `var(--border-default)`, `var(--radius-lg)`
+- `blog/index.astro`: badge radius 40px → `var(--radius-pill)`
+
+**Seguridad:** Headers HSTS/CSP/X-Frame-Options añadidos a `proyectos/[...slug].astro` (return new Response)
+
+**LinkedIn cards:** Generados 6 templates Figma en `/Users/mau/Downloads/cards-preview` (satori+resvg, sin Canva)
+
+**README:** Actualizado con estado real migración (~60%, Fase 1 Home, Fases 2-4 pendientes)
+
+**Build:** ✓ OK (273ms, 46 páginas)
+
+---
+
 ## Ago 20 (noche) — Reemplazo de Canva en código, X pausado, Notion KB poblada, mascota en exploración
 
 **Cards sociales sin Canva:** `scripts/lib/social-card.mjs` (satori + resvg)
