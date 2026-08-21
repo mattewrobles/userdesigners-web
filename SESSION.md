@@ -1,5 +1,47 @@
 # UserDesigners Web — Astro Migration
 
+## Ago 20 (noche) — Reemplazo de Canva en código, X pausado, Notion KB poblada, mascota en exploración
+
+**Cards sociales sin Canva:** `scripts/lib/social-card.mjs` (satori + resvg)
+reemplaza el Autofill de Canva — replica los 6 templates reales del Figma de
+Mau (colores/gradientes exactos vía MCP), soporta imagen única y carrusel
+completo de LinkedIn. Gratis, sin cuota externa. `scripts/preview-cards.mjs`
+genera todo a `~/Downloads/cards-preview` para revisar sin publicar. Bugs que
+encontré revisando el trabajo de Mau (no rompió nada, ya venían de antes):
+template t04 con texto invisible (fix: negro→blanco), y título=descripción
+repetido en páginas de contenido (fix: acepta `{title, description}` reales).
+
+**Assets reales guardados ANTES de que Mau borre temporales:**
+`scripts/lib/assets/decoration-real.png` (el glow/blur real de Figma, más
+fiel que mi aproximación con gradientes CSS — pendiente conectarlo),
+`mascot-robot.png`, `close-illustration-mascots.png` (los 3 personajes
+choca-manos que van en la página de cierre del carrusel), `logo-icon-
+gradient.png`, iconos SVG. Ya en git, NO conectados todavía al generador.
+
+**X (Twitter) — integrado y pausado:** `scripts/post-to-x.mjs` funciona
+(mismo patrón OAuth2+PKCE+multi-cuenta que LinkedIn), pero la cuenta de X
+está en plan "Pay Per Use" con $0 de crédito → 402 en cada intento. Mau
+decidió pausar hasta cargar el mínimo ($5, no expira) — borré
+`X_ACCOUNTS`/`X_REFRESH_TOKEN` de Doppler para que el step se salte solo.
+Al retomar: rehacer login OAuth (tokens viejos ya no guardados).
+
+**Variedad real en el copy social:** LinkedIn y X ahora eligen un estilo de
+apertura al azar por post (pregunta/dato/anécdota/contraintuitivo/error
+común/antes-después) — antes todos salían con la misma estructura fija.
+
+**Notion Knowledge Base poblada:** ~80 filas reales (no la DB vacía de antes,
+que estaba en el workspace equivocado). Token nuevo de integración interna
+("Cleo") compartido a nivel de espacios de equipo por Mau — guardado en
+Doppler `NOTION_USERS_WORKSPACE_TOKEN`. Conectada al agente de blog en n8n
+vía 2 tools nuevos ("Base de Conocimiento" + "Leer Fuente Completa").
+Pendiente: Mau comparte Kaito/Sassi (casi vacíos en el barrido, puede ser
+permisos no falta real de contenido).
+
+**Mascota de marca — sin decidir todavía.** Exploración con Nano Banana:
+pulpo (idea original, nunca salió bien — los tentáculos rompen cualquier
+estilo simple probado) vs. personaje bold tipo "U-BOT"/"BLOBBY" (contorno
+grueso, forma simple, sí funciona) vs. robot con casco oscuro. Sin resolver.
+
 ## Ago 20 — LinkedIn copy + incidente Canva + alertas Slack + DB Notion (bloqueada)
 
 **Copy de LinkedIn reescrito** (`scripts/post-to-linkedin.mjs`): antes era una
