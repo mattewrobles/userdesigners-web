@@ -12,7 +12,7 @@ export const GENERIC_PHRASES = [
 
 const META_PHRASES = [
   "un buen post", "en esta guía cubriremos", "aquí te explicaré", "a continuación te",
-  "el siguiente post", "este artículo te", "termina con faq", "te mostraré cómo",
+  "el siguiente post", "termina con faq", "te mostraré cómo",
 ];
 
 const AUTHORITY_SOURCES = /https:\/\/(www\.)?(nngroup\.com|interaction-design\.org|usability\.gov|baymard\.com|smashingmagazine\.com|alistapart\.com)/;

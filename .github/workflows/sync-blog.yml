@@ -69,12 +69,13 @@ jobs:
           # En preview no corre Validate SEO (es main-only), así que ahí se usa
           # new-posts.txt (lo recién sincronizado, sin gate) en vez de published-posts.txt.
           if [ -f /tmp/published-posts.txt ]; then
-            POST_COUNT=$(grep -c . /tmp/published-posts.txt || echo 0)
+            POST_COUNT=$(wc -l < /tmp/published-posts.txt | tr -d ' ')
           elif [ -f /tmp/new-posts.txt ]; then
-            POST_COUNT=$(grep -c . /tmp/new-posts.txt || echo 0)
+            POST_COUNT=$(wc -l < /tmp/new-posts.txt | tr -d ' ')
           else
             POST_COUNT=0
           fi
+          POST_COUNT="${POST_COUNT:-0}"
           if git diff --staged --quiet && git diff --quiet; then
             echo "No changes"
             echo "POST_COUNT=0" >> $GITHUB_ENV
